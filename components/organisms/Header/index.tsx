@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ navItems }) => {
         <div className="flex items-center gap-8">
           <HeaderSearch />
           <button className="text-sm cursor-pointer">Log in</button>
-          <Link href="/nx/signup">
+          <Link href="/auth/signup">
             <Button
               type="primary"
               label="Sign up"

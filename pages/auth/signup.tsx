@@ -1,4 +1,3 @@
-import { AuthLayout } from "@/components/templates";
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import { Button, Checkbox, Input, SearchCombobox } from "@/components/atoms";
@@ -6,6 +5,7 @@ import { countries } from "country-data-list";
 import Link from "next/link";
 import GEO from "@/lib/api/geo";
 import { SocialAuthButtonGroup } from "@/components/molecules";
+import SignupLayout from "@/components/templates/auth/SignupLayout";
 
 type TUserType = "client" | "freelancer";
 
@@ -97,7 +97,7 @@ const SignUp = () => {
   };
 
   return (
-    <AuthLayout
+    <SignupLayout
       userType={userType}
       toggleUserType={() =>
         setUserType((prev) => (prev === "client" ? "freelancer" : "client"))
@@ -252,7 +252,7 @@ const SignUp = () => {
           </div>
         </>
       )}
-    </AuthLayout>
+    </SignupLayout>
   );
 };
 

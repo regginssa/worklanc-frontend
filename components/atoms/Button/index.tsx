@@ -59,7 +59,7 @@ const Button: React.FC<ButtonProps> = ({
     return (
       <motion.button
         whileTap={{ scale: 0.95 }}
-        className={`${buttonClasses.primary} ${buttonClasses.size} ${classname} rounded-xl transition-all duration-150 ease-in-out flex items-center gap-2`}
+        className={`${buttonClasses.primary} ${buttonClasses.size} ${classname} rounded-xl transition-all duration-150 ease-in-out flex items-center justify-center gap-2`}
         onClick={onClick}
       >
         {icon && !loading && (
@@ -81,7 +81,7 @@ const Button: React.FC<ButtonProps> = ({
     return (
       <motion.button
         whileTap={{ scale: 0.95 }}
-        className={`border-2 border-blue-600 text-blue-600 ${classname} hover:bg-gray-100 font-semibold rounded-xl transition-all duration-300 ease-in-out flex items-center gap-2 ${
+        className={`border-2 border-blue-600 text-blue-600 ${classname} hover:bg-gray-100 font-semibold rounded-xl transition-all duration-300 ease-in-out flex items-center gap-2 justify-center ${
           loading || disabled
             ? "opacity-50 cursor-not-allowed"
             : "cursor-pointer"

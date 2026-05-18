@@ -2,12 +2,12 @@ import { Icon } from "@iconify/react";
 import { motion } from "motion/react";
 import { signIn } from "next-auth/react";
 
-const SocialAuthButtonGroup = () => {
+const SocialAuthButtonGroup = ({ vertical }: { vertical?: boolean }) => {
   return (
-    <div className="flex items-center gap-6">
+    <div className={`flex items-center gap-6 ${vertical && "flex-col"}`}>
       <motion.button
         whileTap={{ scale: 0.95 }}
-        className="rounded-full border border-black flex items-center p-2 flex-1 justify-center gap-2 transition-all duration-200 group hover:bg-black cursor-pointer"
+        className={`rounded-full border border-black flex items-center p-2 flex-1 justify-center gap-2 transition-all duration-200 group hover:bg-black cursor-pointer ${vertical && "w-full!"}`}
       >
         <Icon
           icon="mdi:apple"
@@ -21,7 +21,7 @@ const SocialAuthButtonGroup = () => {
 
       <motion.button
         whileTap={{ scale: 0.95 }}
-        className="rounded-full flex items-center justify-center gap-2 p-2 flex-1 border border-blue-600 bg-blue-500 hover:bg-blue-600 transition-all duration-200 cursor-pointer"
+        className={`rounded-full flex items-center justify-center gap-2 p-2 flex-1 border border-sky-600 bg-sky-500 hover:bg-sky-600 transition-all duration-200 cursor-pointer ${vertical && "w-full!"}`}
         onClick={() => signIn("google")}
       >
         <Icon icon="mdi:google" width={20} className="text-white" />

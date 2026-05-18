@@ -3,14 +3,14 @@ import { motion } from "motion/react";
 
 type UserType = "client" | "freelancer";
 
-interface AuthLayoutProps {
+interface SignupLayoutProps {
   children: React.ReactNode;
   isLogin?: boolean;
   userType?: UserType;
   toggleUserType?: () => void;
 }
 
-const AuthLayout: React.FC<AuthLayoutProps> = ({
+const SignupLayout: React.FC<SignupLayoutProps> = ({
   children,
   isLogin,
   userType,
@@ -62,4 +62,4 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({
   );
 };
 
-export default AuthLayout;
+export default SignupLayout;
