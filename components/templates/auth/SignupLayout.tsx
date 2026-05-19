@@ -49,11 +49,11 @@ const SignupLayout: React.FC<SignupLayoutProps> = ({
 
       {/* Footer */}
       <footer className="h-20 w-full flex items-center justify-center">
-        <div className="flex items-center gap-2 text-sm">
+        <div className="flex items-center gap-2 text-xs">
           <p>
             {isLogin ? "Don't have an account?" : "Already have an account?"}
           </p>
-          <Link href="/auth/login" className="text-blue-600">
+          <Link href="/auth/login" className="text-blue-600 underline">
             {isLogin ? "Sign Up" : "Log in"}
           </Link>
         </div>

@@ -29,7 +29,7 @@ export async function request<T>(
   if (res.status === 401) {
     removeAuthToken();
     toast.error("Session expired");
-    window.location.href = "/auth/signin";
+    window.location.href = "/auth/login";
     return null;
   }
 
@@ -41,8 +41,6 @@ export async function request<T>(
     });
     // throw new Error(data?.message || data?.msg || "API Error");
   }
-
-  console.log("data: ", data);
 
   return data;
 }

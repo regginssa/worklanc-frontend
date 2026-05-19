@@ -1,8 +1,10 @@
 import { Button, Input } from "@/components/atoms";
 import { SocialAuthButtonGroup } from "@/components/molecules";
 import { LoginLayout } from "@/components/templates/auth/LoginLayout";
+import AuthAPI, { setAuthToken } from "@/lib/api/auth";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +12,7 @@ const Login = () => {
     password: "",
   });
   const [errors, setErrors] = useState<any>();
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,6 +40,16 @@ const Login = () => {
   const handleSubmitForm = async () => {
     const isValid = validate();
     if (!isValid) return;
+    setLoading(true);
+    const data = await AuthAPI.signin({ ...formData, signinOption: "email" });
+    if (data?.message?.includes("password")) {
+      setErrors({ ...errors, password: "Password is incorrect" });
+    }
+    if (!data?.token) return setLoading(false);
+    console.log(data.token);
+    setAuthToken(data?.token);
+    toast.success("Welcome back", { position: "top-center" });
+    setLoading(false);
   };
 
   return (
@@ -73,6 +86,7 @@ const Login = () => {
             type="primary"
             label="Log in"
             classname="h-10! text-base! rounded-md!"
+            loading={loading}
             onClick={handleSubmitForm}
           />
 

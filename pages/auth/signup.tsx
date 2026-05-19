@@ -8,6 +8,7 @@ import { SocialAuthButtonGroup } from "@/components/molecules";
 import SignupLayout from "@/components/templates/auth/SignupLayout";
 import AuthAPI, { setAuthToken } from "@/lib/api/auth";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 type TUserType = "client" | "talent";
 
@@ -25,6 +26,7 @@ const SignUp = () => {
   });
   const [errors, setErrors] = useState<any>();
   const [loading, setLoading] = useState(false);
+  const { data: session } = useSession();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -266,6 +268,7 @@ const SignUp = () => {
                   label="Create my account"
                   size="medium"
                   loading={loading}
+                  classname="rounded-md!"
                 />
               </div>
             </form>
