@@ -1,6 +1,7 @@
 import { Button, Input } from "@/components/atoms";
 import { SocialAuthButtonGroup } from "@/components/molecules";
 import { LoginLayout } from "@/components/templates/auth/LoginLayout";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 const Login = () => {
@@ -9,6 +10,7 @@ const Login = () => {
     password: "",
   });
   const [errors, setErrors] = useState<any>();
+  const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -67,7 +69,12 @@ const Login = () => {
             onChange={handleInputChange}
           />
 
-          <Button type="primary" label="Login" onClick={handleSubmitForm} />
+          <Button
+            type="primary"
+            label="Log in"
+            classname="h-10! text-base! rounded-md!"
+            onClick={handleSubmitForm}
+          />
 
           <div className="flex items-center gap-2">
             <div className="flex-1 h-[1px] bg-slate-200"></div>
@@ -85,6 +92,7 @@ const Login = () => {
             label="Sign Up"
             size="medium"
             classname="h-10! rounded-md!"
+            onClick={() => router.push("/auth/signup")}
           />
         </form>
       </div>

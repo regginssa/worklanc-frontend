@@ -21,11 +21,11 @@ const SocialAuthButtonGroup = ({ vertical }: { vertical?: boolean }) => {
 
       <motion.button
         whileTap={{ scale: 0.95 }}
-        className={`rounded-full flex items-center justify-center gap-2 p-2 flex-1 border border-sky-600 bg-sky-500 hover:bg-sky-600 transition-all duration-200 cursor-pointer ${vertical && "w-full!"}`}
+        className={`rounded-full flex items-center text-blue-600 justify-center gap-2 p-2 flex-1 border border-blue-600 hover:bg-blue-500 hover:text-white transition-all duration-200 cursor-pointer ${vertical && "w-full!"}`}
         onClick={() => signIn("google")}
       >
-        <Icon icon="mdi:google" width={20} className="text-white" />
-        <span className="text-sm text-white">Continue with Google</span>
+        <Icon icon="mdi:google" width={20} className="" />
+        <span className="text-sm">Continue with Google</span>
       </motion.button>
     </div>
   );
