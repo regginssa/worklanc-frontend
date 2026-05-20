@@ -1,5 +1,6 @@
 export type AccountType = "client" | "talent";
 export type SigninOption = "email" | "google" | "apple";
+export type ExperienceType = "beginner" | "junior" | "senior";
 
 export interface User {
   id: number;

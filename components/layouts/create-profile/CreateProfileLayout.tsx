@@ -1,38 +1,24 @@
-import Link from "next/link";
-import { SocialGroup } from "@/components/molecules";
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { TSEO } from "@/types/components.types";
 import { SEO } from "@/components/atoms";
+import { Progress } from "@/components/ui/progress";
 
-interface OnboardingLayoutProps {
+interface CreateProfileLayoutProps {
   children: React.ReactNode;
-  showFooter?: boolean;
   seo: TSEO;
+  step: number;
+  title: string;
+  description: string;
 }
 
-const navs = [
-  { label: "About Us", href: "#" },
-  { label: "Feedback", href: "#" },
-  { label: "Trust, Safety & Security", href: "#" },
-  { label: "Help & Support", href: "#" },
-  { label: "WorkLanc Foundation", href: "#" },
-  { label: "Terms of Service", href: "#" },
-  { label: "Privacy Policy", href: "#" },
-  { label: "CA Notice at Collection", href: "#" },
-  { label: "Your Privacy Choices", href: "#" },
-  { label: "Accessibility", href: "#" },
-  { label: "Desktop App", href: "#" },
-  { label: "Cookie Policy", href: "#" },
-  { label: "Enterprise Solutions", href: "#" },
-  { label: "Release notes", href: "#" },
-];
-
-export const OnboardingLayout: React.FC<OnboardingLayoutProps> = ({
+export const CreateProfileLayout: React.FC<CreateProfileLayoutProps> = ({
   children,
-  showFooter,
   seo,
+  step,
+  title,
+  description,
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -103,74 +89,15 @@ export const OnboardingLayout: React.FC<OnboardingLayoutProps> = ({
       </header>
 
       {/* Main */}
-      <main
-        className={`flex-1 flex flex-col items-center justify-center overflow-x-hidden overflow-y-auto ${!showFooter && "mb-20"}`}
-      >
+      <main className="flex-1 w-full max-w-7xl mx-auto mt-6">
+        <div className="space-y-6 mb-6">
+          <p className="text-sm text-slate-600">{step}/3</p>
+          <Progress value={step * (100 / 3)} className="w-full" />
+          <h1 className="text-3xl">{title}</h1>
+          <p className="text-sm text-slate-900">{description}</p>
+        </div>
         {children}
       </main>
-
-      {/* Footer */}
-      {showFooter && (
-        <footer className="w-[70%] mx-auto border-t border-slate-200 py-14 text-xs text-slate-500">
-          <div className="grid grid-cols-4">
-            <ul className="flex flex-col gap-4 ">
-              {navs.slice(0, 3).map((n) => (
-                <li key={n.label}>
-                  <Link href={n.href} className=" hover:underline">
-                    {n.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            <ul className="flex flex-col gap-4 ">
-              {navs.slice(3, 6).map((n) => (
-                <li key={n.label}>
-                  <Link href={n.href} className=" hover:underline">
-                    {n.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            <ul className="flex flex-col gap-4 ">
-              {navs.slice(6, 10).map((n) => (
-                <li key={n.label}>
-                  <Link href={n.href} className=" hover:underline">
-                    {n.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            <ul className="flex flex-col gap-4 ">
-              {navs.slice(10, navs.length).map((n) => (
-                <li key={n.label}>
-                  <Link href={n.href} className=" hover:underline">
-                    {n.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="flex items-center justify-between mt-8">
-            <div className="flex items-center gap-6">
-              <span>Follow Us</span>
-              <SocialGroup />
-            </div>
-            <div className="flex items-center gap-6">
-              <span>Mobile app</span>
-              <Link href="#" className="p-1 rounded-full hover:bg-slate-100">
-                <Icon icon="mdi:apple" width={24} />
-              </Link>
-              <Link href="#" className="p-1 rounded-full hover:bg-slate-100">
-                <Icon icon="mdi:android" width={24} />
-              </Link>
-            </div>
-          </div>
-        </footer>
-      )}
     </div>
   );
 };

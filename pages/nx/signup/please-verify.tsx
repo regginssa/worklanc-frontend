@@ -17,7 +17,14 @@ const PleaseVerify = () => {
   const router = useRouter();
 
   return (
-    <OnboardingLayout showFooter>
+    <OnboardingLayout
+      seo={{
+        title: "Please verify your email",
+        description: "",
+        url: "/nx/signup/please-verify",
+      }}
+      showFooter
+    >
       <Icon icon="material-symbols-light:mail-shield-outline" width={120} />
       <div className="flex flex-col items-center justify-center mt-8 gap-8">
         <h3 className="text-lg">Verify your email to continue</h3>

@@ -10,12 +10,21 @@ import {
 } from "@/components/ui/carousel";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 const TOP_RATED_PLUS = require("@/public/assets/svgs/icons/badges/top_rated_plus.svg");
 
 export default function CreateProfile() {
+  const router = useRouter();
+
   return (
-    <OnboardingLayout>
+    <OnboardingLayout
+      seo={{
+        title: "Hey John. Ready for your next big opportunity?",
+        description: "",
+        url: "/nx/create-profile",
+      }}
+    >
       <div className="w-7xl mx-auto flex items-stretch gap-20">
         <div className="flex-1 space-y-8 min-w-0">
           <h3 className="text-3xl">
@@ -50,6 +59,7 @@ export default function CreateProfile() {
               type="primary"
               label="Get started"
               classname="font-semibold! text-sm! rounded-full! py-3! px-5!"
+              onClick={() => router.push("/nx/create-profile/experience")}
             />
             <p className="text-sm text-slate-600">
               It only takes 5-10 minutes and you can edit it later. We’ll save
