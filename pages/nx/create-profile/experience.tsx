@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { useState } from "react";
 import { ExperienceType } from "@/types/user";
 import { Button } from "@/components/atoms";
+import { useRouter } from "next/router";
 
 const Search = require("@/public/assets/svgs/icons/other/search.svg");
 const Pencil = require("@/public/assets/svgs/icons/other/pencil_in_hand.svg");
@@ -18,6 +19,7 @@ const radios = [
 
 export default function Experience() {
   const [exp, setExp] = useState<ExperienceType>("junior");
+  const router = useRouter();
 
   return (
     <CreateProfileLayout
@@ -46,7 +48,7 @@ export default function Experience() {
                 <Image src={r.icon} alt={r.value} width={145} height={130} />
                 <p className="text-2xl text-left">{r.label}</p>
                 <div
-                  className={`absolute top-0 right-4 w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-200 ${exp === r.value ? "border-black" : "border-slate-200"}`}
+                  className={`absolute top-0 right-4 w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-200 ${exp === r.value ? "border-black" : "border-slate-300"}`}
                 >
                   <span
                     className={`transition-all duration-200 w-3 h-3 rounded-full bg-black ${exp === r.value ? "scale-100" : "scale-0"}`}
@@ -62,6 +64,7 @@ export default function Experience() {
         <motion.button
           whileTap={{ scale: 0.95 }}
           className="py-2 px-4 rounded-full text-sm border border-slate-400"
+          onClick={() => router.back()}
         >
           Back
         </motion.button>
@@ -75,6 +78,7 @@ export default function Experience() {
             type="primary"
             label="Next"
             classname="font-medium! text-sm! py-2.5! px-5! rounded-full!"
+            onClick={() => router.push("/nx/create-profile/goal")}
           />
         </div>
       </div>

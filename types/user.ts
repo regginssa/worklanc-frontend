@@ -1,6 +1,12 @@
 export type AccountType = "client" | "talent";
 export type SigninOption = "email" | "google" | "apple";
 export type ExperienceType = "beginner" | "junior" | "senior";
+export type GoalType =
+  | "main_income"
+  | "side_income"
+  | "gain_experience"
+  | "no_goal_yet";
+export type WorkPreferenceType = "find_jobs" | "sell_services";
 
 export interface User {
   id: number;

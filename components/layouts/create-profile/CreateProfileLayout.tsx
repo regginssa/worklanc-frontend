@@ -89,15 +89,32 @@ export const CreateProfileLayout: React.FC<CreateProfileLayoutProps> = ({
       </header>
 
       {/* Main */}
-      <main className="flex-1 w-full max-w-7xl mx-auto mt-6">
-        <div className="space-y-6 mb-6">
-          <p className="text-sm text-slate-600">{step}/3</p>
-          <Progress value={step * (100 / 3)} className="w-full" />
-          <h1 className="text-3xl">{title}</h1>
-          <p className="text-sm text-slate-900">{description}</p>
-        </div>
-        {children}
-      </main>
+      <AnimatePresence mode="wait">
+        <main className="flex-1 w-full max-w-7xl mx-auto mt-6">
+          <div className="space-y-6 mb-6">
+            <p className="text-sm text-slate-600">{step}/3</p>
+
+            <Progress value={step * (100 / 3)} className="w-full" />
+
+            <h1 className="text-3xl">{title}</h1>
+
+            <p className="text-sm text-slate-900">{description}</p>
+          </div>
+
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, x: 80 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -80 }}
+            transition={{
+              duration: 0.35,
+              ease: "easeInOut",
+            }}
+          >
+            {children}
+          </motion.div>
+        </main>
+      </AnimatePresence>
     </div>
   );
 };
