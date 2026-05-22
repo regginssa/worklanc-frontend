@@ -8,16 +8,20 @@ import { Progress } from "@/components/ui/progress";
 interface CreateProfileLayoutProps {
   children: React.ReactNode;
   seo: TSEO;
-  step: number;
+  currentStep: number;
+  totalSteps: number;
   title: string;
+  subtitle?: string;
   description: string;
 }
 
 export const CreateProfileLayout: React.FC<CreateProfileLayoutProps> = ({
   children,
   seo,
-  step,
+  currentStep,
+  totalSteps,
   title,
+  subtitle,
   description,
 }) => {
   const [open, setOpen] = useState(false);
@@ -92,17 +96,24 @@ export const CreateProfileLayout: React.FC<CreateProfileLayoutProps> = ({
       <AnimatePresence mode="wait">
         <main className="flex-1 w-full max-w-7xl mx-auto mt-6">
           <div className="space-y-6 mb-6">
-            <p className="text-sm text-slate-600">{step}/3</p>
+            <div className="flex items-center gap-1 text-slate-600">
+              {subtitle && <h2 className="text-lg font-medium">{subtitle}</h2>}
+              <span className="text-sm">
+                {currentStep}/{totalSteps}
+              </span>
+            </div>
 
-            <Progress value={step * (100 / 3)} className="w-full" />
+            <Progress
+              value={currentStep * (100 / totalSteps)}
+              className="w-full"
+            />
 
             <h1 className="text-3xl">{title}</h1>
-
             <p className="text-sm text-slate-900">{description}</p>
           </div>
 
           <motion.div
-            key={step}
+            key={currentStep}
             initial={{ opacity: 0, x: 80 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -80 }}

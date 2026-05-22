@@ -43,7 +43,8 @@ export default function Goal() {
     <CreateProfileLayout
       title="Got it. What’s your biggest goal for freelancing?"
       description="Different people come to Upwork for various reasons. We want to highlight the opportunities that fit your goals best while still showing you all the possibilities."
-      step={2}
+      currentStep={2}
+      totalSteps={3}
       seo={{
         title: "Got it. What’s your biggest goal for freelancing?",
         description:
@@ -60,16 +61,22 @@ export default function Goal() {
           >
             <Card
               key={i}
-              className={`hover:bg-slate-100 border ${goal === r.value ? "border-black" : "border-slate-100"} transition-all duration-200`}
+              className={`hover:bg-slate-100 border ${
+                goal === r.value ? "border-black" : "border-slate-100"
+              } transition-all duration-200`}
             >
               <CardContent className="rounded-2xl p-4 space-y-4 relative">
                 <Image src={r.icon} alt={r.value} width={145} height={130} />
                 <p className="text-2xl text-left">{r.label}</p>
                 <div
-                  className={`absolute top-0 right-4 w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-200 ${goal === r.value ? "border-black" : "border-slate-300"}`}
+                  className={`absolute top-0 right-4 w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-200 ${
+                    goal === r.value ? "border-black" : "border-slate-300"
+                  }`}
                 >
                   <span
-                    className={`transition-all duration-200 w-3 h-3 rounded-full bg-black ${goal === r.value ? "scale-100" : "scale-0"}`}
+                    className={`transition-all duration-200 w-3 h-3 rounded-full bg-black ${
+                      goal === r.value ? "scale-100" : "scale-0"
+                    }`}
                   ></span>
                 </div>
               </CardContent>

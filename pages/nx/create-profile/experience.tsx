@@ -25,7 +25,8 @@ export default function Experience() {
     <CreateProfileLayout
       title="A few quick questions: first, have you freelanced before?"
       description="This lets us know how much help to give you along the way. We won’t share your answer with anyone else, including potential clients."
-      step={1}
+      currentStep={1}
+      totalSteps={3}
       seo={{
         title: "A few questions: first, have you freelanced before?",
         description:
@@ -42,16 +43,22 @@ export default function Experience() {
           >
             <Card
               key={i}
-              className={`hover:bg-slate-100 ${exp === r.value && "border border-black"} transition-all duration-200`}
+              className={`hover:bg-slate-100 ${
+                exp === r.value && "border border-black"
+              } transition-all duration-200`}
             >
               <CardContent className="rounded-2xl p-4 space-y-4 relative">
                 <Image src={r.icon} alt={r.value} width={145} height={130} />
                 <p className="text-2xl text-left">{r.label}</p>
                 <div
-                  className={`absolute top-0 right-4 w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-200 ${exp === r.value ? "border-black" : "border-slate-300"}`}
+                  className={`absolute top-0 right-4 w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-200 ${
+                    exp === r.value ? "border-black" : "border-slate-300"
+                  }`}
                 >
                   <span
-                    className={`transition-all duration-200 w-3 h-3 rounded-full bg-black ${exp === r.value ? "scale-100" : "scale-0"}`}
+                    className={`transition-all duration-200 w-3 h-3 rounded-full bg-black ${
+                      exp === r.value ? "scale-100" : "scale-0"
+                    }`}
                   ></span>
                 </div>
               </CardContent>
