@@ -82,7 +82,7 @@ export const CreateProfileLayout: React.FC<CreateProfileLayoutProps> = ({
                     </button>
                     <button className="py-2 px-4 transition-all duration-200 hover:bg-slate-200 cursor-pointer w-full rounded-md flex items-center gap-4">
                       <Icon icon="material-symbols-light:logout" width={24} />
-                      <span className="text-xs">Close account</span>
+                      <span className="text-xs">Log out</span>
                     </button>
                   </div>
                 </motion.ul>

@@ -177,3 +177,17 @@ text-primary {
     @apply font-sans;
   }
 }
+
+.resume-docx-preview .docx-wrapper {
+  width: 100%;
+  max-width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+  align-items: stretch;
+}
+
+.resume-docx-preview .docx-wrapper > section.docx {
+  width: 100% !important;
+  max-width: 100%;
+  box-sizing: border-box;
+}

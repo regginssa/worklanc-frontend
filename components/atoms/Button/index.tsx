@@ -31,8 +31,10 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   const buttonClasses = {
     primary: `${
-      loading || disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-    } ${"bg-blue-600 hover:bg-blue-500"} text-white whitespace-nowrap`,
+      loading || disabled
+        ? "bg-slate-200 text-slate-500 cursor-not-allowed"
+        : "cursor-pointer bg-blue-600 hover:bg-blue-500 text-white"
+    } whitespace-nowrap`,
     size: `${
       size === "small"
         ? "px-5 py-2 text-sm"
@@ -66,14 +68,16 @@ const Button: React.FC<ButtonProps> = ({
         onClick={onClick}
       >
         {icon && !loading && (
-          <Icon icon={icon} className="w-4 h-4" color="white" />
+          <Icon
+            icon={icon}
+            className={`w-4 h-4 ${disabled ? "text-slate-500" : "text-white"}`}
+          />
         )}
         {label}
         {loading && (
           <Icon
             icon="svg-spinners:bars-rotate-fade"
-            className="w-4 h-4"
-            color="white"
+            className={`w-4 h-4 text-slate-500`}
           />
         )}
       </motion.button>
