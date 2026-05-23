@@ -8,10 +8,11 @@ export type ResumeViewerProps = {
 type FileKind = "pdf" | "txt" | "docx" | "doc" | "unknown";
 
 const PREVIEW_CLASS =
-  "h-full w-full max-w-full min-w-0 overflow-y-auto rounded-lg border border-slate-200 bg-white";
+  "h-full max-h-[60vh] w-full max-w-full overflow-y-auto rounded-lg border border-slate-200 bg-white scrollbar-hide";
 
-const DOCX_PREVIEW_CLASS = `${PREVIEW_CLASS} overflow-x-auto`;
-const DOCX_MOUNT_CLASS = "resume-docx-preview w-full max-w-full min-w-0";
+const DOCX_PREVIEW_CLASS = `${PREVIEW_CLASS} overflow-x-auto scrollbar-hide`;
+const DOCX_MOUNT_CLASS =
+  "resume-docx-preview w-full max-w-full min-w-0 scrollbar-hide";
 
 function getFileKind(file: File): FileKind {
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
@@ -200,7 +201,7 @@ function ResumeViewerImpl({ file }: ResumeViewerProps) {
         <iframe
           src={previewUrl}
           title={`Preview of ${file.name}`}
-          className="block h-full min-h-[min(480px,60vh)] w-full max-w-full border-0"
+          className="block h-[60vh] w-full max-w-full border-0"
         />
       </div>
     );
@@ -208,11 +209,11 @@ function ResumeViewerImpl({ file }: ResumeViewerProps) {
 
   if (kind === "txt" && textContent !== null) {
     return (
-      <pre
-        className={`${PREVIEW_CLASS} whitespace-pre-wrap p-4 font-sans text-sm leading-relaxed text-slate-800`}
-      >
-        {textContent || "(empty file)"}
-      </pre>
+      <div className={PREVIEW_CLASS}>
+        <pre className="h-full overflow-y-auto whitespace-pre-wrap p-4 font-sans text-sm leading-relaxed text-slate-800">
+          {textContent || "(empty file)"}
+        </pre>
+      </div>
     );
   }
 
@@ -231,9 +232,9 @@ function ResumeViewerImpl({ file }: ResumeViewerProps) {
         <object
           data={previewUrl}
           type="application/msword"
-          className="h-full min-h-[min(480px,60vh)] w-full"
+          className="h-full min-h-0 w-full"
         >
-          <div className="flex h-full min-h-[min(480px,60vh)] flex-col items-center justify-center gap-2 px-6 text-center">
+          <div className="flex h-full min-h-0 flex-col items-center justify-center gap-2 px-6 text-center">
             <p className="text-sm text-slate-600">
               Your browser cannot preview .doc files inline.
             </p>
@@ -264,10 +265,12 @@ export const ResumeViewer = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div
-        className={`${PREVIEW_CLASS} flex items-center justify-center bg-slate-50`}
-      >
-        <p className="text-sm text-slate-500">Loading preview…</p>
+      <div className="h-full max-h-[60vh]">
+        <div
+          className={`${PREVIEW_CLASS} flex items-center justify-center bg-slate-50`}
+        >
+          <p className="text-sm text-slate-500">Loading preview…</p>
+        </div>
       </div>
     ),
   }

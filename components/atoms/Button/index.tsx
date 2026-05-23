@@ -96,7 +96,7 @@ const Button: React.FC<ButtonProps> = ({
         disabled={disabled || loading}
         onClick={onClick}
       >
-        {icon && !loading && <Icon icon={icon} className="w-4 h-4" />}
+        {icon && !loading && <Icon icon={icon} className="w-5 h-5" />}
         {label}
         {loading && (
           <Icon icon="svg-spinners:bars-rotate-fade" className="w-4 h-4 ml-2" />

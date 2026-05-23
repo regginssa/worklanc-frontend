@@ -121,8 +121,8 @@ export default function ResumeImport() {
           />
 
           <Dialog open={dialogOpen} onOpenChange={handleDialogOpenChange}>
-            <DialogContent className="min-w-5xl">
-              <DialogHeader className="p-4">
+            <DialogContent className="flex min-w-5xl flex-col overflow-hidden">
+              <DialogHeader className="shrink-0 p-4">
                 <DialogTitle className="text-xl">
                   {resume ? "Review your resume" : "Add your resume"}
                 </DialogTitle>
@@ -132,51 +132,60 @@ export default function ResumeImport() {
                     : "Use a PDF, Word doc, or rich text file – make sure it’s 5MB or less."}
                 </DialogDescription>
               </DialogHeader>
-              <div
-                className={`w-full min-w-0 px-4 pb-4 ${
-                  resume && "h-1/3"
-                } transition-all duration-200`}
-              >
-                {resume ? (
-                  <div className="w-full min-w-0">
+              <div className="flex min-h-0 w-full min-w-0 flex-col px-4">
+                <div
+                  className={`w-full min-w-0 transition-all duration-200 ${
+                    resume ? "h-full max-h-[60vh]" : ""
+                  }`}
+                >
+                  {resume ? (
                     <ResumeViewer file={resume} />
-                  </div>
-                ) : (
-                  <div className="w-full py-20 border-2 border-dashed border-slate-500 flex flex-col gap-4 items-center justify-center">
-                    <Image
-                      src={ResumeIcon}
-                      alt="Resume"
-                      className="w-[145px] h-[100px] object-cover"
-                    />
-                    <p className="text-sm text-slate-600 font-light">
-                      Drag and drop or{" "}
-                      <span
-                        className="underline cursor-pointer"
-                        onClick={openFilePicker}
-                      >
-                        choose file
-                      </span>
-                    </p>
-                  </div>
-                )}
-
-                <div className="mt-6 flex justify-end">
-                  <Button
-                    type="primary"
-                    label="Continue"
-                    classname="rounded-full! font-medium! text-sm! px-5! py-2.5!"
-                    loading={uploading}
-                    disabled={!resume || uploading}
-                    onClick={() => {
-                      setDialogOpen(false);
-                      if (resume) {
-                        toast.info(
-                          "Resume saved — profile mapping coming next"
-                        );
-                      }
-                    }}
-                  />
+                  ) : (
+                    <div className="w-full py-20 border-2 border-dashed border-slate-500 flex flex-col gap-4 items-center justify-center">
+                      <Image
+                        src={ResumeIcon}
+                        alt="Resume"
+                        className="w-[145px] h-[100px] object-cover"
+                      />
+                      <p className="text-sm text-slate-600 font-light">
+                        Drag and drop or{" "}
+                        <span
+                          className="underline cursor-pointer"
+                          onClick={openFilePicker}
+                        >
+                          choose file
+                        </span>
+                      </p>
+                    </div>
+                  )}
                 </div>
+              </div>
+              <div className="mt-2 px-4">
+                <button
+                  className="underline text-sm text-slate-600 cursor-pointer"
+                  onClick={() => {
+                    if (resumeUrl) URL.revokeObjectURL(resumeUrl);
+                    fileInputRef.current?.click();
+                  }}
+                >
+                  Replace resume with a new one
+                </button>
+              </div>
+
+              <div className="mt-6 mb-4 flex justify-end">
+                <Button
+                  type="primary"
+                  label="Continue"
+                  classname="rounded-full! font-medium! text-sm! px-5! py-2.5!"
+                  loading={uploading}
+                  disabled={!resume || uploading}
+                  onClick={() => {
+                    setDialogOpen(false);
+                    if (resume) {
+                      toast.info("Resume saved — profile mapping coming next");
+                    }
+                  }}
+                />
               </div>
             </DialogContent>
           </Dialog>
