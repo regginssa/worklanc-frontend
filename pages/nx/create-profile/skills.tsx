@@ -100,18 +100,12 @@ export default function Skills() {
           Back
         </motion.button>
 
-        <div className="flex items-center gap-4">
-          <button className="py-2 px-4 text-sm font-medium hover:underline">
-            Skip for now
-          </button>
-
-          <Button
-            type="primary"
-            label="Next"
-            classname="font-medium! text-sm! py-2.5! px-5! rounded-full!"
-            onClick={() => router.push("/nx/create-profile/goal")}
-          />
-        </div>
+        <Button
+          type="primary"
+          label="Next, your profile title"
+          classname="font-medium! text-sm! py-2.5! px-5! rounded-full!"
+          onClick={() => router.push("/nx/create-profile/title")}
+        />
       </div>
     </CreateProfileLayout>
   );
