@@ -165,7 +165,7 @@ export default function Categories() {
           type="primary"
           label="Next, add your skills"
           classname="font-medium! text-sm! py-2.5! px-5! rounded-full!"
-          onClick={() => router.push("/nx/create-profile/goal")}
+          onClick={() => router.push("/nx/create-profile/skills")}
         />
       </div>
     </CreateProfileLayout>

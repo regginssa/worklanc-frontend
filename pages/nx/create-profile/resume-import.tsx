@@ -7,8 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { getProfileDraft } from "@/lib/profile-draft";
-import ResumeImportImage from "@/public/assets/webps/avatars/resume-import.webp";
+import UserImage from "@/public/assets/webps/avatars/resume-import.webp";
 import ResumeIcon from "@/public/assets/svgs/icons/other/resume.svg";
 import { motion } from "motion/react";
 import Image from "next/image";
@@ -16,8 +15,6 @@ import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ResumeViewer } from "@/components/molecules/ResumeViewer";
-
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 const ACCEPTED_TYPES = [
   "application/pdf",
@@ -201,7 +198,7 @@ export default function ResumeImport() {
         <div className="flex-1"></div>
         <div className="flex-1 rounded-2xl bg-slate-100 p-6">
           <Image
-            src={ResumeImportImage}
+            src={UserImage}
             alt="Avatar"
             className="h-[60px] w-[60px] rounded-full object-cover"
           />
