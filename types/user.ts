@@ -20,6 +20,15 @@ export type Experience = {
   description: string;
 };
 
+export type Education = {
+  school: string;
+  degree: string;
+  fieldOfStudy: string;
+  startedAt: number | null;
+  endAt: number | null;
+  description: string;
+};
+
 export interface User {
   id: number;
   firstName: string;

@@ -1,13 +1,7 @@
 import { CreateProfileLayout } from "@/components/layouts/create-profile/CreateProfileLayout";
 import { motion } from "motion/react";
 import { useRouter } from "next/router";
-import {
-  Button,
-  Checkbox,
-  Input,
-  SearchCombobox,
-  Textarea,
-} from "@/components/atoms";
+import { Button, Dropdown, Input, Textarea } from "@/components/atoms";
 import {
   Carousel,
   CarouselContent,
@@ -18,7 +12,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
-import { Experience } from "@/types/user";
+import { Education } from "@/types/user";
 import {
   Dialog,
   DialogClose,
@@ -27,24 +21,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { countries } from "country-data-list";
-import { DateDropdown } from "@/components/molecules";
-import FolderIcon from "@/public/assets/svgs/icons/other/folder.svg";
+import EducationDocIcon from "@/public/assets/svgs/icons/other/education_doc.svg";
 import Image from "next/image";
-import { formatMonthYear } from "@/utils/df";
 
-export default function Employment() {
-  const [experiences, setExperiences] = useState<Experience[]>([]);
-  const [formData, setFormData] = useState<Experience>({
-    title: "",
-    company: "",
-    location: {
-      city: "",
-      country: "",
-    },
-    isCurrent: false,
-    startedAt: new Date(),
-    endAt: new Date(),
+export default function ProfileEducation() {
+  const [educations, setEducations] = useState<Education[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [formData, setFormData] = useState<Education>({
+    school: "",
+    degree: "",
+    fieldOfStudy: "",
+    startedAt: null,
+    endAt: null,
     description: "",
   });
   const [open, setOpen] = useState(false);
@@ -56,42 +44,47 @@ export default function Employment() {
   };
 
   const handleSave = () => {
-    setExperiences([...experiences, formData]);
+    if (selectedIndex !== null) {
+      setEducations(
+        educations.map((education, index) =>
+          index === selectedIndex ? formData : education
+        )
+      );
+    } else {
+      setEducations([...educations, formData]);
+    }
     setFormData({
-      title: "",
-      company: "",
-      location: {
-        city: "",
-        country: "",
-      },
-      isCurrent: false,
-      startedAt: new Date(),
-      endAt: new Date(),
+      school: "",
+      degree: "",
+      fieldOfStudy: "",
+      startedAt: null,
+      endAt: null,
       description: "",
     });
     setOpen(false);
   };
 
   const handleDelete = (index: number) => {
-    setExperiences(experiences.filter((_, i) => i !== index));
+    setEducations(educations.filter((_, i) => i !== index));
   };
 
   const handleEdit = (index: number) => {
-    setFormData(experiences[index]);
+    setFormData(educations[index]);
+    setSelectedIndex(index);
     setOpen(true);
   };
 
   return (
     <CreateProfileLayout
-      title="If you have relevant work experience, add it here."
-      description="Freelancers who add their experience are twice as likely to win work. But if you’re just starting out, you can still create a great profile. Just head on to the next page."
+      title="Clients like to know what you know - add your education here."
+      description="You don’t have to have a degree. Adding any relevant education helps make your profile more visible."
       currentStep={5}
       totalSteps={10}
       seo={{
-        title: "If you have relevant work experience, add it here.",
+        title: "Clients like to know what you know - add your education here.",
         description:
-          "Freelancers who add their experience are twice as likely to win work. But if you’re just starting out, you can still create a great profile. Just head on to the next page.",
-        url: "/nx/create-profile/employment",
+          "You don’t have to have a degree. Adding any relevant education helps make your profile more visible.",
+        url: "/nx/create-profile/education",
       }}
     >
       <Carousel
@@ -101,37 +94,33 @@ export default function Employment() {
         className="w-full"
       >
         <CarouselContent>
-          {experiences.map((experience, index) => (
+          {educations.map((education, index) => (
             <CarouselItem key={index} className="basis-1/2 lg:basis-1/3">
               <div className="p-1">
                 <Card className="border-2 border-dashed border-slate-400">
                   <CardContent className="p-6 relative aspect-square flex items-center">
                     <div className="flex items-start gap-2">
                       <Image
-                        src={FolderIcon}
+                        src={EducationDocIcon}
                         alt="Folder"
                         className="w-[60px] h-auto object-cover"
                       />
                       <div className="space-y-4">
                         <h3 className="text-2xl line-clamp-3">
-                          {experience.title}
+                          {education.school}
                         </h3>
 
-                        <div className="space-y-2 text-sm">
-                          <p className="font-medium text-slate-800">
-                            {experience.company} |{" "}
-                            {formatMonthYear(experience.startedAt)}
-                            {experience.isCurrent
-                              ? " - Present"
-                              : ` - ${formatMonthYear(experience.endAt)}`}
+                        <div className="text-sm">
+                          <p className="">
+                            {education.degree}, {education.fieldOfStudy}
                           </p>
-                          <p className="text-slate-600">
-                            {experience.location.city},{" "}
-                            {experience.location.country}
+                          <p className="">
+                            {education.startedAt} - {education.endAt}
                           </p>
                         </div>
-                        <p className="text-slate-600 line-clamp-3 text-sm">
-                          {experience.description}
+
+                        <p className="text-sm text-slate-600 line-clamp-3">
+                          {education.description}
                         </p>
                       </div>
                     </div>
@@ -169,7 +158,7 @@ export default function Employment() {
                     <Icon icon="mdi:plus" className="text-white w-6 h-6" />
                   </span>
                   <p className="text-xl font-medium text-slate-800">
-                    Add experience
+                    Add education
                   </p>
                 </CardContent>
               </Card>
@@ -190,16 +179,16 @@ export default function Employment() {
         </motion.button>
 
         <div className="flex items-center gap-4">
-          {experiences.length === 0 && (
+          {educations.length === 0 && (
             <button className="py-2 px-4 text-sm font-medium hover:underline">
               Skip for now
             </button>
           )}
           <Button
             type="primary"
-            label="Next, add your education"
+            label="Next, add languages"
             classname="font-medium! text-sm! py-2.5! px-5! rounded-full!"
-            onClick={() => router.push("/nx/create-profile/education")}
+            onClick={() => router.push("/nx/create-profile/title")}
           />
         </div>
       </div>
@@ -207,103 +196,79 @@ export default function Employment() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="flex min-w-3xl flex-col">
           <DialogHeader className="shrink-0 p-4">
-            <DialogTitle className="text-3xl">Add Work Experience</DialogTitle>
+            <DialogTitle className="text-3xl">
+              {selectedIndex !== null
+                ? "Edit Education History"
+                : "Add Education History"}
+            </DialogTitle>
           </DialogHeader>
 
           <form className="space-y-6 p-4 no-scrollbar max-h-[60vh] overflow-y-auto">
             <Input
               type="text"
-              name="title"
-              label="Title"
-              placeholder="Ex: Software Engineer"
+              name="school"
+              label="School"
+              placeholder="Ex: University of London"
               labelClassName="text-sm font-medium"
               required
-              value={formData.title}
+              value={formData.school}
               onChange={handleInputChange}
             />
             <Input
               type="text"
-              name="company"
-              label="Company"
-              placeholder="Ex: Microsoft"
+              name="degree"
+              label="Degree"
+              placeholder="Ex: Bachelors"
               labelClassName="text-sm font-medium"
               required
-              value={formData.company}
+              value={formData.degree}
               onChange={handleInputChange}
             />
 
-            <div className="">
-              <label className="text-sm font-medium">Location</label>
+            <Input
+              type="text"
+              name="fieldOfStudy"
+              label="Field of Study"
+              placeholder="Ex: Computer Science"
+              labelClassName="text-sm font-medium"
+              required
+              value={formData.fieldOfStudy}
+              onChange={handleInputChange}
+            />
+
+            <div>
+              <label className="text-sm font-medium">Dates Attended</label>
               <div className="flex items-center gap-6 mt-1">
-                <div className="flex-1">
-                  <Input
-                    type="text"
-                    name="city"
-                    placeholder="Ex: London"
-                    labelClassName="text-sm font-medium"
-                    required
-                    value={formData.location.city}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setFormData({
-                        ...formData,
-                        location: {
-                          ...formData.location,
-                          city: e.target.value,
-                        },
-                      })
-                    }
-                  />
-                </div>
-                <div className="flex-1">
-                  <SearchCombobox
-                    name="country"
-                    placeholder="Country"
-                    options={countries.all.map((c) => c.name)}
-                    defaultOption={formData.location.country}
-                    onSelect={(v: string) =>
-                      setFormData({
-                        ...formData,
-                        location: { ...formData.location, country: v },
-                      })
-                    }
-                  />
-                </div>
+                <Dropdown
+                  placeholder="From"
+                  name="startedAt"
+                  options={Array.from({ length: 20 }, (_, i) => i + 2005).map(
+                    (year) => ({
+                      label: year.toString(),
+                      value: year.toString(),
+                    })
+                  )}
+                  value={formData.startedAt?.toString() || ""}
+                  onSelect={(v: string) =>
+                    setFormData({ ...formData, startedAt: Number(v) })
+                  }
+                />
+
+                <Dropdown
+                  placeholder="To (or expected graduation year)"
+                  name="endAt"
+                  options={Array.from({ length: 20 }, (_, i) => i + 2005).map(
+                    (year) => ({
+                      label: year.toString(),
+                      value: year.toString(),
+                    })
+                  )}
+                  value={formData.endAt?.toString() || ""}
+                  onSelect={(v: string) =>
+                    setFormData({ ...formData, endAt: Number(v) })
+                  }
+                />
               </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Checkbox
-                checked={formData.isCurrent}
-                onCheck={(v: boolean) =>
-                  setFormData({ ...formData, isCurrent: v })
-                }
-                className="w-5! h-5!"
-              />
-              <label className="text-sm">
-                I am currently working in this role
-              </label>
-            </div>
-
-            <div className="flex items-center gap-6">
-              <DateDropdown
-                label="Start Date"
-                name="startedAt"
-                required
-                value={formData.startedAt}
-                onChange={(v: Date) =>
-                  setFormData({ ...formData, startedAt: v })
-                }
-                classname="flex-1"
-              />
-              <DateDropdown
-                label="End Date"
-                name="endAt"
-                required
-                value={formData.endAt}
-                onChange={(v: Date) => setFormData({ ...formData, endAt: v })}
-                classname="flex-1"
-                disabled={formData.isCurrent}
-              />
             </div>
 
             <Textarea
