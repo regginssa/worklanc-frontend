@@ -1,8 +1,12 @@
+import { Button, Checkbox } from "@/components/atoms";
 import { CreateProfileLayout } from "@/components/layouts/create-profile/CreateProfileLayout";
 import CategoriesAPI from "@/lib/api/categories";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { Icon } from "@iconify/react";
+import { motion } from "motion/react";
+import { useRouter } from "next/router";
 
 export default function Categories() {
   const {
@@ -18,6 +22,8 @@ export default function Categories() {
     string | null
   >(null);
   const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([]);
+  const [showInfo, setShowInfo] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     if (error) {
@@ -34,11 +40,10 @@ export default function Categories() {
     setSelectedSpecialties((prev) => {
       if (prev.includes(slug)) return prev.filter((s) => s !== slug);
       if (prev.length >= 3) {
-        toast.error("You can select up to 3 specialties", {
-          position: "top-center",
-        });
+        setShowInfo(true);
         return prev;
       }
+      setShowInfo(false);
       return [...prev, slug];
     });
   };
@@ -87,37 +92,81 @@ export default function Categories() {
         </div>
 
         <div className="flex-1 min-w-0">
-          <p className="text-xs text-slate-500 mb-6">
-            Now, select 1 to 3 specialties
-          </p>
-
-          {!selectedCategorySlug ? (
-            <p className="text-sm text-slate-400">
-              Choose a category on the left to see specialties.
+          <div>
+            <p className="text-xs text-slate-500 mb-6">
+              Now, select 1 to 3 specialties
             </p>
-          ) : (
-            <ul className="flex flex-wrap gap-3">
-              {activeCategory?.children.map((child) => {
-                const isSelected = selectedSpecialties.includes(child.slug);
-                return (
-                  <li key={child.slug}>
-                    <button
-                      type="button"
-                      onClick={() => toggleSpecialty(child.slug)}
-                      className={`rounded-full border px-4 py-2 text-sm transition-colors ${
-                        isSelected
-                          ? "border-blue-600 bg-blue-50 text-blue-600"
-                          : "border-slate-300 hover:border-slate-400"
-                      }`}
+
+            {!selectedCategorySlug ? (
+              <p className="text-sm text-slate-400">
+                Choose a category on the left to see specialties.
+              </p>
+            ) : (
+              <ul className="space-y-4">
+                {activeCategory?.children.map((child) => {
+                  const isSelected = selectedSpecialties.includes(child.slug);
+                  return (
+                    <li
+                      key={child.slug}
+                      className="flex items-center gap-2 text-sm"
                     >
-                      {child.name}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
+                      <Checkbox
+                        checked={isSelected}
+                        onCheck={() => toggleSpecialty(child.slug)}
+                        className="w-5! h-5!"
+                      />
+                      <span>{child.name}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+
+          {selectedSpecialties.length > 0 && (
+            <div className="mt-6 space-y-6 flel flex-col">
+              {showInfo && (
+                <div className="items-start gap-2 bg-yellow-50 p-5 inline-flex">
+                  <Icon
+                    icon="material-symbols-light:info-rounded"
+                    className="w-5 h-5 text-yellow-500"
+                  />
+                  <p className="text-sm ">
+                    Select up to 3 specialties. You’ll be able to change and add
+                    to these later on.
+                  </p>
+                </div>
+              )}
+
+              <button
+                className="flex items-center gap-2 hover:underline cursor-pointer"
+                onClick={() => {
+                  setSelectedSpecialties([]);
+                }}
+              >
+                <Icon icon="mdi:times" className="w-5 h-5" />
+                <span>Clear selections</span>
+              </button>
+            </div>
           )}
         </div>
+      </div>
+
+      <div className="mt-10 flex items-center justify-between font-medium">
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          className="py-2 px-4 rounded-full text-sm border border-slate-400"
+          onClick={() => router.back()}
+        >
+          Back
+        </motion.button>
+
+        <Button
+          type="primary"
+          label="Next, add your skills"
+          classname="font-medium! text-sm! py-2.5! px-5! rounded-full!"
+          onClick={() => router.push("/nx/create-profile/goal")}
+        />
       </div>
     </CreateProfileLayout>
   );

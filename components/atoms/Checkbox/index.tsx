@@ -4,6 +4,7 @@ import { Icon } from "@iconify/react";
 interface CheckboxProps {
   checked?: boolean;
   onCheck?: (checked: boolean) => void;
+  className?: string;
   error?: boolean;
 }
 
@@ -11,6 +12,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   checked = false,
   onCheck,
   error,
+  className = "",
 }) => {
   return (
     <motion.button
@@ -26,9 +28,10 @@ const Checkbox: React.FC<CheckboxProps> = ({
           error
             ? "border-red-500 bg-red-50 border-2"
             : checked
-              ? "border border-blue-600 bg-blue-50"
-              : "border border-slate-400 hover:border-black hover:border-2"
+            ? "border border-blue-600 bg-blue-50"
+            : "border border-slate-400 hover:border-black hover:border-2"
         }
+        ${className}
       `}
     >
       <Icon
