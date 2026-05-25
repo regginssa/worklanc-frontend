@@ -10,8 +10,10 @@ interface SearchComboboxProps {
   icon?: string;
   options: any[];
   defaultOption: any;
+  labelClassName?: string;
   classname?: string;
   error?: string;
+  required?: boolean;
   onSelect: (v: any) => void;
 }
 
@@ -23,7 +25,9 @@ const SearchCombobox: React.FC<SearchComboboxProps> = ({
   defaultOption,
   options,
   classname,
+  labelClassName,
   error,
+  required,
   onSelect,
 }) => {
   const [search, setSearch] = useState("");
@@ -49,8 +53,15 @@ const SearchCombobox: React.FC<SearchComboboxProps> = ({
   }, []);
 
   return (
-    <div ref={ref} className="flex flex-col items-start gap-1 relative">
-      {label && <label>{label}</label>}
+    <div
+      ref={ref}
+      className={`flex flex-col items-start gap-1 relative ${classname}`}
+    >
+      {label && (
+        <label className={labelClassName}>
+          {label} {required && <span className="">*</span>}
+        </label>
+      )}
 
       {/* trigger */}
       <motion.button
@@ -60,7 +71,7 @@ const SearchCombobox: React.FC<SearchComboboxProps> = ({
           error
             ? "border-2 border-red-500"
             : "border border-slate-400 hover:border-2 hover:border-black"
-        } transition-all duration-300 ${classname}`}
+        } transition-all duration-300`}
         onClick={() => setOpen((prev) => !prev)}
       >
         {icon && <Icon icon={icon} width={14} />}

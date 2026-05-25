@@ -111,7 +111,7 @@ export default function Rate() {
           type="primary"
           label="Next, add your photo and location"
           classname="font-medium! text-sm! py-2.5! px-5! rounded-full!"
-          onClick={() => router.push("/nx/create-profile/rate")}
+          onClick={() => router.push("/nx/create-profile/location")}
         />
       </div>
     </CreateProfileLayout>
