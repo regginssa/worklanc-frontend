@@ -46,7 +46,6 @@ const Login = () => {
       setErrors({ ...errors, password: "Password is incorrect" });
     }
     if (!data?.token) return setLoading(false);
-    console.log(data.token);
     setAuthToken(data?.token);
     toast.success("Welcome back", { position: "top-center" });
     setLoading(false);
@@ -96,7 +95,7 @@ const Login = () => {
             <div className="flex-1 h-[1px] bg-slate-200"></div>
           </div>
 
-          <SocialAuthButtonGroup vertical />
+          <SocialAuthButtonGroup vertical intent="login" />
 
           <p className="text-slate-500 mt-12 text-center text-sm">
             Don't have an Worklanc account?

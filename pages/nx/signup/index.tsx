@@ -86,6 +86,8 @@ const SignUp = () => {
     fetchCurrentGeo();
   }, []);
 
+  useEffect(() => {}, []);
+
   const handleOptionSelect = (val: TUserType) => {
     setCurrentStep(1);
     setUserType(val);
@@ -94,28 +96,28 @@ const SignUp = () => {
   const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // const isValid = validate();
+    const isValid = validate();
 
-    // if (!isValid) return;
+    if (!isValid) return;
 
-    // setLoading(true);
+    setLoading(true);
 
-    // const data = await AuthAPI.signup({
-    //   ...formData,
-    //   accountType: userType,
-    //   countryCode:
-    //     countries.all.find((c) => c.name === formData.country)?.alpha2 || "US",
-    //   createdAt: new Date(),
-    //   appleId: null,
-    //   googleId: null,
-    //   signinOption: "email",
-    // } as any);
+    const data = await AuthAPI.signup({
+      ...formData,
+      accountType: userType,
+      countryCode:
+        countries.all.find((c) => c.name === formData.country)?.alpha2 || "US",
+      createdAt: new Date(),
+      appleId: null,
+      googleId: null,
+      signinOption: "email",
+    } as any);
 
-    // if (!data?.token) return setLoading(false);
-    // setAuthToken(data.token);
+    if (!data?.token) return setLoading(false);
+    setAuthToken(data.token);
     toast.success(`Welcome Jack`, { position: "top-center" });
     router.push("/nx/signup/please-verify");
-    // setLoading(false);
+    setLoading(false);
   };
 
   return (
@@ -145,7 +147,11 @@ const SignUp = () => {
               {userType === "client" ? "hire talent" : "find work you love"}
             </h1>
 
-            <SocialAuthButtonGroup />
+            <SocialAuthButtonGroup
+              intent="signup"
+              accountType={userType}
+              countryCode={formData.country}
+            />
 
             <div className="mt-8 flex items-center gap-2">
               <div className="flex-1 h-[1px] bg-slate-200"></div>
