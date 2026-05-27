@@ -11,3 +11,4 @@ export { default as ServiceCategoryCard } from "./ServiceCategoryCard";
 export { default as SocialAuthButtonGroup } from "./SocialAuthButtonGroup";
 export { default as SocialGroup } from "./SocialGroup";
 export { default as DateDropdown } from "./DateDropdown";
+export { default as FreelancerPlusAlert } from "./FreelancerPlusAlert";
