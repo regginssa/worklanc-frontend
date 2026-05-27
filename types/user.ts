@@ -12,7 +12,7 @@ export type Language = {
   name: string;
   level: LanguageLevel;
 };
-export type Experience = {
+export type Employment = {
   title: string;
   company: string;
   location: {

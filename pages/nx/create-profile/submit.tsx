@@ -29,7 +29,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { MOCK_SKILLS, type MockSkill } from "@/static/data/mock-skills";
-import { Education, Experience, Language, LanguageLevel } from "@/types/user";
+import { Education, Employment, Language, LanguageLevel } from "@/types/user";
 import { formatMonthYear } from "@/utils/df";
 import { Icon } from "@iconify/react";
 import { countries, languages as countryLanguages } from "country-data-list";
@@ -42,7 +42,7 @@ import { useRouter } from "next/router";
 
 const EDITOR_PREVIEW_SIZE = 300;
 
-const INITIAL_WORK_HISTORY: Experience[] = [
+const INITIAL_WORK_HISTORY: Employment[] = [
   {
     title: "Software Engineer",
     company: "Google",
@@ -135,7 +135,7 @@ type LanguageDraft = {
   level: LanguageLevel | "";
 };
 
-const createEmptyExperience = (): Experience => ({
+const createEmptyExperience = (): Employment => ({
   title: "",
   company: "",
   location: {
@@ -157,7 +157,7 @@ const createEmptyEducation = (): Education => ({
   description: "",
 });
 
-const cloneExperience = (experience: Experience): Experience => ({
+const cloneExperience = (experience: Employment): Employment => ({
   ...experience,
   location: { ...experience.location },
   startedAt: new Date(experience.startedAt),
@@ -234,9 +234,9 @@ export default function Submit() {
   const [skillsOpen, setSkillsOpen] = useState(false);
 
   const [workHistory, setWorkHistory] =
-    useState<Experience[]>(INITIAL_WORK_HISTORY);
+    useState<Employment[]>(INITIAL_WORK_HISTORY);
   const [employmentOpen, setEmploymentOpen] = useState(false);
-  const [employmentDraft, setEmploymentDraft] = useState<Experience>(
+  const [employmentDraft, setEmploymentDraft] = useState<Employment>(
     createEmptyExperience()
   );
   const [employmentEditingIndex, setEmploymentEditingIndex] = useState<

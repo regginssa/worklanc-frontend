@@ -35,7 +35,7 @@ export interface DateDropdownProps {
   monthLabel?: string;
   yearLabel?: string;
   name: string;
-  value: Date;
+  value?: Date | null;
   onChange: (date: Date) => void;
   minYear?: number;
   maxYear?: number;
@@ -68,15 +68,21 @@ export default function DateDropdown({
     [yearMin, yearMax]
   );
 
-  const monthValue = String(value.getMonth() + 1);
-  const yearValue = String(value.getFullYear());
+  const monthValue = value ? String(value.getMonth() + 1) : "";
+  const yearValue = value ? String(value.getFullYear()) : "";
 
   const handleMonthSelect = (selectedMonth: string) => {
-    onChange(mergeDate(Number(selectedMonth), value.getFullYear(), value));
+    const anchor = value ?? new Date();
+    onChange(
+      mergeDate(Number(selectedMonth), anchor.getFullYear(), anchor)
+    );
   };
 
   const handleYearSelect = (selectedYear: string) => {
-    onChange(mergeDate(value.getMonth() + 1, Number(selectedYear), value));
+    const anchor = value ?? new Date();
+    onChange(
+      mergeDate(anchor.getMonth() + 1, Number(selectedYear), anchor)
+    );
   };
 
   return (

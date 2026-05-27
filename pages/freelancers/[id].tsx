@@ -5,7 +5,12 @@ import { Button, IconButton, TabBar } from "@/components/atoms";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { motion } from "motion/react";
-import { FreelancerPlusAlert } from "@/components/molecules";
+import {
+  EducationDialog,
+  EmploymentDialog,
+  FreelancerPlusAlert,
+  TitleDialog,
+} from "@/components/molecules";
 import { useState } from "react";
 import BagOpenIcon from "@/public/assets/svgs/icons/other/bag_open.svg";
 import {
@@ -16,9 +21,16 @@ import {
 import TestimonialIcon from "@/public/assets/svgs/icons/other/testinimal.svg";
 import PrizeIcon from "@/public/assets/svgs/icons/other/prize.svg";
 import FolderIcon from "@/public/assets/svgs/icons/other/folder_open.svg";
+import { Education, Employment } from "@/types/user";
 
 export default function FreelancerProfil() {
   const [portfolioTabIdx, setPortfolioTabIdx] = useState(0);
+  const [titleOpen, setTitleOpen] = useState(false);
+  const [employmentOpen, setEmploymentOpen] = useState(false);
+  const [educationOpen, setEducationOpen] = useState(false);
+  const [employments, setEmployments] = useState<Employment[]>([]);
+  const [educations, setEducations] = useState<Education[]>([]);
+  const [title, setTitle] = useState("");
 
   return (
     <FreelancerLayout
@@ -260,7 +272,7 @@ export default function FreelancerProfil() {
                     variant="outline"
                     icon="mdi:plus"
                     className="p-1!"
-                    onClick={() => {}}
+                    onClick={() => setEducationOpen(true)}
                   />
                 </div>
 
@@ -305,7 +317,7 @@ export default function FreelancerProfil() {
                     variant="outline"
                     icon="mdi:pencil-outline"
                     className="p-1!"
-                    onClick={() => {}}
+                    onClick={() => setTitleOpen(true)}
                   />
                 </div>
 
@@ -544,7 +556,7 @@ export default function FreelancerProfil() {
             variant="outline"
             icon="mdi:plus"
             className="p-1!"
-            onClick={() => {}}
+            onClick={() => setEmploymentOpen(true)}
           />
         </div>
 
@@ -605,6 +617,30 @@ export default function FreelancerProfil() {
           </div>
         </div>
       </div>
+
+      <EmploymentDialog
+        open={employmentOpen}
+        onClose={() => setEmploymentOpen(false)}
+        onSave={() => {}}
+        formData={employments[0]}
+        onChangeFormData={(data) => setEmployments(data)}
+      />
+
+      <EducationDialog
+        open={educationOpen}
+        onClose={() => setEducationOpen(false)}
+        onSave={() => {}}
+        formData={educations[0]}
+        onChangeFormData={(data) => {}}
+      />
+
+      <TitleDialog
+        open={titleOpen}
+        onClose={() => setTitleOpen(false)}
+        title={title}
+        onChangeTitle={setTitle}
+        onSave={() => {}}
+      />
     </FreelancerLayout>
   );
 }
