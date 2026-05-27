@@ -15,3 +15,4 @@ export { default as FreelancerPlusAlert } from "./FreelancerPlusAlert";
 export { default as EmploymentDialog } from "./dialogs/EmploymentDialog";
 export { default as EducationDialog } from "./dialogs/EducationDialog";
 export { default as TitleDialog } from "./dialogs/TitleDialog";
+export { default as HourlyRateDialog } from "./dialogs/HourlyRateDialog";

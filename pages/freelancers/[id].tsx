@@ -9,6 +9,7 @@ import {
   EducationDialog,
   EmploymentDialog,
   FreelancerPlusAlert,
+  HourlyRateDialog,
   TitleDialog,
 } from "@/components/molecules";
 import { useState } from "react";
@@ -26,6 +27,7 @@ import { Education, Employment } from "@/types/user";
 export default function FreelancerProfil() {
   const [portfolioTabIdx, setPortfolioTabIdx] = useState(0);
   const [titleOpen, setTitleOpen] = useState(false);
+  const [rateOpen, setRateOpen] = useState(false);
   const [employmentOpen, setEmploymentOpen] = useState(false);
   const [educationOpen, setEducationOpen] = useState(false);
   const [employments, setEmployments] = useState<Employment[]>([]);
@@ -328,7 +330,7 @@ export default function FreelancerProfil() {
                     variant="outline"
                     icon="mdi:pencil-outline"
                     className="p-1!"
-                    onClick={() => {}}
+                    onClick={() => setRateOpen(true)}
                   />
                   <IconButton
                     variant="outline"
@@ -639,6 +641,14 @@ export default function FreelancerProfil() {
         onClose={() => setTitleOpen(false)}
         title={title}
         onChangeTitle={setTitle}
+        onSave={() => {}}
+      />
+
+      <HourlyRateDialog
+        open={rateOpen}
+        onClose={() => setRateOpen(false)}
+        rate={0}
+        onChangeRate={(rate: number) => {}}
         onSave={() => {}}
       />
     </FreelancerLayout>
