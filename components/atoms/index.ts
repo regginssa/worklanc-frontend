@@ -27,3 +27,4 @@ export { default as DatePicker } from "./DatePicker";
 export { default as PhoneInput } from "./PhoneInput";
 export { default as InputOTP } from "./InputOTP";
 export { default as IconButton } from "./IconButton";
+export { default as CircleProgress } from "./CircleProgress";

@@ -147,7 +147,7 @@ export default function FreelancerHeader() {
     {
       label: "Stats and trends",
       icon: "material-symbols-light:trending-up",
-      href: "#",
+      href: "/nx/my-stats",
     },
     {
       label: "Account health",
