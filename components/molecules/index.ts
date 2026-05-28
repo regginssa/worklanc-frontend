@@ -19,3 +19,5 @@ export { default as HourlyRateDialog } from "./dialogs/HourlyRateDialog";
 export { default as ProfileOverviewDialog } from "./dialogs/ProfileOverviewDialog";
 export { default as ShareProfileDialog } from "./dialogs/ShareProfileDialog";
 export { default as TestimonialDialog } from "./dialogs/TestimonialDialog";
+export { default as CertificationDialog } from "./dialogs/CertificationDialog";
+export { default as OtherExperienceDialog } from "./dialogs/OtherExperienceDialog";

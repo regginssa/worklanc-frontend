@@ -64,7 +64,7 @@ export default function DatePicker({
               placeholder={placeholder}
               className="bg-transparent border-none outline-none text-sm flex-1 placeholder:text-slate-600"
               required={required}
-              value={format(value, "PPP")}
+              value={value ? format(value, "PPP") : ""}
               disabled={disabled}
             />
             <Icon

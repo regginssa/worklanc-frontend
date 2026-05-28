@@ -6,10 +6,12 @@ import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import {
+  CertificationDialog,
   EducationDialog,
   EmploymentDialog,
   FreelancerPlusAlert,
   HourlyRateDialog,
+  OtherExperienceDialog,
   ProfileOverviewDialog,
   ShareProfileDialog,
   TestimonialDialog,
@@ -36,6 +38,8 @@ export default function FreelancerProfil() {
   const [testimonialOpen, setTestimonialOpen] = useState(false);
   const [employmentOpen, setEmploymentOpen] = useState(false);
   const [educationOpen, setEducationOpen] = useState(false);
+  const [certificationOpen, setCertificationOpen] = useState(false);
+  const [otherExperienceOpen, setOtherExperienceOpen] = useState(false);
   const [employments, setEmployments] = useState<Employment[]>([]);
   const [educations, setEducations] = useState<Education[]>([]);
   const [title, setTitle] = useState("");
@@ -538,7 +542,7 @@ export default function FreelancerProfil() {
             variant="outline"
             icon="mdi:plus"
             className="p-1!"
-            onClick={() => {}}
+            onClick={() => setCertificationOpen(true)}
           />
         </div>
 
@@ -553,7 +557,10 @@ export default function FreelancerProfil() {
               Listing your certifications can help prove your specific knowledge
               or abilities. (+10%)
             </p>
-            <button className="text-blue-600 font-medium hover:underline cursor-pointer mt-4">
+            <button
+              className="text-blue-600 font-medium hover:underline cursor-pointer mt-4"
+              onClick={() => setCertificationOpen(true)}
+            >
               Add certification
             </button>
           </div>
@@ -609,7 +616,7 @@ export default function FreelancerProfil() {
             variant="outline"
             icon="mdi:plus"
             className="p-1!"
-            onClick={() => {}}
+            onClick={() => setOtherExperienceOpen(true)}
           />
         </div>
 
@@ -623,7 +630,10 @@ export default function FreelancerProfil() {
             <p className="">
               Add any other experiences that help you stand out
             </p>
-            <button className="text-blue-600 font-medium hover:underline cursor-pointer mt-4">
+            <button
+              className="text-blue-600 font-medium hover:underline cursor-pointer mt-4"
+              onClick={() => setOtherExperienceOpen(true)}
+            >
               Add an experience
             </button>
           </div>
@@ -680,6 +690,18 @@ export default function FreelancerProfil() {
         open={testimonialOpen}
         onClose={() => setTestimonialOpen(false)}
         onRequest={() => {}}
+      />
+
+      <CertificationDialog
+        open={certificationOpen}
+        onClose={() => setCertificationOpen(false)}
+        onAdd={() => {}}
+      />
+
+      <OtherExperienceDialog
+        open={otherExperienceOpen}
+        onClose={() => setOtherExperienceOpen(false)}
+        onSave={() => {}}
       />
     </FreelancerLayout>
   );
