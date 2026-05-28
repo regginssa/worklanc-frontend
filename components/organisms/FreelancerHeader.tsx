@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import UserPic from "@/public/assets/webps/avatars/man2.webp";
 import Image from "next/image";
 import { Switch } from "../ui/switch";
+import { LucideBell, LucideCircleQuestionMark } from "lucide-react";
 
 type NavLink = {
   label: string;
@@ -203,19 +204,15 @@ export default function FreelancerHeader() {
         </nav>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-6">
         <HeaderSearch />
-        <div className="flex items-center">
-          <IconButton
-            variant="text"
-            icon="mdi:question-mark"
-            onClick={() => {}}
-          />
-          <IconButton
-            variant="text"
-            icon="mdi:bell-outline"
-            onClick={() => {}}
-          />
+        <div className="flex items-center gap-6">
+          <Link href="#" className="">
+            <LucideCircleQuestionMark className="w-6 h-6" />
+          </Link>
+          <Link href="#" className="">
+            <LucideBell className="w-6 h-6" />
+          </Link>
         </div>
 
         <div className="relative">
