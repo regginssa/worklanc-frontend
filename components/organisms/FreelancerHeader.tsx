@@ -122,6 +122,7 @@ export default function FreelancerHeader() {
           { label: "Your reports", href: "#" },
           { label: "Billings and earnings", href: "#" },
           { label: "Transactions", href: "#" },
+          { label: "Certificate of earnings", href: "#" },
         ],
       },
       {

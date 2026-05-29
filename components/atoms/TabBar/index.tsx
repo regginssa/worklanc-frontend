@@ -9,10 +9,16 @@ export type TTabItem = {
 interface TabBarProps {
   tabs: TTabItem[];
   selectedTabIndex: number;
+  className?: string;
   onTab: (idx: number) => void;
 }
 
-const TabBar: React.FC<TabBarProps> = ({ tabs, selectedTabIndex, onTab }) => {
+const TabBar: React.FC<TabBarProps> = ({
+  tabs,
+  className,
+  selectedTabIndex,
+  onTab,
+}) => {
   const [tabWidths, setTabWidths] = useState<number[]>([]);
   const [tabOffsets, setTabOffsets] = useState<number[]>([]);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -63,7 +69,7 @@ const TabBar: React.FC<TabBarProps> = ({ tabs, selectedTabIndex, onTab }) => {
             ref={(el: any) => (tabRefs.current[index] = el)}
             className={`text-xl px-4 py-2 relative cursor-pointer hover:text-black ${
               selectedTabIndex === index ? "text-black" : "text-gray-600"
-            }`}
+            } ${className}`}
             onClick={() => onTab(index)}
           >
             {tab.label}
