@@ -8,7 +8,6 @@ import { SocialAuthButtonGroup } from "@/components/molecules";
 import SignupLayout from "@/components/layouts/auth/SignupLayout";
 import AuthAPI, { setAuthToken } from "@/lib/api/auth";
 import { toast } from "sonner";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
 type TUserType = "client" | "talent";
@@ -27,7 +26,6 @@ const SignUp = () => {
   });
   const [errors, setErrors] = useState<any>();
   const [loading, setLoading] = useState(false);
-  const { data: session } = useSession();
   const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,8 +84,6 @@ const SignUp = () => {
     fetchCurrentGeo();
   }, []);
 
-  useEffect(() => {}, []);
-
   const handleOptionSelect = (val: TUserType) => {
     setCurrentStep(1);
     setUserType(val);
@@ -119,6 +115,11 @@ const SignUp = () => {
     router.push("/nx/signup/please-verify");
     setLoading(false);
   };
+
+  console.log(
+    process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+    process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET
+  );
 
   return (
     <SignupLayout

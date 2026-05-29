@@ -13,11 +13,6 @@ const AuthAPI = {
       body: JSON.stringify(body),
     }),
 
-  oauth: async (body: any) =>
-    await request("/auth/oauth", {
-      method: "POST",
-      body: JSON.stringify(body),
-    }),
 };
 
 export const TOKEN_KEY = "Authenticate-Token";

@@ -1,9 +1,14 @@
 import Link from "next/link";
-import { WorklancLogo } from "@/components/atoms";
+import { SEO, WorklancLogo } from "@/components/atoms";
 
 export function LoginLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Log in to Worklanc"
+        description="Log in to Worklanc to find work you love or hire talent to help you grow your business."
+        url="/nx/login"
+      />
       {/* Header */}
       <header className="h-20 w-full bg-white">
         <div className="w-[80%] h-full mx-auto flex items-center justify-between">
