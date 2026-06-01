@@ -24,7 +24,7 @@ export default function JobPostTitle() {
           <h1 className="text-3xl font-medium">
             Let's start with a strong title.
           </h1>
-          <p className="text-sm mt-6">
+          <p className="text-sm mt-8">
             This helps your job post stand out to the right candidates. It’s the
             first thing they’ll see, so make it count!
           </p>

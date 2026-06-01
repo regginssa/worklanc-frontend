@@ -95,7 +95,7 @@ export default function Duration() {
             Next, estimate the scope of your work.
           </h1>
 
-          <p className="text-sm mt-6">
+          <p className="text-sm mt-8">
             Consider the size of your project and the time it will take.
           </p>
         </div>
