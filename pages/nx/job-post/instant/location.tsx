@@ -97,11 +97,11 @@ export default function JobPostLocation() {
       step={4}
       nextLabel="Next: Budget"
       onBack={() => router.back()}
-      onNext={() => router.push("/nx/job-post/instant/duration")}
+      onNext={() => router.push("/nx/job-post/instant/budget")}
       nextDisabled={false}
     >
       <div className="flex items-start gap-10">
-        <div className="flex-1 space-y-6">
+        <div className="flex-1 space-y-8">
           <h1 className="text-3xl font-medium">
             Select your preferred talent location.
           </h1>
@@ -126,7 +126,7 @@ export default function JobPostLocation() {
 
                 <div className="w-5 h-5 overflow-hidden flex items-center border border-slate-300 justify-center transition-all duration-200 group-hover:bg-slate-100 rounded-full">
                   <div
-                    className={`w-3 h-3 bg-zinc-800 rounded-full transition-all duration-200 ${
+                    className={`w-2.5 h-2.5 bg-zinc-800 rounded-full transition-all duration-200 ${
                       location === "local" ? "scale-100" : "scale-0"
                     }`}
                   ></div>
@@ -154,7 +154,7 @@ export default function JobPostLocation() {
 
                 <div className="w-5 h-5 overflow-hidden flex items-center border border-slate-300 justify-center transition-all duration-200 group-hover:bg-slate-100 rounded-full">
                   <div
-                    className={`w-3 h-3 bg-zinc-800 rounded-full transition-all duration-200 ${
+                    className={`w-2.5 h-2.5 bg-zinc-800 rounded-full transition-all duration-200 ${
                       location === "global" ? "scale-100" : "scale-0"
                     }`}
                   ></div>
