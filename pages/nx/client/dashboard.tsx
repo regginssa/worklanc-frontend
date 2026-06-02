@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import MailCheckIcon from "@/public/assets/svgs/icons/icons/mail_check.svg";
 import DollarSheldIcon from "@/public/assets/svgs/icons/icons/dollar_sheld.svg";
+import LaptopScanningFaceIcon from "@/public/assets/svgs/icons/other/laptop_scanning_face.svg";
 import {
   Carousel,
   CarouselContent,
@@ -13,9 +14,34 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import UserPic from "@/public/assets/webps/avatars/man2.webp";
+import TopRatedIcon from "@/public/assets/svgs/icons/badges/top_rated.svg";
+import CardsIcon from "@/public/assets/svgs/icons/other/cards.svg";
+import WorldwideIcon from "@/public/assets/svgs/icons/other/worldwide.svg";
+import CardsLockIcon from "@/public/assets/svgs/icons/other/cards_lock.svg";
+import RoketInHandIcon from "@/public/assets/svgs/icons/other/roket_in_hand.svg";
+
+const resources = [
+  {
+    title: "Payments",
+    description: "Everything you need to know about payments",
+    icon: CardsLockIcon,
+  },
+  {
+    title: "Payments",
+    description: "How to set up your preferred billing method",
+    icon: CardsIcon,
+  },
+  {
+    title: "Trust & safety",
+    description: "Keep yourself and others safe on Worklanc",
+    icon: WorldwideIcon,
+  },
+];
 
 export default function Dashboard() {
   const jobs = Array.from({ length: 1 });
+  const consultations = Array.from({ length: 4 });
 
   // Each job fills 1/3 of the view. "Post a job" fills the remaining slots of
   // the current row of 3 (2/3 when one slot is taken, otherwise 1/3 and it
@@ -109,7 +135,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-6 mt-16">
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-medium">Overview</h2>
           <div className="flex items-center p-1 bg-slate-200 rounded-full max-w-52 h-10 w-full">
@@ -186,6 +212,199 @@ export default function Dashboard() {
           <CarouselPrevious />
           <CarouselNext />
         </Carousel>
+      </div>
+
+      <div className="space-y-6 mt-16">
+        <div className="flex items-center justify-between">
+          <h2 className="text-3xl font-medium">
+            Review your project’s goals with an expert, one-on-one
+          </h2>
+
+          <Link href="#" className="flex items-center gap-2 text-blue-600">
+            <span className="text-sm font-light cursor-pointer underline">
+              Browse consultations
+            </span>
+            <Icon icon="mdi:arrow-right" className="size-5" />
+          </Link>
+        </div>
+
+        <Carousel
+          opts={{
+            align: "start",
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="flex items-stretch">
+            <CarouselItem key="banner" className={`basis-1/2 lg:basis-1/4`}>
+              <div className="h-full text-white flex flex-col justify-between rounded-3xl bg-zinc-800 space-y-4 p-6">
+                <div className="space-y-4 w-full">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-light">Guided tour</span>
+                    <button className="cursor-pointer">
+                      <Icon icon="mdi:close" className="size-6" />
+                    </button>
+                  </div>
+
+                  <h4 className="text-2xl font-medium">
+                    Book a consultation with an expert to review your project’s
+                    budget, timeline, and scope one-on-one.
+                  </h4>
+                </div>
+
+                <div className="flex items-end justify-between gap-6">
+                  <Link
+                    href="#"
+                    className="py-2.5 px-4 rounded-full bg-white text-zinc-800 font-medium text-sm"
+                  >
+                    Learn more
+                  </Link>
+                  <Image
+                    src={LaptopScanningFaceIcon}
+                    alt="Laptop scanning face"
+                    className="w-[97px] h-[87px]"
+                  />
+                </div>
+              </div>
+            </CarouselItem>
+            {consultations.map((_, index) => (
+              <CarouselItem key={index} className="basis-1/2 lg:basis-1/4">
+                <div className="border border-slate-300 rounded-3xl p-6 space-y-4 h-full flex flex-col justify-between">
+                  <div className="space-y-4 w-full">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="relative size-12">
+                          <Image
+                            src={UserPic}
+                            alt="User"
+                            className="rounded-full object-cover w-12 h-12"
+                          />
+                          <Image
+                            src={TopRatedIcon}
+                            alt="Top rated"
+                            className="absolute -top-1.5 -left-1.5 size-6"
+                          />
+                        </div>
+
+                        <div>
+                          <h5 className="text-xl">John D.</h5>
+                          <p className="text-sm font-light">United States</p>
+                        </div>
+                      </div>
+
+                      <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        className="cursor-pointer"
+                      >
+                        <Icon
+                          icon="mdi:cards-heart-outline"
+                          className="size-6 text-blue-600"
+                        />
+                      </motion.button>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="gap-1 flex flex-col items-center justify-center">
+                        <h5 className="text-sm font-light">100%</h5>
+                        <p className="text-xs font-light">Job Success</p>
+                      </div>
+
+                      <div className="gap-1 flex flex-col items-center justify-center">
+                        <h5 className="text-sm font-light">20</h5>
+                        <p className="text-xs font-light">Jobs</p>
+                      </div>
+
+                      <div className="gap-1 flex flex-col items-center justify-center">
+                        <h5 className="text-sm font-light">$50/hr</h5>
+                        <p className="text-xs font-light">Rate</p>
+                      </div>
+                    </div>
+
+                    <h5 className="text-sm font-light">
+                      Senior Flutter | React Native Expert
+                    </h5>
+
+                    <p className="text-sm font-light line-clamp-3">
+                      I have 10 years of experience in mobile app development
+                      and have worked on projects for startups and enterprises.
+                      Collaborated with teams to deliver high-quality software
+                      solutions on time and within budget.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-1 text-sm text-blue-600">
+                    <Icon icon="pepicons-pencil:camera" className="size-6" />
+                    <span>$60 per 30 minutes Zoom meeting</span>
+                  </div>
+
+                  <Link
+                    href="#"
+                    className="py-2.5 w-full flex items-center justify-center font-medium text-sm rounded-full cursor-pointer hover:bg-slate-100 border border-slate-400 transition-colors duration-200"
+                  >
+                    Book a consultation
+                  </Link>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
+      </div>
+
+      <div className="space-y-6 mt-16">
+        <div className="flex items-center justify-between">
+          <h2 className="text-3xl font-medium">Help and resources</h2>
+
+          <Link href="#" className="flex items-center gap-2 text-blue-600">
+            <span className="text-sm font-light cursor-pointer underline">
+              View all resources
+            </span>
+            <Icon icon="mdi:arrow-right" className="size-5" />
+          </Link>
+        </div>
+
+        <div className="border border-slate-300 rounded-3xl p-8 flex items-center justify-between">
+          <div className="">
+            <p className="text-sm text-slate-600">Get started</p>
+            <h4 className="text-2xl font-medium mt-2 mb-8">
+              Get started and connect with talent to get work done
+            </h4>
+
+            <Link
+              href="#"
+              target="_blank"
+              className="cursor-pointer py-2.5 px-5 rounded-full border border-slate-300 text-blue-600 text-sm font-medium transition-colors duration-200 hover:bg-slate-100"
+            >
+              Learn more
+            </Link>
+          </div>
+          <Image
+            src={RoketInHandIcon}
+            alt="Rocket in hand"
+            className="w-[145px] h-[130px]"
+          />
+        </div>
+
+        <div className="grid grid-cols-3 gap-6">
+          {resources.map((resource, index) => (
+            <div
+              key={index}
+              className="border border-slate-300 rounded-3xl p-6 gap-6 flex items-center justify-between"
+            >
+              <div>
+                <h4 className="text-sm text-slate-600">{resource.title}</h4>
+                <p className="text-xl font-medium mt-2">
+                  {resource.description}
+                </p>
+              </div>
+              <Image
+                src={resource.icon}
+                alt={resource.title}
+                className="w-[100px] h-[90px]"
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </ClientLayout>
   );
