@@ -178,6 +178,29 @@ text-primary {
   }
 }
 
+.freelancer-plus-alert {
+  background-image: linear-gradient(
+    to right,
+    #2563eb,
+    #6366f1,
+    #06b6d4
+  );
+  background-size: 200% 100%;
+  animation: gradient-slide 5s linear infinite;
+}
+
+@keyframes gradient-slide {
+  0% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
 .resume-docx-preview .docx-wrapper {
   width: 100%;
   max-width: 100%;

@@ -22,7 +22,7 @@ export default function JobPostDescription() {
       }}
       step={6}
       nextLabel="Review Job Post"
-      onNext={() => router.push("/nx/job-post/instant/milestones")}
+      onNext={() => router.push("/nx/job-post/instant/review")}
     >
       <div className="flex items-start gap-10">
         <div className="flex-1 space-y-8">

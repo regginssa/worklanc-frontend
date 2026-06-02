@@ -30,9 +30,13 @@ export default function RadioGroup({
             className="flex items-start gap-2 cursor-pointer group"
             onClick={() => onChange(option.value)}
           >
-            <div className="w-5 h-5 overflow-hidden flex items-center border border-slate-300 justify-center transition-all duration-200 group-hover:bg-slate-100 rounded-full">
+            <div
+              className={`w-5 h-5 overflow-hidden flex items-center border justify-center transition-all duration-200 group-hover:bg-slate-100 rounded-full ${
+                isSelected ? "border-black" : "border-slate-300"
+              }`}
+            >
               <div
-                className={`w-3 h-3 bg-zinc-800 rounded-full transition-all duration-200 ${
+                className={`w-2.5 h-2.5 bg-zinc-800 rounded-full transition-all duration-200 ${
                   isSelected ? "scale-100" : "scale-0"
                 }`}
               ></div>
