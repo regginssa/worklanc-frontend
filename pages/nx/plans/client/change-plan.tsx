@@ -159,6 +159,8 @@ export default function ChangePlan() {
             <Icon icon="mdi:chevron-down" className="w-5 h-5" />
           </motion.button>
         </div>
+
+        {/* REMEMBER: THERE IS A MISSING SECTION HERE TO COMPARE FEATURES ACROSS PLANS */}
       </div>
     </ClientLayout>
   );

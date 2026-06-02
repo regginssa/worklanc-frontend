@@ -481,6 +481,7 @@ export default function JobPostReview() {
             <motion.button
               whileTap={{ scale: 0.95 }}
               className="py-2 px-5 text-sm font-medium hover:underline cursor-pointer"
+              onClick={() => router.push("/nx/client/dashboard")}
             >
               Save as a draft
             </motion.button>
