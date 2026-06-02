@@ -22,6 +22,11 @@ import Link from "next/link";
 import { Switch } from "@/components/ui/switch";
 import { Icon } from "@iconify/react";
 import { CheckBoxGroup } from "@/components/molecules";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const screeningQuestions = [
   {
@@ -132,7 +137,7 @@ export default function JobPostReview() {
           />
         </div>
 
-        <div className="border-2 border-blue-200 rounded-3xl p-4 flex items-center justify-between">
+        <div className="border-2 border-blue-200 rounded-3xl p-4 flex items-center justify-between gap-16">
           <div className="flex items-center gap-4">
             <div className="freelancer-plus-alert size-14 flex items-center justify-center rounded-lg">
               <Image src={AIIcon} alt="AI" className="w-10 h-10" />
@@ -160,16 +165,33 @@ export default function JobPostReview() {
 
           <div className="flex items-center gap-4">
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-slate-200 rounded-md space-y-4 p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-600 font-medium text-lg">0</span>
-                  <Icon
-                    icon="mdi:lock-outline"
-                    className="size-5 text-slate-600"
-                  />
-                </div>
-                <p className="text-xs text-slate-600">Freelancers sourced</p>
-              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div
+                    className="bg-slate-200 rounded-md space-y-4 p-4 cursor-pointer"
+                    onClick={() => router.push("/nx/plans/client/change-plan")}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-600 font-medium text-lg">
+                        0
+                      </span>
+                      <Icon
+                        icon="mdi:lock-outline"
+                        className="size-5 text-slate-600"
+                      />
+                    </div>
+                    <p className="text-xs text-slate-600">
+                      Freelancers sourced
+                    </p>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <p className="text-sm p-2">
+                    Upgrade to Business Plus to have Uma Recruiter proactively
+                    find freelancers for you.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
 
               <div className="space-y-4 p-4">
                 <h4 className="text-slate-600 font-medium text-lg">3 to 5</h4>
@@ -177,7 +199,6 @@ export default function JobPostReview() {
                   Top proposals shortlisted
                 </p>
               </div>
-
               <div className="space-y-4 p-4">
                 <h4 className="text-slate-600 font-medium text-lg">6 hrs</h4>
                 <p className="text-xs text-slate-600">Shortlist delivered</p>
