@@ -22,11 +22,11 @@ export default function FreelancerSettingsLayout({
     { label: "My Teams", href: "/freelancers/settings/teams" },
     {
       label: "Connected Services",
-      href: "/freelancers/settings/connected-services",
+      href: "/nx/connected-services",
     },
     {
       label: "Password & Security",
-      href: "/freelancers/settings/password-and-security",
+      href: "/ab/account-security/password-and-security",
     },
     {
       label: "Identity Verification",
@@ -34,7 +34,7 @@ export default function FreelancerSettingsLayout({
     },
     {
       label: "Notification Settings",
-      href: "/freelancers/settings/notifications",
+      href: "/ab/notification-settings",
     },
   ];
 

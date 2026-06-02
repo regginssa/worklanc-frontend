@@ -1,10 +1,43 @@
 import { Checkbox, Dropdown } from "@/components/atoms";
 import TabBar, { TTabItem } from "@/components/atoms/TabBar";
-import { FreelancerSettingsLayout } from "@/components/layouts";
+import {
+  ClientSettingsLayout,
+  FreelancerSettingsLayout,
+} from "@/components/layouts";
 import { CheckBoxGroup } from "@/components/molecules";
 import { useState } from "react";
 
-export default function Notifications() {
+export default function NotificationSettings() {
+  const [accountType, setAccountType] = useState<"freelancer" | "client">(
+    "client"
+  );
+  if (accountType === "freelancer") {
+    return (
+      <FreelancerSettingsLayout
+        seo={{
+          title: "Notification settings - Worklanc",
+          description: "Notification settings - Worklanc",
+          url: "/ab/notification-settings",
+        }}
+      >
+        <Content />
+      </FreelancerSettingsLayout>
+    );
+  }
+  return (
+    <ClientSettingsLayout
+      seo={{
+        title: "Notification settings - Worklanc",
+        description: "Notification settings - Worklanc",
+        url: "/ab/notification-settings",
+      }}
+    >
+      <Content />
+    </ClientSettingsLayout>
+  );
+}
+
+const Content = () => {
   const tabs: TTabItem[] = [
     { label: "Messages", value: "messages" },
     { label: "Email updates", value: "email_updates" },
@@ -180,13 +213,7 @@ export default function Notifications() {
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
 
   return (
-    <FreelancerSettingsLayout
-      seo={{
-        title: "Notifications - Worklanc",
-        description: "Notifications - Worklanc",
-        url: "/freelancers/settings/notifications",
-      }}
-    >
+    <>
       <h2 className="text-3xl font-medium">Notification settings</h2>
 
       <TabBar
@@ -410,6 +437,6 @@ export default function Notifications() {
           </div>
         </div>
       )}
-    </FreelancerSettingsLayout>
+    </>
   );
-}
+};

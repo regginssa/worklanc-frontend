@@ -1,16 +1,46 @@
 import { Button } from "@/components/atoms";
-import { FreelancerSettingsLayout } from "@/components/layouts";
+import {
+  ClientSettingsLayout,
+  FreelancerSettingsLayout,
+} from "@/components/layouts";
 import { Switch } from "@/components/ui/switch";
+import { useState } from "react";
 
 export default function PasswordAndSecurity() {
+  const [accountType, setAccountType] = useState<"freelancer" | "client">(
+    "client"
+  );
+
+  if (accountType === "freelancer") {
+    return (
+      <FreelancerSettingsLayout
+        seo={{
+          title: "Password and security - Worklanc",
+          description: "Password and security - Worklanc",
+          url: "/ab/account-security/password-and-security",
+        }}
+      >
+        <Content />
+      </FreelancerSettingsLayout>
+    );
+  }
+
   return (
-    <FreelancerSettingsLayout
+    <ClientSettingsLayout
       seo={{
         title: "Password and security - Worklanc",
         description: "Password and security - Worklanc",
-        url: "/freelancers/settings/password-and-security",
+        url: "/ab/account-security/password-and-security",
       }}
     >
+      <Content />
+    </ClientSettingsLayout>
+  );
+}
+
+const Content = () => {
+  return (
+    <>
       <h2 className="text-3xl font-medium">Password and security</h2>
       <div className="border border-slate-300 rounded-3xl p-8 space-y-8">
         <h3 className="text-2xl font-medium">Log in</h3>
@@ -96,6 +126,6 @@ export default function PasswordAndSecurity() {
           </p>
         </div>
       </div>
-    </FreelancerSettingsLayout>
+    </>
   );
-}
+};
