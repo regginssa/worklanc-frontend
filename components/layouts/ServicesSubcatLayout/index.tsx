@@ -13,7 +13,7 @@ import { Button, FilterDropdown, Rater, Slider } from "@/components/atoms";
 import { useState } from "react";
 import RadioGroup, { IRadioOption } from "@/components/molecules/RadioGroup";
 import CheckboxGroup, {
-  ICheckboxOption,
+  CheckBoxGroupOption,
 } from "@/components/molecules/CheckboxGroup";
 import Autocomplete, {
   IAutocompleteOption,
@@ -104,7 +104,7 @@ const ServicesSubcatLayout: React.FC<ServicesSubcatLayoutProps> = ({
     },
   ];
 
-  const talentQualityOptions: ICheckboxOption[] = [
+  const talentQualityOptions: CheckBoxGroupOption[] = [
     {
       id: "top-rated-plus",
       label: "Top Rated Plus",
@@ -154,7 +154,7 @@ const ServicesSubcatLayout: React.FC<ServicesSubcatLayoutProps> = ({
     },
   ];
 
-  const nftArtStyleOptions: ICheckboxOption[] = [
+  const nftArtStyleOptions: CheckBoxGroupOption[] = [
     {
       id: "3d_art",
       label: "3D Art",
@@ -192,7 +192,7 @@ const ServicesSubcatLayout: React.FC<ServicesSubcatLayoutProps> = ({
     },
   ];
 
-  const nftMarketplaceOptions: ICheckboxOption[] = [
+  const nftMarketplaceOptions: CheckBoxGroupOption[] = [
     {
       id: "foundation_platform",
       label: "Foundation Platform",
