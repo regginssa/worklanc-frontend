@@ -21,7 +21,7 @@ export default function ClientSettingsLayout({
       label: "Password & Security",
       href: "/ab/account-security/password-and-security",
     },
-    { label: "Teams & Members", href: "/freelancers/1" },
+    { label: "Teams & Members", href: "/nx/org-management/teams" },
     { label: "Membership", href: "/freelancers/1" },
     { label: "Notification Settings", href: "/ab/notification-settings" },
     { label: "Tax Information", href: "/freelancers/1" },

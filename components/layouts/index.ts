@@ -9,3 +9,4 @@ export { default as FreelancerSettingsLayout } from "./freelancers/SettingsLayou
 export { default as ClientLayout } from "./client";
 export { default as JobPostLayout } from "./client/JobPostLayout";
 export { default as ClientSettingsLayout } from "./client/SettingsLayout";
+export { default as OrgManagementLayout } from "./org-management";
