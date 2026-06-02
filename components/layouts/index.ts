@@ -8,3 +8,4 @@ export { default as FreelancerLayout } from "./freelancers";
 export { default as FreelancerSettingsLayout } from "./freelancers/SettingsLayout";
 export { default as ClientLayout } from "./client";
 export { default as JobPostLayout } from "./client/JobPostLayout";
+export { default as ClientSettingsLayout } from "./client/SettingsLayout";

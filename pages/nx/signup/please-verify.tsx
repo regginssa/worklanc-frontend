@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import VerifyEmailIcon from "@/public/assets/svgs/icons/other/verify_email.svg";
+import Image from "next/image";
 
 const PleaseVerify = () => {
   const [email, setEmail] = useState("");
@@ -25,11 +27,18 @@ const PleaseVerify = () => {
       }}
       showFooter
     >
-      <Icon icon="material-symbols-light:mail-shield-outline" width={120} />
+      <Image
+        src={VerifyEmailIcon}
+        alt="Verify email"
+        className="w-[145px] h-[130px]"
+      />
       <div className="flex flex-col items-center justify-center mt-8 gap-8">
         <h3 className="text-lg">Verify your email to continue</h3>
         <div className="text-sm text-slate-600 text-center">
-          <p>We just sent an email to the address: owner@charlieunicornai.eu</p>
+          <p>
+            We just sent an email to the address:{" "}
+            <strong className="font-medium">owner@charlieunicornai.eu</strong>
+          </p>
           <p>
             Please check your email and select the link provided to verify your
             address
