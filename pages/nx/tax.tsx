@@ -149,6 +149,7 @@ const Content = () => {
             </motion.button>
             <Button
               type="primary"
+              isSubmit
               label="Save"
               classname="py-2! px-6! rounded-md!"
             />

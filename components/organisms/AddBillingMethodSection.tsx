@@ -10,12 +10,18 @@ import UsdtLogo from "@/public/assets/svgs/icons/logos/usdt.svg";
 import BnbLogo from "@/public/assets/svgs/icons/logos/bnb.svg";
 import ChrleLogo from "@/public/assets/svgs/icons/logos/chrle.png";
 import BabyuLogo from "@/public/assets/svgs/icons/logos/babyu.png";
+import { useState } from "react";
+import { PaymentMethod } from "@/types/payment";
+import { StripeBillingForm } from "../molecules";
 
 export default function AddBillingMethodSection({
   onCancel,
 }: {
   onCancel: () => void;
 }) {
+  const [selectedBillingMethod, setSelectedBillingMethod] =
+    useState<PaymentMethod | null>(null);
+
   return (
     <section
       id="add-billing-method-section"
@@ -33,36 +39,52 @@ export default function AddBillingMethodSection({
       </div>
 
       <ul className="text-sm space-y-6">
-        <li className="flex items-center gap-2">
-          <Radio checked={false} onCheck={() => {}} />
-          <span>Debit or credit card</span>
+        <li className="space-y-6">
           <div className="flex items-center gap-2">
-            <Icon icon="logos:visa" className="size-8" />
-            <Icon icon="logos:mastercard" className="size-8" />
-            <Icon
-              icon="streamline-logos:american-express-logo-block"
-              className="size-8 text-sky-600"
+            <Radio
+              checked={selectedBillingMethod === "card"}
+              onCheck={() => setSelectedBillingMethod("card")}
             />
-            <Icon icon="logos:discover" className="size-8" />
-            <Icon
-              icon="fa7-brands:cc-diners-club"
-              className="size-8 text-sky-800"
-            />
+            <span>Debit or credit card</span>
+            <div className="flex items-center gap-2">
+              <Icon icon="logos:visa" className="size-8" />
+              <Icon icon="logos:mastercard" className="size-8" />
+              <Icon
+                icon="streamline-logos:american-express-logo-block"
+                className="size-8 text-sky-600"
+              />
+              <Icon icon="logos:discover" className="size-8" />
+              <Icon
+                icon="fa7-brands:cc-diners-club"
+                className="size-8 text-sky-800"
+              />
+            </div>
           </div>
+
+          {selectedBillingMethod === "card" && <StripeBillingForm />}
         </li>
 
         <li className="flex items-center gap-2">
-          <Radio checked={false} onCheck={() => {}} />
+          <Radio
+            checked={selectedBillingMethod === "paypal"}
+            onCheck={() => setSelectedBillingMethod("paypal")}
+          />
           <Image src={PaypalLogo} alt="Paypal" width={80} height={20} />
         </li>
 
         <li className="flex items-center gap-2">
-          <Radio checked={false} onCheck={() => {}} />
+          <Radio
+            checked={selectedBillingMethod === "venmo"}
+            onCheck={() => setSelectedBillingMethod("venmo")}
+          />
           <Image src={VenmoLogo} alt="Venmo" width={80} height={10} />
         </li>
 
         <li className="flex items-center gap-2">
-          <Radio checked={false} onCheck={() => {}} />
+          <Radio
+            checked={selectedBillingMethod === "crypto"}
+            onCheck={() => setSelectedBillingMethod("crypto")}
+          />
           <span>Cryptocurrency</span>
           <div className="flex items-center gap-2">
             <Image src={ChrleLogo} alt="CHRLE" width={24} height={24} />
@@ -97,7 +119,7 @@ const Radio = ({
       }`}
     >
       <div
-        className={`absolute inset-2 rounded-full transition-all duration-300 ease-out ${
+        className={`absolute inset-1 rounded-full transition-all duration-300 ease-out ${
           checked ? "scale(1)" : "scale(0)"
         } ${checked ? "bg-black" : "bg-transparent"}`}
       ></div>
