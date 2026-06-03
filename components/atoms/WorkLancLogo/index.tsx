@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import Logo from "@/public/assets/logos/logo.svg";
+import Logo from "@/public/assets/logos/logo.png";
 
 interface WorklancLogoProps {
   className?: string;

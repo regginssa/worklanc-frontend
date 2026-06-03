@@ -56,7 +56,7 @@ export default function Members() {
         <h1 className="text-2xl font-medium">Members</h1>
         <Button
           type="primary"
-          label="Invite members"
+          label="Invite Members"
           classname="py-2.5! px-5! text-sm! font-medium!"
           onClick={() => router.push("/nx/org-management/invitations/create")}
         />
