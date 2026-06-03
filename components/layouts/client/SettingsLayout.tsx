@@ -24,7 +24,7 @@ export default function ClientSettingsLayout({
     { label: "Teams & Members", href: "/nx/org-management/teams" },
     { label: "Membership", href: "/nx/plans/client" },
     { label: "Notification Settings", href: "/ab/notification-settings" },
-    { label: "Tax Information", href: "/freelancers/1" },
+    { label: "Tax Information", href: "/nx/tax" },
     { label: "Connected Services", href: "/nx/connected-services" },
   ];
 

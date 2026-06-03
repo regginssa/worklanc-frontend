@@ -38,7 +38,12 @@ const SearchCombobox: React.FC<SearchComboboxProps> = ({
 
   useEffect(() => {
     if (search.trim().length === 0) setSearchedOptions(options);
-    else setSearchedOptions(options.filter((opt) => opt.includes(search)));
+    else
+      setSearchedOptions(
+        options.filter((opt) =>
+          opt.toLowerCase().includes(search.toLowerCase())
+        )
+      );
   }, [search, options]);
 
   useEffect(() => {
@@ -79,7 +84,7 @@ const SearchCombobox: React.FC<SearchComboboxProps> = ({
         <input
           name={name}
           placeholder={placeholder}
-          className="bg-transparent border-none outline-none text-sm flex-1 placeholder:text-slate-600"
+          className="bg-transparent cursor-pointer border-none outline-none text-sm flex-1 placeholder:text-slate-600"
           value={defaultOption}
           readOnly
         />
@@ -104,7 +109,7 @@ const SearchCombobox: React.FC<SearchComboboxProps> = ({
             className="absolute bg-white top-full w-full max-h-64 overflow-y-auto z-40 mt-2 shadow-md rounded-lg border border-slate-200 flex flex-col"
           >
             {/* search */}
-            <div className="sticky top-0 bg-white p-3 w-full border-b">
+            <div className="sticky top-0 bg-white p-3 w-full">
               <Input
                 name="search-country"
                 type="text"
