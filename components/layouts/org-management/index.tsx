@@ -15,13 +15,11 @@ import { useEffect, useState } from "react";
 interface OrgManagementLayoutProps {
   children: React.ReactNode;
   seo: TSEO;
-  title: string;
 }
 
 export default function OrgManagementLayout({
   children,
   seo,
-  title,
 }: OrgManagementLayoutProps) {
   const [accountType, setAccountType] = useState<AccountType>("client");
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
@@ -61,15 +59,11 @@ export default function OrgManagementLayout({
           </Link>
         </div>
 
-        <div className="space-y-6">
-          <TabBar
-            tabs={tabs}
-            selectedTabIndex={selectedTabIndex}
-            onTab={handleTabChange}
-          />
-
-          <h1 className="text-2xl font-medium px-4">{title}</h1>
-        </div>
+        <TabBar
+          tabs={tabs}
+          selectedTabIndex={selectedTabIndex}
+          onTab={handleTabChange}
+        />
 
         {children}
       </main>

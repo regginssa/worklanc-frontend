@@ -11,8 +11,8 @@ export default function Teams() {
         description: "Teams - Worklanc",
         url: "/nx/org-management/teams",
       }}
-      title="Teams"
     >
+      <h1 className="text-2xl font-medium px-4">Teams</h1>
       <div className="flex flex-col items-center justify-center gap-6">
         <Image src={TeamsIcon} alt="Teams" className="w-[145px] h-[130px]" />
         <h2 className="text-xl">Create your first team</h2>
