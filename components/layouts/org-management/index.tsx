@@ -8,8 +8,9 @@ import { TSEO } from "@/types/components.types";
 import { AccountType } from "@/types/user";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface OrgManagementLayoutProps {
   children: React.ReactNode;
@@ -25,6 +26,7 @@ export default function OrgManagementLayout({
   const [accountType, setAccountType] = useState<AccountType>("client");
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
   const router = useRouter();
+  const pathname = usePathname();
   const tabs = [
     { label: "Teams", value: "/nx/org-management/teams" },
     { label: "Members", value: "/nx/org-management/members" },
@@ -32,8 +34,14 @@ export default function OrgManagementLayout({
     { label: "Company settings", value: "/nx/org-management/company-settings" },
   ];
 
+  useEffect(() => {
+    const tab = tabs.find((tab) => tab.value === pathname);
+    if (tab) {
+      setSelectedTabIndex(tabs.indexOf(tab));
+    }
+  }, [pathname]);
+
   const handleTabChange = (index: number) => {
-    setSelectedTabIndex(index);
     router.push(tabs[index].value);
   };
 

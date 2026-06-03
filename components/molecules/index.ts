@@ -1,5 +1,5 @@
 export { default as AccordionGroup } from "./AccordionGroup";
-export { default as CheckboxGroup } from "./CheckboxGroup";
+export { default as CheckboxGroup } from "./FCheckboxGroup";
 export { default as HeaderSearch } from "./HeaderSearch";
 export { default as PriceRangeSlider } from "./PriceRangeSlider";
 export { default as ProcessStep } from "./ProcessStep";
@@ -21,6 +21,7 @@ export { default as ShareProfileDialog } from "./dialogs/ShareProfileDialog";
 export { default as TestimonialDialog } from "./dialogs/TestimonialDialog";
 export { default as CertificationDialog } from "./dialogs/CertificationDialog";
 export { default as OtherExperienceDialog } from "./dialogs/OtherExperienceDialog";
+export { default as SecurityQuestionDialog } from "./dialogs/SecurityQuestionDialog";
 export { default as CheckBoxGroup } from "./CheckBoxGroup";
 export { default as ViewToggle } from "./ViewToggle";
 export { default as DraftJobCard } from "./DraftJobCard";
