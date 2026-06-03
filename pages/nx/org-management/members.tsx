@@ -11,6 +11,9 @@ export default function Members() {
     useState(false);
   const [openReEnterPasswordDialog, setOpenReEnterPasswordDialog] =
     useState(false);
+  const [searchFormData, setSearchFormData] = useState({
+    keyword: "",
+  });
 
   return (
     <OrgManagementLayout
@@ -29,7 +32,20 @@ export default function Members() {
         />
       </div>
 
-      <div className="flex items-center gap-4">{/* <Input /> */}</div>
+      <div className="flex items-center gap-4">
+        <Input
+          type="text"
+          name="keyword"
+          label="Search by name or email"
+          labelClassName="text-base! font-medium!"
+          icon="mdi:search"
+          classname="flex-1"
+          value={searchFormData.keyword}
+          onChange={(e) =>
+            setSearchFormData({ ...searchFormData, keyword: e.target.value })
+          }
+        />
+      </div>
       <SecurityQuestionDialog
         open={openSecurityQuestionDialog}
         onClose={() => setOpenSecurityQuestionDialog(false)}
