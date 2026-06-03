@@ -22,7 +22,7 @@ export default function ClientSettingsLayout({
       href: "/ab/account-security/password-and-security",
     },
     { label: "Teams & Members", href: "/nx/org-management/teams" },
-    { label: "Membership", href: "/freelancers/1" },
+    { label: "Membership", href: "/nx/plans/client" },
     { label: "Notification Settings", href: "/ab/notification-settings" },
     { label: "Tax Information", href: "/freelancers/1" },
     { label: "Connected Services", href: "/nx/connected-services" },

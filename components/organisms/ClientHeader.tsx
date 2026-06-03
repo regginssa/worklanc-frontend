@@ -8,6 +8,7 @@ import UserPic from "@/public/assets/webps/avatars/man2.webp";
 import Image from "next/image";
 import { Switch } from "../ui/switch";
 import { LucideBell, LucideCircleQuestionMark } from "lucide-react";
+import { useRouter } from "next/router";
 
 type NavLink = {
   label: string;
@@ -74,6 +75,7 @@ function HoverNavMenu({ label, sections }: HoverNavMenuProps) {
 export default function ClientHeader() {
   const [open, setOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (!open) return;
@@ -217,7 +219,10 @@ export default function ClientHeader() {
                   className="absolute bg-white top-full w-[280px] right-0 max-h-[420px] overflow-y-auto text-sm z-40 mt-1 shadow-md py-1 rounded-lg border border-slate-200"
                 >
                   <div className="py-1">
-                    <div className="flex items-center gap-2 p-4 hover:bg-slate-100 cursor-pointer">
+                    <div
+                      className="flex items-center gap-2 p-4 hover:bg-slate-100 cursor-pointer"
+                      onClick={() => router.push("/nx/client-info")}
+                    >
                       <Image
                         src={UserPic}
                         alt="User"
