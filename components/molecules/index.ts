@@ -31,3 +31,4 @@ export { default as ConsultationBanner } from "./ConsultationBanner";
 export { default as ResourceCard } from "./ResourceCard";
 export { default as HireStepCard } from "./HireStepCard";
 export { default as ReEnterPasswordDialog } from "./dialogs/ReEnterPasswordDialog";
+export { default as MembersFilterDialog } from "./dialogs/MembersFilterDialog";
