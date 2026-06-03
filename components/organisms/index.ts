@@ -8,3 +8,4 @@ export { default as CreateProfileHeader } from "./CreateProfileHeader";
 export { default as FreelancerHeader } from "./FreelancerHeader";
 export { default as AuthorizedFooter } from "./AuthorizedFooter";
 export { default as ClientHeader } from "./ClientHeader";
+export { default as AddBillingMethodSection } from "./AddBillingMethodSection";

@@ -16,7 +16,7 @@ export default function ClientSettingsLayout({
 
   const settingNavs = [
     { label: "My Info", href: "/nx/client-info" },
-    { label: "Billing & Payments", href: "/freelancers/1" },
+    { label: "Billing & Payments", href: "/nx/payments/deposit-methods" },
     {
       label: "Password & Security",
       href: "/ab/account-security/password-and-security",
