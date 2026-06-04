@@ -16,6 +16,7 @@ import SearchableGroupDropdown, {
   SearchableGroupOption,
 } from "@/components/atoms/SearchableGroupDropdown";
 import { countries } from "country-data-list";
+import { TalentPreviewCardGroup } from "@/components/molecules";
 
 const makeLocationOptions = (): SearchableGroupOption[] => {
   const regions = [
@@ -56,7 +57,7 @@ export default function SearchTalent() {
     location: [""],
   });
   const [loadings, setLoadings] = useState({
-    keyword: true,
+    keyword: false,
   });
 
   const locationOptions = makeLocationOptions();
@@ -98,7 +99,7 @@ export default function SearchTalent() {
       <div className="flex items-start gap-10">
         <TalentFilter />
 
-        <div className="flex-1">
+        <div className="min-w-0 flex-1 space-y-2">
           <SearchableGroupDropdown
             name="location"
             placeholder="Location"
@@ -109,6 +110,8 @@ export default function SearchTalent() {
               setSearchFormData({ ...searchFormData, location: value })
             }
           />
+
+          <TalentPreviewCardGroup />
         </div>
       </div>
 
