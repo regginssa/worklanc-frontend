@@ -147,7 +147,7 @@ export default function SearchableGroupDropdown({
                     </h4>
 
                     <motion.ul
-                      className="space-y-2"
+                      className="space-y-4"
                       initial="hidden"
                       animate="visible"
                       variants={{
@@ -168,6 +168,7 @@ export default function SearchableGroupDropdown({
                           transition={{ duration: 0.15 }}
                         >
                           <Checkbox
+                            className="w-5! h-5! rounded-sm!"
                             checked={values.includes(item.value)}
                             onCheck={(v: boolean) =>
                               onChange(

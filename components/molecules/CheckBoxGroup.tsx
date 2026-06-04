@@ -46,7 +46,7 @@ export default function CheckBoxGroup({
               }
             }}
           >
-            <Checkbox checked={isChecked} />
+            <Checkbox checked={isChecked} className="w-5! h-5! rounded-sm!" />
             <span className="text-sm">{option.label}</span>
           </div>
         );
