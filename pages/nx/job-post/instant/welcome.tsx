@@ -1,4 +1,4 @@
-import { Button } from "@/components/atoms";
+import { Button, Stepper } from "@/components/atoms";
 import { ClientLayout } from "@/components/layouts";
 import AIIcon from "@/public/assets/svgs/icons/other/ai.svg";
 import Image from "next/image";
@@ -17,6 +17,16 @@ export default function Welcome() {
         url: "/nx/job-post/instant/welcome",
       }}
     >
+      <div className="flex items-center justify-center">
+        <Stepper
+          steps={[
+            { title: "Add business context" },
+            { title: "Create job post" },
+            { title: "Share with talent" },
+          ]}
+          currentStep={1}
+        />
+      </div>
       <div className="w-1/3 space-y-8">
         <Image
           src={AIIcon}
@@ -48,12 +58,17 @@ export default function Welcome() {
           </motion.button>
         </div>
 
-        <p className="text-sm text-slate-600">
-          Beta feature powered by Uma, Upwork's Mindful AI.{" "}
-          <Link href="#" className="text-black cursor-pointer">
+        <div>
+          <p className="text-sm text-slate-600">
+            Beta feature powered by Uma, Upwork's Mindful AI.
+          </p>
+          <Link
+            href="#"
+            className="text-black text-sm hover:underline cursor-pointer"
+          >
             How it works
           </Link>
-        </p>
+        </div>
       </div>
     </ClientLayout>
   );

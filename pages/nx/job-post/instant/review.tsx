@@ -8,12 +8,13 @@ import {
 import ChecklistIcon from "@/public/assets/svgs/icons/other/checklist.svg";
 import AIIcon from "@/public/assets/svgs/icons/other/ai.svg";
 import Image from "next/image";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import {
   Button,
   Dropdown,
   IconButton,
   RadioGroup,
+  Stepper,
   Textarea,
 } from "@/components/atoms";
 import { useRouter } from "next/router";
@@ -21,12 +22,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { Switch } from "@/components/ui/switch";
 import { Icon } from "@iconify/react";
-import { CheckBoxGroup } from "@/components/molecules";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import CheckBoxGroup from "@/components/molecules/CheckBoxGroup";
 
 const screeningQuestions = [
   {
@@ -117,6 +118,8 @@ export default function JobPostReview() {
   const [writtenQuestions, setWrittenQuestions] = useState<string[]>([]);
   const [writeOpen, setWriteOpen] = useState(false);
   const [writeQuestion, setWriteQuestion] = useState<string | null>(null);
+  const [screeningExpanded, setScreeningExpanded] = useState(false);
+  const [advancedExpanded, setAdvancedExpanded] = useState(false);
   const router = useRouter();
 
   return (
@@ -127,6 +130,16 @@ export default function JobPostReview() {
         url: "/nx/job-post/instant/review",
       }}
     >
+      <div className="flex items-center justify-center">
+        <Stepper
+          steps={[
+            { title: "Add business context" },
+            { title: "Create job post" },
+            { title: "Share with talent" },
+          ]}
+          currentStep={2}
+        />
+      </div>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-medium">Job details</h1>
@@ -313,7 +326,12 @@ export default function JobPostReview() {
         </div>
 
         <div className="p-8 border-b border-slate-300 space-y-8">
-          <div className="flex items-start justify-between cursor-pointer">
+          <button
+            type="button"
+            aria-expanded={screeningExpanded}
+            className="flex w-full items-start justify-between cursor-pointer text-left"
+            onClick={() => setScreeningExpanded((prev) => !prev)}
+          >
             <div className="space-y-2">
               <h3 className="text-xl font-medium">
                 Screening questions (optional)
@@ -323,10 +341,27 @@ export default function JobPostReview() {
               </p>
             </div>
 
-            <Icon icon="mdi:chevron-down" className="size-6 text-slate-700" />
-          </div>
+            <Icon
+              icon="mdi:chevron-down"
+              className={`size-6 shrink-0 text-slate-700 transition-transform duration-200 ${
+                screeningExpanded ? "rotate-180" : ""
+              }`}
+            />
+          </button>
 
-          <div className="space-y-6">
+          <AnimatePresence initial={false}>
+            {screeningExpanded && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{
+                  height: { duration: 0.3, ease: "easeInOut" },
+                  opacity: { duration: 0.2, ease: "easeInOut" },
+                }}
+                className="overflow-hidden"
+              >
+                <div className="space-y-6">
             <div className="space-y-2">
               <p className="text-sm font-medium">
                 Select or add up to 5 questions
@@ -397,11 +432,19 @@ export default function JobPostReview() {
                 onChange={() => {}}
               />
             </div>
-          </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         <div className="p-8 border-b border-slate-300 space-y-8">
-          <div className="flex items-start justify-between cursor-pointer">
+          <button
+            type="button"
+            aria-expanded={advancedExpanded}
+            className="flex w-full items-start justify-between cursor-pointer text-left"
+            onClick={() => setAdvancedExpanded((prev) => !prev)}
+          >
             <div className="space-y-2">
               <h3 className="text-xl font-medium">
                 Advanced preferences (optional)
@@ -411,10 +454,27 @@ export default function JobPostReview() {
               </p>
             </div>
 
-            <Icon icon="mdi:chevron-down" className="size-6 text-slate-700" />
-          </div>
+            <Icon
+              icon="mdi:chevron-down"
+              className={`size-6 shrink-0 text-slate-700 transition-transform duration-200 ${
+                advancedExpanded ? "rotate-180" : ""
+              }`}
+            />
+          </button>
 
-          <div className="flex items-start">
+          <AnimatePresence initial={false}>
+            {advancedExpanded && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{
+                  height: { duration: 0.3, ease: "easeInOut" },
+                  opacity: { duration: 0.2, ease: "easeInOut" },
+                }}
+                className="overflow-hidden"
+              >
+                <div className="flex items-start">
             <div className="flex-1 space-y-8">
               <div className="space-y-4">
                 <p className="text-sm font-light">English level</p>
@@ -464,7 +524,10 @@ export default function JobPostReview() {
                 />
               </div>
             </div>
-          </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         <div className="p-8 flex items-center justify-between">

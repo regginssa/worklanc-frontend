@@ -115,7 +115,9 @@ export default function JobPostLocation() {
           <div className="grid grid-cols-2 gap-8">
             <motion.button
               whileTap={{ scale: 0.95 }}
-              className="p-4 border border-slate-300 rounded-2xl space-y-2 cursor-pointer"
+              className={`p-4 border rounded-2xl space-y-2 cursor-pointer transition-colors duration-200 ${
+                location === "local" ? "border-black" : "border-slate-300"
+              }`}
               onClick={() => {
                 setLocation("local");
                 setStateValues([]);
@@ -124,7 +126,11 @@ export default function JobPostLocation() {
               <div className="flex items-center justify-between">
                 <Icon icon="mdi:map-marker-outline" className="size-6" />
 
-                <div className="w-5 h-5 overflow-hidden flex items-center border border-slate-300 justify-center transition-all duration-200 group-hover:bg-slate-100 rounded-full">
+                <div
+                  className={`w-5 h-5 overflow-hidden flex items-center border ${
+                    location === "local" ? "border-black" : "border-slate-300"
+                  } justify-center transition-all duration-200 group-hover:bg-slate-100 rounded-full`}
+                >
                   <div
                     className={`w-2.5 h-2.5 bg-zinc-800 rounded-full transition-all duration-200 ${
                       location === "local" ? "scale-100" : "scale-0"
@@ -143,7 +149,9 @@ export default function JobPostLocation() {
 
             <motion.button
               whileTap={{ scale: 0.95 }}
-              className="p-4 border border-slate-300 rounded-2xl space-y-2 cursor-pointer"
+              className={`p-4 border ${
+                location === "global" ? "border-black" : "border-slate-300"
+              } rounded-2xl space-y-2 cursor-pointer`}
               onClick={() => {
                 setLocation("global");
                 setRegionValues([]);
@@ -152,7 +160,11 @@ export default function JobPostLocation() {
               <div className="flex items-center justify-between">
                 <Icon icon="mdi:globe" className="size-6" />
 
-                <div className="w-5 h-5 overflow-hidden flex items-center border border-slate-300 justify-center transition-all duration-200 group-hover:bg-slate-100 rounded-full">
+                <div
+                  className={`w-5 h-5 overflow-hidden flex items-center border ${
+                    location === "global" ? "border-black" : "border-slate-300"
+                  } justify-center transition-all duration-200 group-hover:bg-slate-100 rounded-full`}
+                >
                   <div
                     className={`w-2.5 h-2.5 bg-zinc-800 rounded-full transition-all duration-200 ${
                       location === "global" ? "scale-100" : "scale-0"
