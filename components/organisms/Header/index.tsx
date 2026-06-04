@@ -1,38 +1,36 @@
-import { INavItem } from "@/types/components.types";
-import Navbar from "../Navbar";
-import { Button, WorklancLogo } from "@/components/atoms";
-import { HeaderSearch } from "@/components/molecules";
-import Link from "next/link";
+"use client";
+
+import { useState } from "react";
+import type { HeaderVariant } from "@/lib/headerVariant";
+import { useHeaderVariant } from "@/hooks/useHeaderVariant";
+import ClientHeader from "../ClientHeader";
+import CreateProfileHeader from "../CreateProfileHeader";
+import FreelancerHeader from "../FreelancerHeader";
+import IntroHeader from "./IntroHeader";
+import type { INavItem } from "@/types/components.types";
+
+export type { HeaderVariant };
 
 interface HeaderProps {
-  navItems: INavItem[];
+  /** Force a specific header (e.g. intro on marketing layouts). */
+  variant?: HeaderVariant;
+  /** Optional override for intro navigation items. */
+  navItems?: INavItem[];
 }
 
-const Header: React.FC<HeaderProps> = ({ navItems }) => {
-  return (
-    <header className="w-full h-20 flex items-center fixed top-0 bg-white z-50">
-      <div className="w-[80%] mx-auto flex flex-row items-center justify-between">
-        <div className="flex flex-row items-center gap-10">
-          <WorklancLogo />
-          {/* Navbar */}
-          <Navbar navItems={navItems} />
-        </div>
-        {/* Sign in & Sign up Buttons */}
-        <div className="flex items-center gap-8">
-          <HeaderSearch />
-          <button className="text-sm cursor-pointer">Log in</button>
-          <Link href="/nx/signup">
-            <Button
-              type="primary"
-              label="Sign up"
-              size="medium"
-              classname="rounded-full!"
-            />
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-};
+export default function Header({ variant: forcedVariant, navItems }: HeaderProps) {
+  const variant = useHeaderVariant(forcedVariant);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-export default Header;
+  switch (variant) {
+    case "create-profile":
+      return <CreateProfileHeader open={menuOpen} setOpen={setMenuOpen} />;
+    case "client":
+      return <ClientHeader />;
+    case "talent":
+      return <FreelancerHeader />;
+    case "intro":
+    default:
+      return <IntroHeader navItems={navItems} />;
+  }
+}

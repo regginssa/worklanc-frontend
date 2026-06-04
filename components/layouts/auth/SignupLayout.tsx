@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { motion } from "motion/react";
-import { SEO, WorklancLogo } from "@/components/atoms";
+import { SEO } from "@/components/atoms";
+import { Header } from "@/components/organisms";
 
 type UserType = "client" | "talent";
 
@@ -26,32 +27,26 @@ const SignupLayout: React.FC<SignupLayoutProps> = ({
         description="Sign up to Worklanc to find work you love or hire talent to help you grow your business."
         url="/nx/signup"
       />
-      {/* Header */}
-      <header className="h-20 w-full bg-white">
-        <div className="w-[80%] h-full mx-auto flex items-center justify-between">
-          <WorklancLogo />
-
-          {!hiddenToggle && userType && toggleUserType && (
-            <div className="flex items-center gap-4">
-              <span className="">
-                {userType === "client"
-                  ? "Looking for work?"
-                  : "Here to hire talent?"}
-              </span>
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                className="text-blue-600 hover:underline transition-all duration-200 cursor-pointer"
-                onClick={toggleUserType}
-              >
-                {userType === "client" ? "Apply as talent" : "Join as a Client"}
-              </motion.button>
-            </div>
-          )}
+      <Header variant="intro" />
+      {!hiddenToggle && userType && toggleUserType && (
+        <div className="w-[80%] mx-auto -mt-12 mb-2 flex items-center justify-end gap-4 text-sm">
+          <span>
+            {userType === "client"
+              ? "Looking for work?"
+              : "Here to hire talent?"}
+          </span>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            className="text-blue-600 hover:underline transition-all duration-200 cursor-pointer"
+            onClick={toggleUserType}
+          >
+            {userType === "client" ? "Apply as talent" : "Join as a Client"}
+          </motion.button>
         </div>
-      </header>
+      )}
 
       {/* Main */}
-      <main className="flex-1 flex flex-col items-center justify-center overflow-x-hidden overflow-y-auto">
+      <main className="flex-1 flex flex-col items-center justify-center overflow-x-hidden overflow-y-auto pt-20">
         {children}
       </main>
 

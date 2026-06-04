@@ -39,7 +39,7 @@ export default function FreelancerSettingsLayout({
   ];
 
   return (
-    <FreelancerLayout seo={seo}>
+    <FreelancerLayout seo={seo} headerVariant="talent">
       <div className="flex items-start">
         <div className="w-1/4 space-y-6">
           <h1 className="text-4xl font-semibold">Settings</h1>

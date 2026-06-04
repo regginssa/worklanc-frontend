@@ -1,7 +1,7 @@
 import { TSEO } from "@/types/components.types";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import FreelancerLayout from ".";
+import ClientLayout from ".";
 
 interface ClientSettingsLayoutProps {
   seo: TSEO;
@@ -29,7 +29,7 @@ export default function ClientSettingsLayout({
   ];
 
   return (
-    <FreelancerLayout seo={seo}>
+    <ClientLayout seo={seo} headerVariant="client">
       <div className="flex items-start">
         <div className="w-1/4 space-y-6">
           <h1 className="text-4xl font-semibold">Settings</h1>
@@ -58,6 +58,6 @@ export default function ClientSettingsLayout({
 
         <div className="flex-1 space-y-6">{children}</div>
       </div>
-    </FreelancerLayout>
+    </ClientLayout>
   );
 }

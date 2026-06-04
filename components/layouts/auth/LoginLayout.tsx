@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { SEO, WorklancLogo } from "@/components/atoms";
+import { SEO } from "@/components/atoms";
+import { Header } from "@/components/organisms";
 
 export function LoginLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,15 +10,10 @@ export function LoginLayout({ children }: { children: React.ReactNode }) {
         description="Log in to Worklanc to find work you love or hire talent to help you grow your business."
         url="/nx/login"
       />
-      {/* Header */}
-      <header className="h-20 w-full bg-white">
-        <div className="w-[80%] h-full mx-auto flex items-center justify-between">
-          <WorklancLogo />
-        </div>
-      </header>
+      <Header variant="intro" />
 
       {/* Main */}
-      <main className="flex-1 w-full flex items-center justify-center">
+      <main className="flex-1 w-full flex items-center justify-center pt-20">
         {children}
       </main>
 

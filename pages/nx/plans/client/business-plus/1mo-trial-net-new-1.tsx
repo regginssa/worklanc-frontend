@@ -1,4 +1,5 @@
-import { Button, Checkbox, SEO, WorklancLogo } from "@/components/atoms";
+import { Button, Checkbox } from "@/components/atoms";
+import { ClientLayout } from "@/components/layouts";
 import PeopleImage from "@/public/assets/webps/people/people.webp";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -20,19 +21,16 @@ export default function OneMonthTrialNetNew1() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="flex items-stretch">
-        <SEO
-          title="Business Plus - New 1 Month Trial"
-          description="Business Plus - New 1 Month Trial"
-          url="/nx/plans/client/business-plus/1mo-trial-net-new-1"
-        />
-        <div className="w-3/5 min-h-screen flex flex-col shadow-xl">
-          <header className="w-full p-6">
-            <WorklancLogo />
-          </header>
-
-          <main className="flex-1 mt-16 w-[80%] mx-auto">
+    <ClientLayout
+      seo={{
+        title: "Business Plus - New 1 Month Trial",
+        description: "Business Plus - New 1 Month Trial",
+        url: "/nx/plans/client/business-plus/1mo-trial-net-new-1",
+      }}
+    >
+      <div className="flex items-stretch gap-0">
+        <div className="w-3/5 min-h-[32rem] flex flex-col shadow-xl bg-white rounded-3xl overflow-hidden">
+          <main className="flex-1 mt-8 w-[80%] mx-auto">
             <div className="flex-1 space-y-10">
               <div className="space-y-4">
                 <p className="uppercase text-sm">
@@ -110,7 +108,7 @@ export default function OneMonthTrialNetNew1() {
             </p>
           </footer>
         </div>
-        <div className="flex-1 min-h-screen flex flex-col items-center justify-center">
+        <div className="flex-1 min-h-[32rem] flex flex-col items-center justify-center rounded-3xl overflow-hidden">
           <Image
             src={PeopleImage}
             alt="People"
@@ -180,6 +178,6 @@ export default function OneMonthTrialNetNew1() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </ClientLayout>
   );
 }

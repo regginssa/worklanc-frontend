@@ -5,13 +5,12 @@ import {
   Dropdown,
   IconButton,
   Input,
-  SEO,
   SearchCombobox,
   Textarea,
 } from "@/components/atoms";
 import type { AutoCompleteOption } from "@/components/atoms/AutoCompleteSelector";
 import { DateDropdown } from "@/components/molecules";
-import { CreateProfileHeader } from "@/components/organisms";
+import { CreateProfilePageLayout } from "@/components/layouts";
 import DocEditIcon from "@/public/assets/svgs/icons/other/doc_edit.svg";
 import UserPic from "@/public/assets/webps/avatars/man2.webp";
 import {
@@ -150,8 +149,6 @@ const formatCurrency = (value: string) => {
 };
 
 export default function Submit() {
-  const [open, setOpen] = useState(false);
-
   const [profileTitle, setProfileTitle] = useState("");
   const [titleDraft, setTitleDraft] = useState(profileTitle);
   const [titleError, setTitleError] = useState<string | null>(null);
@@ -812,14 +809,14 @@ export default function Submit() {
   };
 
   return (
-    <>
-      <CreateProfileHeader open={open} setOpen={setOpen} />
-      <SEO
-        title="Submit your profile"
-        description="Make any edits you want, then submit your profile. You can make more changes after it’s live."
-        url="/nx/create-profile/submit"
-      />
-
+    <CreateProfilePageLayout
+      seo={{
+        title: "Submit your profile",
+        description:
+          "Make any edits you want, then submit your profile. You can make more changes after it’s live.",
+        url: "/nx/create-profile/submit",
+      }}
+    >
       <input
         ref={fileInputRef}
         type="file"
@@ -828,7 +825,7 @@ export default function Submit() {
         onChange={(e) => handlePhotoChange(e.target.files?.[0] || null)}
       />
 
-      <div className="max-w-7xl mx-auto mt-6 px-6 mb-10 space-y-8">
+      <div className="space-y-8">
         <h1 className="text-3xl font-medium">Preview Profile</h1>
 
         <div className="p-8 rounded-3xl bg-slate-50 flex items-center gap-8">
@@ -1917,6 +1914,6 @@ export default function Submit() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </CreateProfilePageLayout>
   );
 }

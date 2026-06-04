@@ -1,4 +1,5 @@
-import { Button, SEO, WorklancLogo } from "@/components/atoms";
+import { Button, SEO } from "@/components/atoms";
+import { Header } from "@/components/organisms";
 import AlienIcon from "@/public/assets/svgs/icons/other/alien.svg";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,16 +10,14 @@ export default function NotFound() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Header variant="intro" />
       <SEO
         title="Worklanc - Page Not Found"
         description="We can’t find this page. But we can help you find new opportunities: hire talent, find work or get help."
         url="/404"
       />
-      <header className="p-6">
-        <WorklancLogo />
-      </header>
 
-      <main className="max-w-lg w-full mx-auto flex flex-col items-center justify-center flex-1 space-y-10">
+      <main className="max-w-lg w-full mx-auto flex flex-col items-center justify-center flex-1 space-y-10 pt-20 px-6">
         <Image src={AlienIcon} alt="Alien" className="w-[145px] h-[130px]" />
 
         <div className="space-y-2 text-center">

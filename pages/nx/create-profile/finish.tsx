@@ -1,6 +1,5 @@
-import { Button, SEO } from "@/components/atoms";
-import { CreateProfileHeader } from "@/components/organisms";
-import { useState } from "react";
+import { Button } from "@/components/atoms";
+import { CreateProfilePageLayout } from "@/components/layouts";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import UserPic1 from "@/public/assets/webps/avatars/resume-import.webp";
@@ -9,19 +8,18 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 export default function Finish() {
-  const [open, setOpen] = useState(false);
   const router = useRouter();
 
   return (
-    <>
-      <CreateProfileHeader open={open} setOpen={setOpen} />
-      <SEO
-        title="Your profile's ready"
-        description="Your profile is now live and ready to be viewed by clients. You can edit it anytime."
-        url="/nx/create-profile/finish"
-      />
-
-      <div className="max-w-7xl mx-auto mt-6 px-6 mb-10 space-y-8">
+    <CreateProfilePageLayout
+      seo={{
+        title: "Your profile's ready",
+        description:
+          "Your profile is now live and ready to be viewed by clients. You can edit it anytime.",
+        url: "/nx/create-profile/finish",
+      }}
+    >
+      <div className="space-y-8">
         <div>
           <h1 className="text-3xl font-medium">Your profile is ready!</h1>
           <h2 className="text-3xl font-medium mt-1">
@@ -154,6 +152,6 @@ export default function Finish() {
           </Link>
         </div>
       </div>
-    </>
+    </CreateProfilePageLayout>
   );
 }

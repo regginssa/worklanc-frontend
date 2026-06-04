@@ -1,11 +1,6 @@
 import { SEO, TabBar } from "@/components/atoms";
-import {
-  AuthorizedFooter,
-  ClientHeader,
-  FreelancerHeader,
-} from "@/components/organisms";
+import { AuthorizedFooter, Header } from "@/components/organisms";
 import { TSEO } from "@/types/components.types";
-import { AccountType } from "@/types/user";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -21,7 +16,6 @@ export default function OrgManagementLayout({
   children,
   seo,
 }: OrgManagementLayoutProps) {
-  const [accountType, setAccountType] = useState<AccountType>("client");
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
   const router = useRouter();
   const pathname = usePathname();
@@ -45,7 +39,7 @@ export default function OrgManagementLayout({
 
   return (
     <>
-      {accountType === "client" ? <ClientHeader /> : <FreelancerHeader />}
+      <Header />
       <SEO {...seo} />
 
       <main className="max-w-7xl mx-auto space-y-10">

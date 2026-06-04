@@ -1,11 +1,9 @@
 export { default as AccordionImageViewer } from "./AccordionImageViewer";
 export { default as Breadcrumbs } from "./Breadcrumbs";
 export { default as Header } from "./Header";
+export type { HeaderVariant } from "./Header";
 export { default as Navbar } from "./Navbar";
 export { default as Footer } from "./Footer";
 export { default as NavHoverDropdown } from "./NavHoverDropdown";
-export { default as CreateProfileHeader } from "./CreateProfileHeader";
-export { default as FreelancerHeader } from "./FreelancerHeader";
 export { default as AuthorizedFooter } from "./AuthorizedFooter";
-export { default as ClientHeader } from "./ClientHeader";
 export { default as AddBillingMethodSection } from "./AddBillingMethodSection";

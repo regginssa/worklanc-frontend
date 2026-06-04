@@ -1,9 +1,8 @@
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
 import { TSEO } from "@/types/components.types";
 import { SEO } from "@/components/atoms";
 import { Progress } from "@/components/ui/progress";
-import { CreateProfileHeader } from "@/components/organisms";
+import { Header } from "@/components/organisms";
 import { useOnboardingGuard } from "@/hooks/useAuth";
 
 interface CreateProfileLayoutProps {
@@ -25,16 +24,13 @@ export const CreateProfileLayout: React.FC<CreateProfileLayoutProps> = ({
   subtitle,
   description,
 }) => {
-  const [open, setOpen] = useState(false);
-
   // Require auth + a talent account; bounce completed users to the dashboard.
   useOnboardingGuard();
 
   return (
     <div className="min-h-screen flex flex-col">
       {seo && <SEO {...seo} />}
-      {/* Header */}
-      <CreateProfileHeader open={open} setOpen={setOpen} />
+      <Header />
 
       {/* Main */}
       <AnimatePresence mode="wait">
