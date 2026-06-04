@@ -86,7 +86,7 @@ function FilterSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="py-2">
+    <div className={`py-2 ${expanded ? "relative" : ""}`}>
       <button
         type="button"
         aria-expanded={expanded}
@@ -112,9 +112,11 @@ function FilterSection({
               height: { duration: 0.3, ease: "easeInOut" },
               opacity: { duration: 0.2, ease: "easeInOut" },
             }}
-            className="overflow-hidden"
+            className="overflow-visible"
           >
-            <div className="space-y-4 pt-4">{children}</div>
+            <div className="relative space-y-4 overflow-visible pt-4">
+              {children}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -133,7 +135,7 @@ export default function TalentFilter() {
     Object.fromEntries(FILTER_SECTIONS.map((key) => [key, true])) as Record<
       FilterSectionKey,
       boolean
-    >,
+    >
   );
 
   const timezones = Timezones.all;
@@ -196,7 +198,7 @@ export default function TalentFilter() {
   };
 
   return (
-    <div className="w-1/4 rounded-lg bg-slate-50 p-4 space-y-1 text-sm">
+    <div className="w-1/4 overflow-visible rounded-lg bg-slate-50 p-4 space-y-1 text-sm">
       <FilterSection
         title="Talent badge"
         expanded={expandedSections.talentBadge}

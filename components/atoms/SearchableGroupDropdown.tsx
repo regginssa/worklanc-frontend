@@ -118,7 +118,7 @@ export default function SearchableGroupDropdown({
         <AnimatePresence>
           {open && (
             <motion.div
-              className="absolute mt-1 top-full w-full bg-white shadow-lg border border-slate-300 rounded-lg z-10 space-y-4 max-h-72 overflow-y-auto"
+              className="absolute mt-1 top-full w-full bg-white shadow-lg border no-scrollbar border-slate-300 max-w-[400px] rounded-lg z-20 space-y-4 max-h-72 overflow-y-auto"
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
@@ -180,7 +180,9 @@ export default function SearchableGroupDropdown({
                               )
                             }
                           />
-                          <p className="text-sm">{item.label}</p>
+                          <p className="text-sm whitespace-nowrap">
+                            {item.label}
+                          </p>
                         </motion.li>
                       ))}
                     </motion.ul>

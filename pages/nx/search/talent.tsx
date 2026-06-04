@@ -11,14 +11,39 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button, Input } from "@/components/atoms";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Icon } from "@iconify/react";
-import Link from "next/link";
 import { TalentFilter } from "@/components/organisms";
+import SearchableGroupDropdown, {
+  SearchableGroupOption,
+} from "@/components/atoms/SearchableGroupDropdown";
+import { countries } from "country-data-list";
+
+const makeLocationOptions = (): SearchableGroupOption[] => {
+  const regions = [
+    { label: "Asia", value: "asia" },
+    { label: "Africa", value: "africa" },
+    { label: "Americas", value: "americas" },
+    { label: "Europe", value: "europe" },
+    { label: "Oceania", value: "oceania" },
+  ];
+  const options: SearchableGroupOption[] = [
+    {
+      title: "Local",
+      items: [{ label: "Search your location only", value: "local" }],
+    },
+    {
+      title: "Regions",
+      items: regions,
+    },
+    {
+      title: "Countries",
+      items: countries.all.map((country) => ({
+        label: country.name,
+        value: country.alpha2,
+      })),
+    },
+  ];
+  return options;
+};
 
 export default function SearchTalent() {
   const [open, setOpen] = useState(false);
@@ -28,10 +53,13 @@ export default function SearchTalent() {
     anyOfTheseWords: "",
     noneOfTheseWords: "",
     theExactPhrase: "",
+    location: [""],
   });
   const [loadings, setLoadings] = useState({
     keyword: true,
   });
+
+  const locationOptions = makeLocationOptions();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchFormData({ ...searchFormData, [e.target.name]: e.target.value });
@@ -70,7 +98,18 @@ export default function SearchTalent() {
       <div className="flex items-start gap-10">
         <TalentFilter />
 
-        <div className="flex-1"></div>
+        <div className="flex-1">
+          <SearchableGroupDropdown
+            name="location"
+            placeholder="Location"
+            className="w-1/4"
+            options={makeLocationOptions()}
+            values={searchFormData.location}
+            onChange={(value) =>
+              setSearchFormData({ ...searchFormData, location: value })
+            }
+          />
+        </div>
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
