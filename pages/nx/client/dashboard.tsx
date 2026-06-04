@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import Image from "next/image";
 import MailCheckIcon from "@/public/assets/svgs/icons/icons/mail_check.svg";
+import PhoneIcon from "@/public/assets/svgs/icons/icons/phone.svg";
 import DollarSheldIcon from "@/public/assets/svgs/icons/icons/dollar_sheld.svg";
 import {
   Carousel,
@@ -113,10 +114,19 @@ export default function Dashboard() {
           />
 
           <HireStepCard
+            href="/nx/signup/please-verify"
+            label="Required to hire"
+            title="Verify your phone"
+            description="Confirm it's you, to be able to publish your first job post"
+            icon={PhoneIcon}
+            iconAlt="Phone"
+          />
+
+          <HireStepCard
             href="#"
             label="Required to hire"
             title="Add a billing method"
-            description="Confirm it's you and establish trust with freelancers"
+            description="This can increase your hiring speed up to 3x. There's no cost until you hire"
             icon={DollarSheldIcon}
             iconAlt="Dollar sheld"
           />

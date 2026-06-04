@@ -155,13 +155,13 @@ export default function ClientHeader() {
     {
       label: "Invite a coworker",
       icon: "material-symbols-light:supervisor-account-outline",
-      href: "#",
+      href: "/nx/org-management/invitations/create",
     },
 
     {
       label: "Account settings",
       icon: "material-symbols-light:settings-outline",
-      href: "/freelancers/settings/contact-info",
+      href: "/nx/client-info",
     },
 
     {
