@@ -31,3 +31,4 @@ export { default as CircleProgress } from "./CircleProgress";
 export { default as RadioGroup } from "./RadioGroup";
 export { default as SearchableGroupDropdown } from "./SearchableGroupDropdown";
 export { default as SearchableDropdown } from "./SearchableDropdown";
+export { default as Pagination } from "./Pagination";

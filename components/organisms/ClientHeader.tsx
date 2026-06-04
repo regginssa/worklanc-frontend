@@ -95,7 +95,10 @@ export default function ClientHeader() {
       {
         heading: "Manage jobs and offers",
         items: [
-          { label: "Job posts and proposals", href: "#" },
+          {
+            label: "Job posts and proposals",
+            href: "/nx/wm/all-jobs/?status=open,draft",
+          },
           { label: "Pending offers", href: "#" },
           { label: "Proposals and offers", href: "#" },
         ],

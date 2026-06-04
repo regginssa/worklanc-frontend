@@ -67,8 +67,8 @@ export default function SearchableDropdown({
   }, [open]);
 
   return (
-    <div className={`space-y-1 ${className}`}>
-      <div className="relative" ref={containerRef}>
+    <div className={`w-full min-w-0 space-y-1 ${className}`}>
+      <div className="relative w-full min-w-0" ref={containerRef}>
         {label && (
           <label className={`text-sm ${labelClassName} font-medium`}>
             {label} {required && <span>*</span>}
@@ -77,7 +77,7 @@ export default function SearchableDropdown({
 
         <motion.button
           whileTap={{ scale: 0.97 }}
-          className={`w-full h-10 flex items-center gap-2 py-2 px-4 rounded-lg cursor-pointer ${
+          className={`w-full min-w-0 max-w-full h-10 flex items-center gap-2 py-2 px-4 rounded-lg cursor-pointer ${
             error
               ? "border-2 border-red-500"
               : disabled
@@ -90,21 +90,21 @@ export default function SearchableDropdown({
             <Icon
               icon={icon}
               width={20}
-              className="text-slate-700 group-hover:text-black group-focus-within:text-black transition-all duration-200"
+              className="shrink-0 text-slate-700 group-hover:text-black group-focus-within:text-black transition-all duration-200"
             />
           )}
           {value === "" ? (
-            <div className="bg-transparent border-none outline-none text-sm flex-1 text-left text-slate-600">
+            <div className="min-w-0 flex-1 truncate bg-transparent border-none outline-none text-sm text-left text-slate-600">
               {placeholder}
             </div>
           ) : (
-            <div className="text-sm flex-1 text-left">
+            <div className="min-w-0 flex-1 truncate text-sm text-left">
               {options.find((option) => option.value === value)?.label}
             </div>
           )}
           <Icon
             icon="mdi:chevron-down"
-            className={`size-6 transition-transform duration-200 ${
+            className={`size-6 shrink-0 transition-transform duration-200 ${
               open ? "rotate-180" : "rotate-0"
             }`}
           />
@@ -113,7 +113,7 @@ export default function SearchableDropdown({
         <AnimatePresence>
           {open && (
             <motion.div
-              className="absolute mt-1 top-full w-full bg-white shadow-lg border border-slate-300 rounded-lg z-10 max-h-72 overflow-y-auto"
+              className="absolute mt-1 top-full w-full bg-white no-scrollbar shadow-lg border border-slate-300 rounded-lg z-10 max-h-72 overflow-y-auto"
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}

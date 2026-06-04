@@ -33,3 +33,4 @@ export { default as ReEnterPasswordDialog } from "./dialogs/ReEnterPasswordDialo
 export { default as MembersFilterDialog } from "./dialogs/MembersFilterDialog";
 export { default as StripeBillingForm } from "./StripeBillingForm";
 export { default as BillingAddressFields } from "./BillingAddressFields";
+export { default as JobPostsCardGroup } from "./JobPostsCardGroup";
