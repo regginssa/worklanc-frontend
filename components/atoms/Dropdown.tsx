@@ -64,7 +64,7 @@ export default function Dropdown({
   return (
     <div
       ref={rootRef}
-      className={`flex w-full flex-col items-start gap-1 ${classname}`}
+      className={`flex w-full min-w-0 flex-col items-start gap-1 ${classname}`}
     >
       {label && (
         <label className={`text-sm font-medium ${labelClassName}`}>
@@ -72,11 +72,11 @@ export default function Dropdown({
         </label>
       )}
 
-      <div className="relative w-full">
+      <div className="relative w-full min-w-0 max-w-full">
         <motion.button
           type="button"
           whileTap={{ scale: 0.97 }}
-          className={`flex h-10 w-full items-center gap-2 rounded-lg px-4 py-2 transition-all duration-300 cursor-pointer ${
+          className={`flex h-10 w-full min-w-0 max-w-full overflow-hidden items-center gap-2 rounded-lg px-4 py-2 transition-all duration-300 cursor-pointer ${
             error
               ? "border-2 border-red-500"
               : disabled
@@ -91,7 +91,7 @@ export default function Dropdown({
           )}
 
           <span
-            className={`flex-1 truncate text-left text-sm ${
+            className={`min-w-0 flex-1 truncate text-left text-sm ${
               selectedLabel ? "text-slate-900" : "text-slate-600"
             }`}
           >
@@ -116,7 +116,7 @@ export default function Dropdown({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -8, scale: 0.98 }}
               transition={{ duration: 0.18, ease: "easeOut" }}
-              className="absolute left-0 right-0 top-full z-40 mt-2 flex max-h-64 flex-col overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-md"
+              className="absolute left-0 right-0 top-full z-40 mt-2 flex w-full max-h-64 flex-col overflow-x-hidden overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-md"
             >
               {normalizedOptions.length === 0 ? (
                 <li className="flex h-40 flex-col items-center justify-center gap-4 p-4">
@@ -144,7 +144,7 @@ export default function Dropdown({
                       ) : (
                         <div className="w-[14px]" />
                       )}
-                      <span>{option.label}</span>
+                      <span className="min-w-0 flex-1 truncate">{option.label}</span>
                     </li>
                   );
                 })

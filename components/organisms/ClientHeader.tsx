@@ -99,8 +99,7 @@ export default function ClientHeader() {
             label: "Job posts and proposals",
             href: "/nx/wm/all-jobs/?status=open,draft",
           },
-          { label: "Pending offers", href: "#" },
-          { label: "Proposals and offers", href: "#" },
+          { label: "Pending offers", href: "/nx/wm/client/contracts" },
         ],
       },
       {
