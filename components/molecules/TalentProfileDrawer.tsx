@@ -3,7 +3,7 @@ import { Drawer, DrawerContent, DrawerHeader } from "../ui/drawer";
 import Link from "next/link";
 import Image from "next/image";
 import UserPic from "@/public/assets/webps/avatars/man2.webp";
-import { Button, IconButton, Pagination } from "../atoms";
+import { Button, IconButton, Pagination, TabBar } from "../atoms";
 import { Icon } from "@iconify/react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import TopRatedPlusIcon from "@/public/assets/svgs/icons/badges/top_rated_plus.svg";
@@ -12,9 +12,13 @@ import { Tabs } from "../common";
 import { useState } from "react";
 import VideoIntroImg from "@/public/assets/jpgs/video_intro.jpg";
 import PlayIcon from "@/public/assets/svgs/icons/icons/play.svg";
+import AIIcon from "@/public/assets/svgs/icons/other/ai.svg";
 import ClientFeedbackCard, {
   ClientFeedbackCardItem,
 } from "../common/ClientFeedbackCard";
+import TalentProfileJobCardGroup, {
+  TalentProfileJobCardGroupItem,
+} from "./TalentProfileJobCardGroup";
 
 const tabs = [
   { label: "About", value: "about" },
@@ -24,6 +28,65 @@ const tabs = [
   { label: "Employment history", value: "employment_history" },
   { label: "Skills", value: "skills" },
   { label: "Education", value: "education" },
+];
+
+const workHistoryTabs = [
+  { label: "Completed (91)", value: "completed" },
+  { label: "In progress (2)", value: "in_progress" },
+];
+
+const jobHistory: TalentProfileJobCardGroupItem[] = [
+  {
+    title: "Looking for a pro android developer",
+    description:
+      "I'm looking for a pro android developer to help me build my app. I need someone who is experienced in android development and has a good understanding of the android platform.",
+    skills: ["Android", "React Native", "Expo"],
+    startDate: new Date(),
+    endDate: new Date(),
+    totalAmount: 1000,
+    hourlyRate: 100,
+    duration: 10,
+    type: "hourly",
+    status: "completed",
+    review: 4.8,
+  },
+  {
+    title: "Looking for a pro ios developer",
+    description:
+      "I'm looking for a pro ios developer to help me build my app. I need someone who is experienced in ios development and has a good understanding of the ios platform.",
+    skills: ["iOS", "Swift", "Objective-C"],
+    startDate: new Date(),
+    endDate: new Date(),
+    totalAmount: 1000,
+    type: "fixed",
+    status: "completed",
+    review: 4.8,
+  },
+  {
+    title: "Looking for a pro android developer",
+    description:
+      "I'm looking for a pro android developer to help me build my app. I need someone who is experienced in android development and has a good understanding of the android platform.",
+    skills: ["Android", "React Native", "Expo"],
+    startDate: new Date(),
+    endDate: new Date(),
+    totalAmount: 1000,
+    type: "fixed",
+    status: "in_progress",
+  },
+  {
+    title: "Looking for a pro android developer",
+    description:
+      "I'm looking for a pro android developer to help me build my app. I need someone who is experienced in android development and has a good understanding of the android platform.",
+    skills: ["Android", "React Native", "Expo"],
+    startDate: new Date(),
+    isCurrent: true,
+    type: "hourly",
+    status: "in_progress",
+    review: 4.8,
+    hourlyRate: 100,
+    totalAmount: 1000,
+    duration: 345,
+  },
 ];
 
 const clientFeedbacks: ClientFeedbackCardItem[] = [
@@ -57,6 +120,7 @@ export default function TalentProfileDrawer({
   onClose: () => void;
 }) {
   const [tabIndex, setTabIndex] = useState(0);
+  const [workHistoryTabIndex, setWorkHistoryTabIndex] = useState(0);
 
   return (
     <Drawer open={open} onClose={onClose} direction="right">
@@ -288,6 +352,67 @@ export default function TalentProfileDrawer({
                   currentPage={1}
                   totalPages={10}
                   onPageChange={() => {}}
+                />
+              </div>
+            </section>
+
+            <section
+              id="work_history"
+              className="border border-slate-300 rounded-3xl p-6 space-y-6"
+            >
+              <h2 className="text-2xl font-medium flex-1">
+                Work history on Worklanc
+              </h2>
+              <div className="p-4 rounded-3xl bg-slate-50 space-y-6">
+                <div className="flex items-center gap-2">
+                  <Image src={AIIcon} alt="AI" className="size-8" />
+                  <h3 className="text-xl font-medium">Summary</h3>
+                </div>
+
+                <p className="text-sm text-slate-600">
+                  A top-performing mobile application developer specializing in
+                  both iOS and Android platforms. Has developed over 50
+                  applications including a subscription-based food delivery
+                  system [1] and a fintech app utilizing serverless architecture
+                  [2]. Notable for end-to-end solutions such as loyalty programs
+                  for retail [3]and high-quality app development for dynamic
+                  user interfaces across various se…{" "}
+                  <button className="text-black underline cursor-pointer">
+                    Show more
+                  </button>
+                </p>
+
+                <p className="text-xs text-slate-600">
+                  Generated by CHRLE, Worklanc's Charlie Unicorn AI, from
+                  completed jobs
+                </p>
+
+                <div className="space-y-2">
+                  <p className="text-lg font-medium">Skills used</p>
+                  <ul className="flex flex-wrap items-center gap-2">
+                    {tabs.slice(0, 4).map((skill) => (
+                      <li
+                        key={skill.value}
+                        className="py-0.5 px-2 rounded-md bg-slate-200 text-sm cursor-pointer"
+                      >
+                        {skill.label}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <div className="">
+                <TabBar
+                  tabs={workHistoryTabs}
+                  selectedTabIndex={workHistoryTabIndex}
+                  onTab={setWorkHistoryTabIndex}
+                />
+                <TalentProfileJobCardGroup
+                  items={jobHistory.filter(
+                    (job) =>
+                      job.status === workHistoryTabs[workHistoryTabIndex].value
+                  )}
                 />
               </div>
             </section>
