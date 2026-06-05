@@ -12,3 +12,11 @@ export function formatNumber(num: number): string {
 
   return str;
 }
+
+export function formatEarnedAmount(amount: number): string {
+  if (amount < 1000) {
+    return String(amount);
+  }
+
+  return `${Math.floor(amount / 1000)}K+`;
+}

@@ -7,3 +7,4 @@ export { default as PorfolioCard } from "./PorfolioCard";
 export { default as EmploymentHistoryItem } from "./EmploymentHistoryItem";
 export { default as CertificationItem } from "./CertificationItem";
 export { default as TalentDiscoverItem } from "./TalentDiscoverItem";
+export { BadgeIcons, BadgeTitles } from "./TalentBadges";
