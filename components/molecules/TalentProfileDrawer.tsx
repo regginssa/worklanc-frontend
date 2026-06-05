@@ -23,8 +23,10 @@ import TargetArrowIcon from "@/public/assets/svgs/icons/other/target_arrow.svg";
 import SkillsGroup from "./SkillsGroup";
 import PortfolioCardGroup from "./PortfolioCardGroup";
 import { PorfolioCardItem } from "../common/PorfolioCard";
-import EmploymentHistoryGroup from "./EmploymentHistoryGroup";
+import EmploymentHistoryItemGroup from "./EmploymentHistoryItemGroup";
 import { EmploymentHistoryItemType } from "../common/EmploymentHistoryItem";
+import CertificationItemGroup from "./CertificationItemGroup";
+import { CertificationItemType } from "../common/CertificationItem";
 
 const tabs = [
   { label: "About", value: "about" },
@@ -155,6 +157,21 @@ const employmentHistory: EmploymentHistoryItemType[] = [
     isCurrent: true,
     description:
       "Designed and implemented a new accounting system for the company",
+  },
+];
+
+const certifications: CertificationItemType[] = [
+  {
+    name: "Back-End Development",
+    provider: "Worklanc",
+    skills: ["Python", "Node.js", "RESTful APIs", "SQL", "NoSQL"],
+    logo: "https://assets.static-upwork.com/images/certification/logos/high/python-back-end-development.png",
+  },
+  {
+    name: "Front-End Development",
+    provider: "React.org",
+    skills: ["React", "JavaScript", "HTML", "CSS", "React Router"],
+    logo: "https://assets.static-upwork.com/images/certification/logos/high/python-back-end-development.png",
   },
 ];
 
@@ -499,7 +516,46 @@ export default function TalentProfileDrawer({
                 Employment history
               </h2>
 
-              <EmploymentHistoryGroup items={employmentHistory} />
+              <EmploymentHistoryItemGroup items={employmentHistory} />
+
+              <Button
+                type="outline"
+                label="View full profile"
+                size="medium"
+                classname="py-2! px-8! font-medium! text-sm! border! rounded-full!"
+                icon="mdi:external-link"
+                onClick={() => {}}
+              />
+            </section>
+
+            <section
+              id="skills"
+              className="border border-slate-300 rounded-3xl p-6 space-y-6"
+            >
+              <h2 className="text-2xl font-medium flex-1">Skills</h2>
+
+              <SkillsGroup
+                skills={tabs.map((tab) => tab.label)}
+                matchedSkills={tabs.map((tab) => tab.label)}
+                max={tabs.length}
+              />
+            </section>
+
+            <section
+              id="certifications"
+              className="border border-slate-300 rounded-3xl p-6 space-y-6"
+            >
+              <h2 className="text-2xl font-medium flex-1">Certifications</h2>
+
+              <CertificationItemGroup items={certifications} />
+              <Button
+                type="outline"
+                label="View full profile"
+                size="medium"
+                classname="py-2! px-8! font-medium! text-sm! border! rounded-full!"
+                icon="mdi:external-link"
+                onClick={() => {}}
+              />
             </section>
           </div>
         </div>

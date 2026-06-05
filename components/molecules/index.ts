@@ -39,3 +39,5 @@ export { default as TalentProfileDrawer } from "./TalentProfileDrawer";
 export { default as TalentProfileJobCardGroup } from "./TalentProfileJobCardGroup";
 export { default as SkillsGroup } from "./SkillsGroup";
 export { default as PortfolioCardGroup } from "./PortfolioCardGroup";
+export { default as CertificationItemGroup } from "./CertificationItemGroup";
+export { default as EmploymentHistoryItemGroup } from "./EmploymentHistoryItemGroup";

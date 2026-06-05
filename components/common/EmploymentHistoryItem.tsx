@@ -33,7 +33,7 @@ export default function EmploymentHistoryItem({
       : `${description.slice(0, DESCRIPTION_PREVIEW_LENGTH).trimEnd()}...`;
 
   return (
-    <li className="flex items-start justify-between">
+    <div className="flex items-start justify-between">
       <div>
         <h5 className="text-lg font-medium line-clamp-1">
           {company} | {title}
@@ -42,7 +42,7 @@ export default function EmploymentHistoryItem({
           {formatMonthYear(startedAt)} -{" "}
           {isCurrent ? "Present" : formatMonthYear(endAt)}
         </p>
-        <p className="text-sm text-slate-600 mt-4">
+        <p className="text-sm text-slate-800 mt-4">
           {displayDescription}{" "}
           {isLongDescription && !isExpanded && (
             <button
@@ -80,6 +80,6 @@ export default function EmploymentHistoryItem({
           />
         </div>
       )}
-    </li>
+    </div>
   );
 }

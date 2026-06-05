@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
       "res.cloudinary.com",
       "www.upwork.com",
       "upwork-usw2-prod-agora-file-storage.s3.us-west-2.amazonaws.com",
+      "assets.static-upwork.com",
     ],
   },
 };
