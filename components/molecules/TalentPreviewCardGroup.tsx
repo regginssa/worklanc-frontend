@@ -4,12 +4,13 @@ import UserPic from "@/public/assets/webps/avatars/man2.webp";
 import Image from "next/image";
 import TopRatedPlusIcon from "@/public/assets/svgs/icons/badges/top_rated_plus.svg";
 import Link from "next/link";
-import { Button, IconButton, Pagination } from "../atoms";
+import { Button, IconButton, JobSuccessScore, Pagination } from "../atoms";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useLayoutEffect, useRef, useState } from "react";
 import AIIcon from "@/public/assets/svgs/icons/other/ai.svg";
 import CompanyLogo from "@/public/assets/jpgs/logos/ongraph.jpg";
 import TalentProfileDrawer from "./TalentProfileDrawer";
+import SkillsGroup from "./SkillsGroup";
 
 const skills = [
   "Java",
@@ -111,7 +112,10 @@ export default function TalentPreviewCardGroup() {
 
             <div className="flex items-center gap-10 text-sm text-slate-600 font-medium">
               <span>$50/hr</span>
-              <span>100% Job Success</span>
+              <div className="flex items-center gap-2">
+                <JobSuccessScore value={100} />
+                <span>100% Job Success</span>
+              </div>
               <span>$200K+ Earned</span>
 
               <Tooltip>
@@ -148,19 +152,17 @@ export default function TalentPreviewCardGroup() {
               </Tooltip>
             </div>
 
-            <ul className="flex flex-wrap gap-2 items-center">
-              {skills.slice(0, 6).map((skill) => (
-                <li
-                  key={skill}
-                  className="py-0.5 px-2 rounded-md bg-slate-200 text-sm"
-                >
-                  {skill}
-                </li>
-              ))}
-              <li className="py-0.5 px-2 rounded-md bg-slate-200 text-sm">
-                +{skills.length - 6}
-              </li>
-            </ul>
+            <SkillsGroup skills={skills} max={6} />
+
+            <p className="text-sm font-medium">
+              Marco N. has worked{" "}
+              <Link
+                href="#"
+                className="text-blue-600 cursor-pointer hover:underline"
+              >
+                15 jobs related to your search
+              </Link>
+            </p>
 
             <div className="p-4 rounded-3xl bg-slate-100 group-hover:bg-white transition-colors duration-200 space-y-4">
               <div className="flex items-center justify-between">
