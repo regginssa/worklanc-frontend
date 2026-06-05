@@ -135,7 +135,7 @@ export default function BenchLayout({
           </div>
         </div>
 
-        <div className="flex-1 space-y-8">{children}</div>
+        <div className="flex-1 space-y-10">{children}</div>
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>

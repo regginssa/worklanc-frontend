@@ -44,9 +44,9 @@ export default function TalentDiscoverItem({
           ></span>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 flex-1">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm text-blue-600">{name}</h3>
+            <h3 className="text-sm text-blue-600 flex-1">{name}</h3>
             <motion.button whileTap={{ scale: 0.95 }}>
               <Icon icon="mdi:heart-outline" className="size-5" />
             </motion.button>
