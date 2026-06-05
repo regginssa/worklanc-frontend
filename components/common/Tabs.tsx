@@ -14,9 +14,11 @@ const TAB_GAP_PX = 16;
 export default function Tabs({
   tabs,
   selectedTabIndex,
+  className,
   onTab,
 }: {
   tabs: ITabItem[];
+  className?: string;
   selectedTabIndex: number;
   onTab: (index: number) => void;
 }) {
@@ -97,7 +99,7 @@ export default function Tabs({
   }, [selectedTabIndex, scrollActiveTabIntoView]);
 
   return (
-    <div className="w-full min-w-0">
+    <div className={`w-full min-w-0 ${className}`}>
       <div
         ref={scrollRef}
         className="w-full min-w-0 overflow-x-auto no-scrollbar rounded-full border-2 border-slate-200 p-1"

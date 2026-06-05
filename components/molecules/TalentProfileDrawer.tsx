@@ -9,7 +9,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import TopRatedPlusIcon from "@/public/assets/svgs/icons/badges/top_rated_plus.svg";
 import { motion } from "motion/react";
 import { Tabs } from "../common";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import VideoIntroImg from "@/public/assets/jpgs/video_intro.jpg";
 import PlayIcon from "@/public/assets/svgs/icons/icons/play.svg";
 import AIIcon from "@/public/assets/svgs/icons/other/ai.svg";
@@ -27,6 +27,8 @@ import EmploymentHistoryItemGroup from "./EmploymentHistoryItemGroup";
 import { EmploymentHistoryItemType } from "../common/EmploymentHistoryItem";
 import CertificationItemGroup from "./CertificationItemGroup";
 import { CertificationItemType } from "../common/CertificationItem";
+import EducationItemGroup from "./EducationItemGroup";
+import { EducationItemType } from "../common/EducationItem";
 
 const tabs = [
   { label: "About", value: "about" },
@@ -35,6 +37,7 @@ const tabs = [
   { label: "Portfolio", value: "portfolio" },
   { label: "Employment history", value: "employment_history" },
   { label: "Skills", value: "skills" },
+  { label: "Certifications", value: "certifications" },
   { label: "Education", value: "education" },
 ];
 
@@ -175,6 +178,26 @@ const certifications: CertificationItemType[] = [
   },
 ];
 
+const STICKY_TABS_OFFSET = 56;
+const TAB_CLICK_SCROLL_LOCK_MS = 600;
+
+const educationHistory: EducationItemType[] = [
+  {
+    school: "University of London",
+    degree: "Bachelor of Science",
+    fieldOfStudy: "Computer Science",
+    startedAt: 2020,
+    endAt: 2024,
+  },
+  {
+    school: "University of London",
+    degree: "Bachelor of Science",
+    fieldOfStudy: "Computer Science",
+    startedAt: 2020,
+    endAt: 2024,
+  },
+];
+
 export default function TalentProfileDrawer({
   open,
   onClose,
@@ -184,11 +207,88 @@ export default function TalentProfileDrawer({
 }) {
   const [tabIndex, setTabIndex] = useState(0);
   const [workHistoryTabIndex, setWorkHistoryTabIndex] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isTabClickScrollRef = useRef(false);
   const selectedWorkHistoryTab = workHistoryTabs[workHistoryTabIndex].value;
   const filteredJobHistory =
     selectedWorkHistoryTab === "search_related"
       ? jobHistory
       : jobHistory.filter((job) => job.status === selectedWorkHistoryTab);
+
+  const getActiveTabIndex = useCallback(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return 0;
+
+    const activationLine =
+      container.getBoundingClientRect().top + STICKY_TABS_OFFSET;
+
+    let activeIndex = 0;
+    tabs.forEach((tab, index) => {
+      const section = container.querySelector<HTMLElement>(`#${tab.value}`);
+      if (!section) return;
+
+      if (section.getBoundingClientRect().top <= activationLine + 4) {
+        activeIndex = index;
+      }
+    });
+
+    return activeIndex;
+  }, []);
+
+  const handleTabChange = useCallback((index: number) => {
+    isTabClickScrollRef.current = true;
+    setTabIndex(index);
+  }, []);
+
+  useEffect(() => {
+    if (!open || !isTabClickScrollRef.current) return;
+
+    const sectionId = tabs[tabIndex]?.value;
+    const container = scrollContainerRef.current;
+    if (!sectionId || !container) return;
+
+    const section = container.querySelector<HTMLElement>(`#${sectionId}`);
+    if (!section) return;
+
+    const containerTop = container.getBoundingClientRect().top;
+    const sectionTop = section.getBoundingClientRect().top;
+
+    container.scrollTo({
+      top:
+        container.scrollTop + (sectionTop - containerTop) - STICKY_TABS_OFFSET,
+      behavior: "smooth",
+    });
+
+    const timeout = window.setTimeout(() => {
+      isTabClickScrollRef.current = false;
+    }, TAB_CLICK_SCROLL_LOCK_MS);
+
+    return () => window.clearTimeout(timeout);
+  }, [tabIndex, open]);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container || !open) return;
+
+    let ticking = false;
+
+    const onScroll = () => {
+      if (isTabClickScrollRef.current) return;
+      if (ticking) return;
+
+      ticking = true;
+      requestAnimationFrame(() => {
+        const nextIndex = getActiveTabIndex();
+        setTabIndex((prev) => (prev !== nextIndex ? nextIndex : prev));
+        ticking = false;
+      });
+    };
+
+    container.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    return () => container.removeEventListener("scroll", onScroll);
+  }, [open, getActiveTabIndex]);
 
   return (
     <Drawer open={open} onClose={onClose} direction="right">
@@ -211,9 +311,12 @@ export default function TalentProfileDrawer({
           </div>
         </DrawerHeader>
 
-        <div className="flex min-w-0 items-start gap-6 p-6 no-scrollbar overflow-y-auto">
+        <div
+          ref={scrollContainerRef}
+          className="flex min-w-0 items-start gap-6 p-6 no-scrollbar overflow-y-auto"
+        >
           {/* SUMMARIZE */}
-          <div className="w-1/3 flex flex-col items-center gap-4">
+          <div className="w-1/3 flex flex-col items-center gap-4 sticky top-0">
             <div className="relative size-[140px]">
               <Image
                 src={UserPic}
@@ -344,7 +447,12 @@ export default function TalentProfileDrawer({
 
           {/* DETAILS */}
           <div className="min-w-0 flex-1 space-y-6">
-            <Tabs tabs={tabs} selectedTabIndex={tabIndex} onTab={setTabIndex} />
+            <Tabs
+              tabs={tabs}
+              selectedTabIndex={tabIndex}
+              onTab={handleTabChange}
+              className="sticky -top-6 z-10 bg-white"
+            />
 
             <section
               id="about"
@@ -548,6 +656,23 @@ export default function TalentProfileDrawer({
               <h2 className="text-2xl font-medium flex-1">Certifications</h2>
 
               <CertificationItemGroup items={certifications} />
+              <Button
+                type="outline"
+                label="View full profile"
+                size="medium"
+                classname="py-2! px-8! font-medium! text-sm! border! rounded-full!"
+                icon="mdi:external-link"
+                onClick={() => {}}
+              />
+            </section>
+
+            <section
+              id="education"
+              className="border border-slate-300 rounded-3xl p-6 space-y-6"
+            >
+              <h2 className="text-2xl font-medium flex-1">Education</h2>
+
+              <EducationItemGroup items={educationHistory} />
               <Button
                 type="outline"
                 label="View full profile"

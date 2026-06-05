@@ -41,3 +41,4 @@ export { default as SkillsGroup } from "./SkillsGroup";
 export { default as PortfolioCardGroup } from "./PortfolioCardGroup";
 export { default as CertificationItemGroup } from "./CertificationItemGroup";
 export { default as EmploymentHistoryItemGroup } from "./EmploymentHistoryItemGroup";
+export { default as EducationItemGroup } from "./EducationItemGroup";
