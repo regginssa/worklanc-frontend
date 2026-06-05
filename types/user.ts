@@ -12,6 +12,11 @@ export type ProfileVisibility = "public" | "private";
 export type ProjectPreference = "both" | "long" | "short";
 export type ImportSource = "resume" | "linkedin" | "manual";
 export type LanguageLevel = "basic" | "conversational" | "fluent" | "native";
+export type TalentBadge =
+  | "NONE"
+  | "TOP_RATED_PLUS"
+  | "TOP_RATED"
+  | "RISING_TALENT";
 export type Language = {
   name: string;
   level: LanguageLevel;

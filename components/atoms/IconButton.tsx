@@ -28,7 +28,7 @@ export default function IconButton({
     <motion.button
       type="button"
       whileTap={{ scale: 0.95 }}
-      className={`flex items-center justify-center p-2.5 transition-all duration-200 ease-in-out cursor-pointer ${variantClasses[variant]} ${className}`}
+      className={`flex items-center justify-center p-2.5 transition-colors duration-200 ease-in-out cursor-pointer ${variantClasses[variant]} ${className}`}
       onClick={onClick}
     >
       <Icon icon={icon} className="w-5 h-5" />

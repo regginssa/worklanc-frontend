@@ -107,7 +107,7 @@ export default function ClientHeader() {
         items: [
           { label: "Post a job", href: "#" },
           { label: "Search for talent", href: "#" },
-          { label: "Talent you've hired", href: "#" },
+          { label: "Talent you've hired", href: "/browse/bench/my-hires" },
           { label: "Talent you've saved", href: "#" },
           { label: "Direct contracts", href: "#" },
         ],

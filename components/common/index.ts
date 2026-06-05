@@ -6,3 +6,4 @@ export { default as IconLabel } from "./IconLabel";
 export { default as PorfolioCard } from "./PorfolioCard";
 export { default as EmploymentHistoryItem } from "./EmploymentHistoryItem";
 export { default as CertificationItem } from "./CertificationItem";
+export { default as TalentDiscoverItem } from "./TalentDiscoverItem";

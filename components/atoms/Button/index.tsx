@@ -146,6 +146,27 @@ const Button: React.FC<ButtonProps> = ({
     );
   }
 
+  if (type === "secondary") {
+    return (
+      <motion.button
+        whileTap={{ scale: 0.95 }}
+        className={`border py-2 px-4 border-slate-400 ${classname} hover:bg-slate-100 transition-colors duration-200 ease-in-out flex items-center gap-2 justify-center ${
+          loading || disabled
+            ? "bg-slate-200 cursor-not-allowed"
+            : "cursor-pointer"
+        }`}
+        disabled={disabled || loading}
+        onClick={onClick}
+      >
+        {icon && !loading && <Icon icon={icon} className="w-5 h-5" />}
+        {label}
+        {loading && (
+          <Icon icon="svg-spinners:bars-rotate-fade" className="w-4 h-4 ml-2" />
+        )}
+      </motion.button>
+    );
+  }
+
   return null;
 };
 
