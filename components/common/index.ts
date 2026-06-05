@@ -3,3 +3,5 @@ export type { AutoCompleteOption } from "./AutoComplete";
 export { default as Tabs } from "./Tabs";
 export { default as ClientFeedbackCard } from "./ClientFeedbackCard";
 export { default as IconLabel } from "./IconLabel";
+export { default as PorfolioCard } from "./PorfolioCard";
+export { default as EmploymentHistoryItem } from "./EmploymentHistoryItem";

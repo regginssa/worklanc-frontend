@@ -4,6 +4,7 @@ import { IconLabel } from "../common";
 import { formatNumberWithCommas } from "@/utils/math";
 import { useState } from "react";
 import { Dialog, DialogHeader, DialogContent, DialogTitle } from "../ui/dialog";
+import SkillsGroup from "./SkillsGroup";
 
 export type TalentProfileJobCardGroupItem = {
   title: string;
@@ -52,21 +53,7 @@ export default function TalentProfileJobCardGroup({
             </div>
 
             {item.skills && item.status === "in_progress" && (
-              <ul className="flex flex-wrap items-center gap-2">
-                {item.skills.slice(0, 4).map((skill) => (
-                  <li
-                    key={skill}
-                    className="text-sm bg-slate-100 text-slate-600 rounded-md px-2 py-1"
-                  >
-                    {skill}
-                  </li>
-                ))}
-                {item.skills.length > 4 && (
-                  <li className="text-sm bg-slate-100 text-slate-600 rounded-md px-2 py-1">
-                    +{item.skills.length - 4}
-                  </li>
-                )}
-              </ul>
+              <SkillsGroup skills={item.skills} />
             )}
 
             <div className="flex items-center gap-6">
