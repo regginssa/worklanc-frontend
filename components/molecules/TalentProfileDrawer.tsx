@@ -3,11 +3,51 @@ import { Drawer, DrawerContent, DrawerHeader } from "../ui/drawer";
 import Link from "next/link";
 import Image from "next/image";
 import UserPic from "@/public/assets/webps/avatars/man2.webp";
-import { Button, IconButton } from "../atoms";
+import { Button, IconButton, Pagination } from "../atoms";
 import { Icon } from "@iconify/react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import TopRatedPlusIcon from "@/public/assets/svgs/icons/badges/top_rated_plus.svg";
 import { motion } from "motion/react";
+import { Tabs } from "../common";
+import { useState } from "react";
+import VideoIntroImg from "@/public/assets/jpgs/video_intro.jpg";
+import PlayIcon from "@/public/assets/svgs/icons/icons/play.svg";
+import ClientFeedbackCard, {
+  ClientFeedbackCardItem,
+} from "../common/ClientFeedbackCard";
+
+const tabs = [
+  { label: "About", value: "about" },
+  { label: "Client feedback", value: "client_feedback" },
+  { label: "Work history", value: "work_history" },
+  { label: "Portfolio", value: "portfolio" },
+  { label: "Employment history", value: "employment_history" },
+  { label: "Skills", value: "skills" },
+  { label: "Education", value: "education" },
+];
+
+const clientFeedbacks: ClientFeedbackCardItem[] = [
+  {
+    title: "Looking for a pro android developer",
+    score: 4.8,
+    date: new Date(),
+    description:
+      "I'm looking for a pro android developer to help me build my app. I need someone who is experienced in android development and has a good understanding of the android platform.",
+    tags: [
+      { label: "Android", tooltip: "Android development" },
+      { label: "React Native", tooltip: "React Native development" },
+      { label: "Expo", tooltip: "Expo development" },
+    ],
+  },
+  {
+    title: "Looking for a pro ios developer",
+    score: 4.8,
+    date: new Date(),
+    description:
+      "I'm looking for a pro android developer to help me build my app. I need someone who is experienced in android development and has a good understanding of the android platform.",
+    fromUserName: "Rachel S",
+  },
+];
 
 export default function TalentProfileDrawer({
   open,
@@ -16,12 +56,19 @@ export default function TalentProfileDrawer({
   open: boolean;
   onClose: () => void;
 }) {
+  const [tabIndex, setTabIndex] = useState(0);
+
   return (
     <Drawer open={open} onClose={onClose} direction="right">
       <DrawerContent size="lg">
         <DrawerHeader>
           <div className="flex items-center justify-between w-full">
-            <ArrowLeftIcon className="size-6" />
+            <button
+              className="hover:text-blue-600 cursor-pointer"
+              onClick={onClose}
+            >
+              <ArrowLeftIcon className="size-6" />
+            </button>
             <Link
               href="#"
               className="flex items-center gap-2 text-blue-600 cursor-pointer hover:underline text-sm font-medium"
@@ -32,7 +79,7 @@ export default function TalentProfileDrawer({
           </div>
         </DrawerHeader>
 
-        <div className="flex items-start gap-6 p-6">
+        <div className="flex min-w-0 items-start gap-6 p-6 no-scrollbar overflow-y-auto">
           {/* SUMMARIZE */}
           <div className="w-1/3 flex flex-col items-center gap-4">
             <div className="relative size-[140px]">
@@ -130,7 +177,7 @@ export default function TalentProfileDrawer({
             </div>
 
             <div className="w-full space-y-2">
-              <div className="flex items-center justify-between gap-4 w-full">
+              <div className="flex items-center justify-between gap-2 w-full">
                 <Button
                   type="primary"
                   label="Hire"
@@ -164,7 +211,87 @@ export default function TalentProfileDrawer({
           </div>
 
           {/* DETAILS */}
-          <div className="flex-1"></div>
+          <div className="min-w-0 flex-1 space-y-6">
+            <Tabs tabs={tabs} selectedTabIndex={tabIndex} onTab={setTabIndex} />
+
+            <section
+              id="about"
+              className="border border-slate-300 rounded-3xl p-6 space-y-6"
+            >
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-medium flex-1">About Marco N.</h2>
+
+                <div className="flex items-center gap-4 w-1/2">
+                  <div className="rounded-2xl bg-slate-100 space-y-1 p-2">
+                    <p className="text-sm">$15.00/hr</p>
+                    <p className="text-xs text-slate-600">Rate</p>
+                  </div>
+
+                  <div className="rounded-2xl bg-slate-100 space-y-1 p-2">
+                    <p className="text-sm">English</p>
+                    <p className="text-xs text-slate-600">Language</p>
+                  </div>
+
+                  <div className="rounded-2xl bg-slate-100 space-y-1 p-2">
+                    <p className="text-sm line-clamp-1">
+                      OnGraph Technologies Private Limited
+                    </p>
+                    <p className="text-xs text-slate-600">Agency</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-[320px] h-[180px] overflow-hidden relative rounded-md">
+                <Image
+                  src={VideoIntroImg}
+                  alt="Video introduction"
+                  className="w-full h-auto object-contain"
+                />
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <button className="cursor-pointer">
+                    <Image src={PlayIcon} alt="Play" className="size-12" />
+                  </button>
+                </div>
+              </div>
+
+              <p className="text-sm text-slate-600">
+                I help startups and product teams build, fix, and scale mobile
+                apps (iOS, Android, and Flutter), including apps with AI-powered
+                features—ensuring stability, performance, and long-term
+                reliability. With 7+ years of experience and 50+ apps delivered,
+                I’ve worked on production apps used by real users where
+                performance, stability, and user experience directly impact
+                business outcomes. Clients usually come to me when: • Their app
+                is crashing, slow, or unstable in production...{" "}
+                <button className="cursor-pointer text-black underline">
+                  Show more
+                </button>
+              </p>
+            </section>
+
+            <section
+              id="client_feedback"
+              className="border border-slate-300 rounded-3xl p-6 space-y-6"
+            >
+              <h2 className="text-2xl font-medium flex-1">
+                Client feedback (23)
+              </h2>
+
+              <ul className="grid grid-cols-2 gap-6">
+                {clientFeedbacks.slice(0, 2).map((cf) => (
+                  <ClientFeedbackCard key={cf.title} {...cf} />
+                ))}
+              </ul>
+
+              <div className="flex justify-end">
+                <Pagination
+                  currentPage={1}
+                  totalPages={10}
+                  onPageChange={() => {}}
+                />
+              </div>
+            </section>
+          </div>
         </div>
       </DrawerContent>
     </Drawer>

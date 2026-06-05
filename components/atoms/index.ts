@@ -33,3 +33,4 @@ export { default as SearchableGroupDropdown } from "./SearchableGroupDropdown";
 export { default as SearchableDropdown } from "./SearchableDropdown";
 export { default as Pagination } from "./Pagination";
 export { default as Stepper } from "./Stepper";
+export { default as RatingScore } from "./RatingScore";
