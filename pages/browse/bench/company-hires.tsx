@@ -4,23 +4,21 @@ import UserIcon from "@/public/assets/svgs/icons/other/user.svg";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
-export default function MyHires() {
+export default function CompanyHires() {
   const router = useRouter();
 
   return (
     <BenchLayout
       seo={{
-        title: "Your hires - Worklanc",
-        description: "Look up people you've worked with",
-        url: "/browse/bench/my-hires",
+        title: "Company hires - Worklanc",
+        description: "Explore your company's hires",
+        url: "/browse/bench/company-hires",
       }}
     >
       <section className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-medium">Your hires</h1>
-          <p className="text-sm text-slate-600">
-            Look up people you've worked with
-          </p>
+          <h1 className="text-3xl font-medium">Company hires</h1>
+          <p className="text-sm text-slate-600">Explore your company's hires</p>
         </div>
         <Button
           type="primary"
@@ -34,31 +32,35 @@ export default function MyHires() {
         <div className="grid grid-cols-3 gap-6">
           <div className="bg-slate-200 flex flex-col items-center justify-center gap-10 rounded-3xl aspect-square">
             <Image src={UserIcon} alt="User" width={80} height={80} />
-            <p className="text-sm text-slate-600">An absolute lifesaver</p>
+            <p className="text-sm text-slate-600">An idea machine</p>
           </div>
           <div className="bg-slate-200 flex flex-col items-center justify-center gap-10 rounded-3xl aspect-square">
             <Image src={UserIcon} alt="User" width={80} height={80} />
-            <p className="text-sm text-slate-600">A long-term collaborator</p>
+            <p className="text-sm text-slate-600">A pleasure to work with</p>
           </div>
           <div className="bg-slate-200 flex flex-col items-center justify-center gap-10 rounded-3xl aspect-square">
             <Image src={UserIcon} alt="User" width={80} height={80} />
-            <p className="text-sm text-slate-600">Your go-to problem solver</p>
+            <p className="text-sm text-slate-600">Your 5-star favorite</p>
           </div>
         </div>
 
         <p className="text-center text-sm">
-          You haven’t hired anyone yet. Start searching for the right fit for
-          your next project.
+          No one at your company has hired anyone yet. Add teammates to help you
+          hire faster.
         </p>
 
         <div className="flex items-center justify-center">
           <Button
             type="outline"
-            label="Find Talent"
+            label="Add teammates to Company"
             size="medium"
-            icon="mdi:search"
+            icon="mdi:plus"
             classname="py-2.5! px-5! rounded-full! text-sm! font-medium!"
-            onClick={() => router.push("/nx/search/talent")}
+            onClick={() =>
+              router.push(
+                "/nx/org-management/invitations/create?hmh_source=mytalent"
+              )
+            }
           />
         </div>
       </section>
