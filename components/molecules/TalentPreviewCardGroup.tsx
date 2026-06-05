@@ -9,6 +9,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useLayoutEffect, useRef, useState } from "react";
 import AIIcon from "@/public/assets/svgs/icons/other/ai.svg";
 import CompanyLogo from "@/public/assets/jpgs/logos/ongraph.jpg";
+import TalentProfileDrawer from "./TalentProfileDrawer";
 
 const skills = [
   "Java",
@@ -32,6 +33,7 @@ const insights = [
 
 export default function TalentPreviewCardGroup() {
   const listRef = useRef<HTMLLIElement | null>(null);
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="min-w-0 w-full flex-1 space-y-8">
@@ -41,6 +43,7 @@ export default function TalentPreviewCardGroup() {
             ref={listRef}
             key={index}
             className="min-w-0 p-6 hover:bg-slate-100 transition-colors duration-200 border-b border-slate-300 space-y-4 group cursor-pointer"
+            onClick={() => setOpen(true)}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center flex-1 gap-4">
@@ -233,6 +236,8 @@ export default function TalentPreviewCardGroup() {
       <div className="flex items-center justify-center">
         <Pagination totalPages={10} currentPage={1} onPageChange={() => {}} />
       </div>
+
+      <TalentProfileDrawer open={open} onClose={() => setOpen(false)} />
     </div>
   );
 }

@@ -35,3 +35,4 @@ export { default as StripeBillingForm } from "./StripeBillingForm";
 export { default as BillingAddressFields } from "./BillingAddressFields";
 export { default as JobPostsCardGroup } from "./JobPostsCardGroup";
 export { default as TalentPreviewCardGroup } from "./TalentPreviewCardGroup";
+export { default as TalentProfileDrawer } from "./TalentProfileDrawer";
