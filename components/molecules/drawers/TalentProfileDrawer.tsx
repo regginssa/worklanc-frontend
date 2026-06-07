@@ -1,34 +1,34 @@
-import { ArrowLeftIcon, ExternalLink, VerifiedIcon } from "lucide-react";
-import { Drawer, DrawerContent, DrawerHeader } from "../ui/drawer";
+import { ArrowLeftIcon, ExternalLink } from "lucide-react";
+import { Drawer, DrawerContent, DrawerHeader } from "../../ui/drawer";
 import Link from "next/link";
 import Image from "next/image";
 import UserPic from "@/public/assets/webps/avatars/man2.webp";
-import { Button, IconButton, Pagination, TabBar } from "../atoms";
+import { Button, IconButton, Pagination, TabBar } from "../../atoms";
 import { Icon } from "@iconify/react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip";
 import TopRatedPlusIcon from "@/public/assets/svgs/icons/badges/top_rated_plus.svg";
 import { motion } from "motion/react";
-import { Tabs } from "../common";
+import { Tabs } from "../../common";
 import { useCallback, useEffect, useRef, useState } from "react";
 import VideoIntroImg from "@/public/assets/jpgs/video_intro.jpg";
 import PlayIcon from "@/public/assets/svgs/icons/icons/play.svg";
 import AIIcon from "@/public/assets/svgs/icons/other/ai.svg";
 import ClientFeedbackCard, {
   ClientFeedbackCardItem,
-} from "../common/ClientFeedbackCard";
+} from "../../common/ClientFeedbackCard";
 import TalentProfileJobCardGroup, {
   TalentProfileJobCardGroupItem,
-} from "./TalentProfileJobCardGroup";
+} from "../TalentProfileJobCardGroup";
 import TargetArrowIcon from "@/public/assets/svgs/icons/other/target_arrow.svg";
-import SkillsGroup from "./SkillsGroup";
-import PortfolioCardGroup from "./PortfolioCardGroup";
-import { PorfolioCardItem } from "../common/PorfolioCard";
-import EmploymentHistoryItemGroup from "./EmploymentHistoryItemGroup";
-import { EmploymentHistoryItemType } from "../common/EmploymentHistoryItem";
-import CertificationItemGroup from "./CertificationItemGroup";
-import { CertificationItemType } from "../common/CertificationItem";
-import EducationItemGroup from "./EducationItemGroup";
-import { EducationItemType } from "../common/EducationItem";
+import SkillsGroup from "../SkillsGroup";
+import PortfolioCardGroup from "../PortfolioCardGroup";
+import { PorfolioCardItem } from "../../common/PorfolioCard";
+import EmploymentHistoryItemGroup from "../EmploymentHistoryItemGroup";
+import { EmploymentHistoryItemType } from "../../common/EmploymentHistoryItem";
+import CertificationItemGroup from "../CertificationItemGroup";
+import { CertificationItemType } from "../../common/CertificationItem";
+import EducationItemGroup from "../EducationItemGroup";
+import { EducationItemType } from "../../common/EducationItem";
 
 const tabs = [
   { label: "About", value: "about" },

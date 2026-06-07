@@ -35,7 +35,7 @@ export { default as StripeBillingForm } from "./StripeBillingForm";
 export { default as BillingAddressFields } from "./BillingAddressFields";
 export { default as JobPostsCardGroup } from "./JobPostsCardGroup";
 export { default as TalentPreviewCardGroup } from "./TalentPreviewCardGroup";
-export { default as TalentProfileDrawer } from "./TalentProfileDrawer";
+export { default as TalentProfileDrawer } from "./drawers/TalentProfileDrawer";
 export { default as TalentProfileJobCardGroup } from "./TalentProfileJobCardGroup";
 export { default as SkillsGroup } from "./SkillsGroup";
 export { default as PortfolioCardGroup } from "./PortfolioCardGroup";

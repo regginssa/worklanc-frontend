@@ -1,15 +1,14 @@
 import { Icon } from "@iconify/react";
-import { motion } from "motion/react";
 import UserPic from "@/public/assets/webps/avatars/man2.webp";
 import Image from "next/image";
 import TopRatedPlusIcon from "@/public/assets/svgs/icons/badges/top_rated_plus.svg";
 import Link from "next/link";
 import { Button, IconButton, JobSuccessScore, Pagination } from "../atoms";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import AIIcon from "@/public/assets/svgs/icons/other/ai.svg";
 import CompanyLogo from "@/public/assets/jpgs/logos/ongraph.jpg";
-import TalentProfileDrawer from "./TalentProfileDrawer";
+import TalentProfileDrawer from "./drawers/TalentProfileDrawer";
 import SkillsGroup from "./SkillsGroup";
 
 const skills = [
