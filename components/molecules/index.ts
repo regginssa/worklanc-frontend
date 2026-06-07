@@ -43,3 +43,4 @@ export { default as CertificationItemGroup } from "./CertificationItemGroup";
 export { default as EmploymentHistoryItemGroup } from "./EmploymentHistoryItemGroup";
 export { default as EducationItemGroup } from "./EducationItemGroup";
 export { default as RecentlyViewedTalentCardGroup } from "./RecentlyViewedTalentCardGroup";
+export * from "./freelancer-profile";

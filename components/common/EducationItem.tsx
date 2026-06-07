@@ -71,18 +71,22 @@ export default function EducationItem({
 
       {(onEdit || onDelete) && (
         <div className="flex items-center gap-4">
-          <IconButton
-            variant="outline"
-            icon="mdi:pencil-outline"
-            className="p-1!"
-            onClick={onEdit ?? (() => {})}
-          />
-          <IconButton
-            variant="outline"
-            icon="mdi:trash-can-outline"
-            className="p-1!"
-            onClick={onDelete ?? (() => {})}
-          />
+          {onEdit && (
+            <IconButton
+              variant="outline"
+              icon="mdi:pencil-outline"
+              className="p-1!"
+              onClick={onEdit}
+            />
+          )}
+          {onDelete && (
+            <IconButton
+              variant="outline"
+              icon="mdi:trash-can-outline"
+              className="p-1!"
+              onClick={onDelete}
+            />
+          )}
         </div>
       )}
     </div>
