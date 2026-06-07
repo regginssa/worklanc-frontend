@@ -8,13 +8,22 @@ import {
   FreelancerProfileHoursPerWeek,
   FreelancerProfileLanguages,
   FreelancerProfileOverview,
+  FreelancerProfilePortfolioGallery,
   FreelancerProfileSidebarEducation,
+  FreelancerProfileSkillsList,
   FreelancerProfileTitleRate,
   FreelancerProfileVerifications,
+  FreelancerProfileWorkHistoryWorklanc,
 } from "../freelancer-profile";
 import UserPic from "@/public/assets/webps/avatars/man2.webp";
-import { useState } from "react";
 import { Button, IconButton } from "@/components/atoms";
+import {
+  profileDrawerJobHistory,
+  profileDrawerPortfolioItems,
+  profileDrawerSkills,
+  profileDrawerWorkHistorySummary,
+  profileDrawerWorkHistoryTabs,
+} from "./profileDrawerMockData";
 
 export default function FreelancerProfileDrawer({
   open,
@@ -127,7 +136,7 @@ export default function FreelancerProfileDrawer({
               </div>
             </div>
 
-            <div className="flex-1">
+            <div className="flex-1 space-y-6">
               <div className="space-y-6 pb-6 border-b border-slate-300">
                 <FreelancerProfileTitleRate
                   title="Full Stack Developer"
@@ -139,6 +148,28 @@ export default function FreelancerProfileDrawer({
 
                 <FreelancerProfileBookConsultation />
               </div>
+
+              <FreelancerProfileWorkHistoryWorklanc
+                tabs={[
+                  { label: "Completed jobs (2)", value: "completed" },
+                  { label: "In progress (2)", value: "in_progress" },
+                ]}
+                jobs={profileDrawerJobHistory}
+                searchSkills={profileDrawerSkills}
+                matchedSearchSkills={profileDrawerSkills}
+                summary={profileDrawerWorkHistorySummary}
+                summarySkills={profileDrawerSkills.slice(0, 4)}
+              />
+
+              <FreelancerProfilePortfolioGallery
+                title="Portfolio (8)"
+                items={profileDrawerPortfolioItems}
+              />
+
+              <FreelancerProfileSkillsList
+                skills={profileDrawerSkills}
+                max={15}
+              />
             </div>
           </div>
         </div>

@@ -56,5 +56,14 @@ export type {
   FreelancerProfileEducationItem,
   FreelancerProfileSidebarEducationProps,
 } from "./FreelancerProfileSidebarEducation";
+export type {
+  WorkHistoryWorklancTab,
+  FreelancerProfileWorkHistoryWorklancProps,
+} from "./FreelancerProfileWorkHistoryWorklanc";
+export type { FreelancerProfilePortfolioGalleryProps } from "./FreelancerProfilePortfolioGallery";
+export type { FreelancerProfileSkillsListProps } from "./FreelancerProfileSkillsList";
 export { default as FreelancerProfileEarnSummary } from "./FreelancerProfileEarnSummary";
 export { default as FreelancerProfileBookConsultation } from "./FreelancerProfileBookConsultation";
+export { default as FreelancerProfileWorkHistoryWorklanc } from "./FreelancerProfileWorkHistoryWorklanc";
+export { default as FreelancerProfilePortfolioGallery } from "./FreelancerProfilePortfolioGallery";
+export { default as FreelancerProfileSkillsList } from "./FreelancerProfileSkillsList";
