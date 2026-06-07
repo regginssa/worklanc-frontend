@@ -47,12 +47,12 @@ const mainNavs: NavItem[] = [
 const yourLists: NavItem[] = [
   {
     label: "Saved talent",
-    href: "/browse/bench/your-list-1",
+    href: "/browse/bench/all-saves",
     icon: "mdi:heart",
   },
   {
     label: "Saved projects",
-    href: "/browse/bench/your-list-1",
+    href: "/browse/bench/saved-projects",
     icon: "fluent:tag-20-regular",
   },
 ];
