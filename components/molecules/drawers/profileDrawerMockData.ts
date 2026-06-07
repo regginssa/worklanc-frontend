@@ -1,6 +1,7 @@
 import { PorfolioCardItem } from "@/components/common/PorfolioCard";
 import { TalentProfileJobCardGroupItem } from "../TalentProfileJobCardGroup";
 import { WorkHistoryWorklancTab } from "../freelancer-profile";
+import { Certification } from "@/types/user";
 
 export const profileDrawerWorkHistoryTabs: WorkHistoryWorklancTab[] = [
   { label: "Search related (10)", value: "search_related" },
@@ -89,5 +90,30 @@ export const profileDrawerPortfolioItems: PorfolioCardItem[] = [
     title: "Bitcoin Bite",
     img: "https://upwork-usw2-prod-agora-file-storage.s3.us-west-2.amazonaws.com/profile/portfolio/thumbnail/4cb927a50a789ce54ee4d8ad690a9d1b?response-content-disposition=inline%3B%20filename%3D%22image_large%22%3B%20filename%2A%3Dutf-8%27%27image_large&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEKb%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMiJIMEYCIQDVeCqOzWTyrQO0wno6olbDlVFfmj0HoegKdR3qdYaBEgIhAPt3aZMu6g7MaVzk9XMhcjHkpH7Tek42YESUOVu2hSWEKpIFCG8QABoMNzM5OTM5MTczODE5Igxkg6CViOgjYRpVl08q7wSvpW9e%2Btj32SdznAH80cHvuRBOdcF6N3MH99PnUVRClRlml1RDXY%2F1XzXLZ5yjFRZMqouyddn%2F66sBhcz7vdRmF56EqiZ%2FSTulsfCKsMgTSBSMCbzqudSc8zCsGemtHuLI3GB7DjRHvB%2FgE1sf1E0e8HGGuX0hVRC3zi%2Bog6VktoUCSr%2FOFNJqDJWLWokppcYNZblkRcjSbwm7Tq1mkPtSP24yjxZ2ha2Z6I2uhDqkED1P0ubNM8ulp53wPiBpJn19RlMEAPYoytH91v7apuWlj8eXIKSamq2aMuyelx1ESmnIR33FPKxgd0Incm6XUYPGFKz6VwCzUf739KKHDvD8oQDN2fA7v1Jdt8NWcaMNUXkluYycbiAtNRYwI2w1kOzT20LsR25kKhZdmx2wI7sENuqJn1mpXOp8BXAAEVXlu2W8fd%2FWQf5g0rcuPTddroSJ6nSdBV3KOm9SxL5epSTnxsO63ETyebo8H80BBLPTesDDJfyGJ6Ffq5x%2BHRtpFhpXWTFqfVDe52fHtkX5ebG06g8r2xJq20JGSVPgz3gbxzPQ%2Fj0iI5Px3axnTcZTNpaFLbT2FAWsvyvfa4FPHrVXi%2FlaSliF5JivDf%2FBFwli4yNnzzijoCFzGmBJmxmufk7mt2YWJDyh97u7FLMWX8abqx6xJCJMSzCEwSr7ncP1WEN%2BWaIY7oRqt2GmfWa2GVRHEfqw96%2FXDTXWDQCZYNLQoOK5cAv2lmbsIx10fhRNCgxUVQuELUVH4FpDk17rZRco5fewcTH5PJnVNpMxYy0ITSOqGJhMMmIqXl%2FCjTKpdx5AAlef91RF16SlHOBQFzDrr4vRBjqYAdVWO4F%2BMVPIS7%2FSMfNRSFO4bUOOkOfa9t%2F0Vg66zeVCbcj7zDnNtkE5SAshzb35zen3UDgHXnsnXQSwxoG8wuk8ysLAuivulyMahFVDfGMoqmtJPZgbYkzZPuGsgOmpjzk3rKlk%2FdeLHD3WfbY9fnOh%2B6jjNpFNfrR8bUX8B255naoSoDnV3L9go2y8QibEsrbrziuQN4mG&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20260605T145550Z&X-Amz-SignedHeaders=host&X-Amz-Expires=1799&X-Amz-Credential=ASIA2YR6PYW5W36FAYSP%2F20260605%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Signature=8cc1f124a0c0858c728ccfb8679d8866aa44c716d546dfb30e08cef90e1bfe40",
     skills: ["Android", "React Native", "Expo"],
+  },
+];
+
+export const profileDrawerCertifications: Certification[] = [
+  {
+    name: "Fractional CTO | Real-hand experince",
+    provider: "Harvard Online programm",
+    issuedDate: new Date(),
+    expirationDate: null,
+    providerLogo: "",
+    description:
+      "I finished a few harvard programms, business and management related that is a great addition to be 10 years a real experience with development a first class projects",
+    credentialId: "",
+    credentialUrl: "",
+  },
+  {
+    name: "Fractional CTO | Real-hand experince",
+    provider: "LinkedIn Learning",
+    issuedDate: new Date(),
+    expirationDate: null,
+    providerLogo: "",
+    description:
+      "I finished a few harvard programms, business and management related that is a great addition to be 10 years a real experience with development a first class projects",
+    credentialId: "",
+    credentialUrl: "",
   },
 ];

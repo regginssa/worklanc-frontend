@@ -218,6 +218,7 @@ export default function FreelancerProfil() {
       />
 
       <FreelancerProfileCertifications
+        certifications={[]}
         onAdd={() => setCertificationOpen(true)}
         onEmptyAction={() => setCertificationOpen(true)}
       />

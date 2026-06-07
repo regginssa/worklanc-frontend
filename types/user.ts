@@ -43,6 +43,17 @@ export type Education = {
   description: string;
 };
 
+export type Certification = {
+  name: string;
+  provider: string;
+  providerLogo: string | null;
+  issuedDate: Date;
+  expirationDate: Date | null;
+  description: string | null;
+  credentialId: string | null;
+  credentialUrl: string | null;
+};
+
 // A category/subcategory reference (name + slug).
 export interface CategoryRef {
   name: string;
