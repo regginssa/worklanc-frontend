@@ -56,8 +56,8 @@ export default function FreelancerProfileDrawer({
           </div>
         </DrawerHeader>
 
-        <div className="space-y-6 mx-6 p-6 no-scrollbar overflow-y-auto">
-          <div className="space-y-6 border border-slate-300 rounded-3xl">
+        <div className="space-y-6 mx-6 no-scrollbar overflow-y-auto">
+          <div className="space-y-6 border border-slate-300 rounded-3xl py-6 px-8">
             <FreelancerProfileHeader
               name="Marco N."
               avatar={UserPic}
@@ -91,7 +91,7 @@ export default function FreelancerProfileDrawer({
               </div>
             </FreelancerProfileHeader>
 
-            <div className="flex items-start gap-6">
+            <div className="flex items-start gap-8">
               <div className="w-1/3">
                 <div className="border-b border-slate-300 pb-6">
                   <FreelancerProfileEarnSummary
