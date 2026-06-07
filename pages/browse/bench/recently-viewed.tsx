@@ -1,6 +1,10 @@
 import { RecentlyViewedTalentCardItem } from "@/components/common";
 import { BenchLayout } from "@/components/layouts";
-import { RecentlyViewedTalentCardGroup } from "@/components/molecules";
+import {
+  FreelancerProfileDrawer,
+  RecentlyViewedTalentCardGroup,
+} from "@/components/molecules";
+import { useState } from "react";
 
 const recentlyViewedItems: RecentlyViewedTalentCardItem[] = [
   {
@@ -111,6 +115,8 @@ const recentlyViewedItems: RecentlyViewedTalentCardItem[] = [
 ];
 
 export default function RecentlyViewed() {
+  const [viewProfileOpen, setViewProfileOpen] = useState(false);
+
   return (
     <BenchLayout
       seo={{
@@ -124,8 +130,16 @@ export default function RecentlyViewed() {
       </section>
 
       <section>
-        <RecentlyViewedTalentCardGroup items={recentlyViewedItems} />
+        <RecentlyViewedTalentCardGroup
+          items={recentlyViewedItems}
+          onViewProfile={(item) => setViewProfileOpen(true)}
+        />
       </section>
+
+      <FreelancerProfileDrawer
+        open={viewProfileOpen}
+        onClose={() => setViewProfileOpen(false)}
+      />
     </BenchLayout>
   );
 }

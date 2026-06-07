@@ -45,6 +45,7 @@ export type RecentlyViewedTalentCardItem = {
   onHire?: () => void;
   onInvite?: () => void;
   onAddNote?: () => void;
+  onViewProfile?: () => void;
 };
 
 export default function RecentlyViewedTalentCard({
@@ -60,6 +61,7 @@ export default function RecentlyViewedTalentCard({
   onHire,
   onInvite,
   onAddNote,
+  onViewProfile,
 }: RecentlyViewedTalentCardItem) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -85,7 +87,7 @@ export default function RecentlyViewedTalentCard({
   }, [menuOpen]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" onClick={onViewProfile}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Image

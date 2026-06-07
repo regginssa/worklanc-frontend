@@ -16,8 +16,8 @@ export default function FreelancerProfileTitleRate({
   onLink,
 }: FreelancerProfileTitleRateProps) {
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-4">
+    <div className="flex items-center gap-6 justify-between">
+      <div className="flex items-center gap-4 flex-1">
         <h3 className="text-2xl font-medium">{title}</h3>
         {onEditTitle && (
           <IconButton
@@ -30,9 +30,7 @@ export default function FreelancerProfileTitleRate({
       </div>
 
       <div className="flex items-center gap-4">
-        <span className="text-lg font-medium">
-          ${hourlyRate.toFixed(2)}/hr
-        </span>
+        <span className="text-lg font-medium">${hourlyRate.toFixed(2)}/hr</span>
         {onEditRate && (
           <IconButton
             variant="outline"

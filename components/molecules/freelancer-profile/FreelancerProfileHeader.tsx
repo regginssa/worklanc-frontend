@@ -1,8 +1,12 @@
-import { IconButton } from "@/components/atoms";
+import { IconButton, JobSuccessScore } from "@/components/atoms";
 import { Icon } from "@iconify/react";
 import { motion } from "motion/react";
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
+import ShareProfileDialog from "../dialogs/ShareProfileDialog";
+import { useState } from "react";
+import { BadgeIcons, BadgeTitles, IconLabel } from "@/components/common";
+import { TalentBadge } from "@/types/user";
 
 export interface FreelancerProfileHeaderProps {
   name: string;
@@ -12,8 +16,12 @@ export interface FreelancerProfileHeaderProps {
   isOnline?: boolean;
   identityVerified?: boolean;
   verifyIdentityHref?: string;
+  isAvailableNow?: boolean;
+  jobSuccessScore: number;
+  badge: TalentBadge;
+  className?: string;
   onEditAvatar?: () => void;
-  onShare?: () => void;
+  isSharable?: boolean;
   children?: React.ReactNode;
 }
 
@@ -24,13 +32,19 @@ export default function FreelancerProfileHeader({
   localTime,
   isOnline = false,
   identityVerified = false,
-  verifyIdentityHref = "#",
+  verifyIdentityHref,
+  isAvailableNow,
+  jobSuccessScore,
+  badge,
+  className,
   onEditAvatar,
-  onShare,
+  isSharable,
   children,
 }: FreelancerProfileHeaderProps) {
+  const [shareOpen, setShareOpen] = useState(false);
+
   return (
-    <div className="p-8 border-b border-slate-300">
+    <div className={`p-8 border-b border-slate-300 ${className}`}>
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
           <div className="relative h-[96px] w-[96px]">
@@ -61,9 +75,14 @@ export default function FreelancerProfileHeader({
                     icon="solar:verified-check-bold-duotone"
                     className="h-6 w-6 text-slate-400"
                   />
-                  <Link href={verifyIdentityHref} className="text-sm underline">
-                    Verify your identity
-                  </Link>
+                  {verifyIdentityHref && (
+                    <Link
+                      href={verifyIdentityHref}
+                      className="text-sm underline"
+                    >
+                      Verify your identity
+                    </Link>
+                  )}
                 </div>
               )}
             </div>
@@ -77,25 +96,60 @@ export default function FreelancerProfileHeader({
                 {localTime ? ` – ${localTime}` : ""}
               </span>
             </div>
+
+            {isAvailableNow && (
+              <IconLabel icon="si:lightning-line" label="Available Now" />
+            )}
+            {(jobSuccessScore > 0 || badge !== "NONE") && (
+              <div className="flex items-center gap-4">
+                {badge !== "NONE" && (
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src={BadgeIcons[badge]}
+                      alt={badge}
+                      width={32}
+                      height={32}
+                    />
+                    <span className="font-medium uppercase text-sm">
+                      {BadgeTitles[badge]}
+                    </span>
+                  </div>
+                )}
+                {jobSuccessScore > 0 && (
+                  <div className="flex items-center gap-2">
+                    <JobSuccessScore value={jobSuccessScore} />
+                    <span className="text-sm font-medium">
+                      {jobSuccessScore}% Job Success
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
         {children}
       </div>
 
-      {onShare && (
+      {isSharable && (
         <div className="flex justify-end">
           <motion.button
             whileTap={{ scale: 0.95 }}
             type="button"
             className="flex cursor-pointer items-center gap-2 text-blue-600 transition-all duration-200 hover:text-blue-500"
-            onClick={onShare}
+            onClick={() => setShareOpen(true)}
           >
             <span className="text-sm font-medium">Share</span>
             <Icon icon="mdi:ios-share" className="h-5 w-5" />
           </motion.button>
         </div>
       )}
+
+      <ShareProfileDialog
+        url="https://www.worklanc.com/freelancers/1"
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+      />
     </div>
   );
 }

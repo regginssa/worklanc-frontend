@@ -7,8 +7,10 @@ import {
 
 export default function RecentlyViewedTalentCardGroup({
   items,
+  onViewProfile,
 }: {
   items: RecentlyViewedTalentCardItem[];
+  onViewProfile?: (item: RecentlyViewedTalentCardItem) => void;
 }) {
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
@@ -18,6 +20,10 @@ export default function RecentlyViewedTalentCardGroup({
     { label: "25 at a time", value: 25 },
     { label: "50 at a time", value: 50 },
   ];
+
+  const handleViewProfile = (item: RecentlyViewedTalentCardItem) => {
+    onViewProfile?.(item);
+  };
 
   return (
     <div className="space-y-10">
@@ -29,7 +35,10 @@ export default function RecentlyViewedTalentCardGroup({
               index === 0 ? "border-t" : ""
             }`}
           >
-            <RecentlyViewedTalentCard {...item} />
+            <RecentlyViewedTalentCard
+              {...item}
+              onViewProfile={() => handleViewProfile(item)}
+            />
           </li>
         ))}
       </ul>

@@ -1,4 +1,5 @@
 import { IconButton } from "@/components/atoms";
+import { CollapsableText } from "@/components/common";
 
 export interface FreelancerProfileOverviewProps {
   overview: string;
@@ -11,7 +12,7 @@ export default function FreelancerProfileOverview({
 }: FreelancerProfileOverviewProps) {
   return (
     <div className="flex items-start gap-8">
-      <p className="text-sm">{overview}</p>
+      <CollapsableText text={overview} maxLength={500} />
       {onEdit && (
         <IconButton
           variant="outline"

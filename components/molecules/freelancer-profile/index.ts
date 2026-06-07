@@ -56,3 +56,5 @@ export type {
   FreelancerProfileEducationItem,
   FreelancerProfileSidebarEducationProps,
 } from "./FreelancerProfileSidebarEducation";
+export { default as FreelancerProfileEarnSummary } from "./FreelancerProfileEarnSummary";
+export { default as FreelancerProfileBookConsultation } from "./FreelancerProfileBookConsultation";

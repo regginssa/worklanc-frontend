@@ -28,7 +28,6 @@ import {
   HourlyRateDialog,
   OtherExperienceDialog,
   ProfileOverviewDialog,
-  ShareProfileDialog,
   TestimonialDialog,
   TitleDialog,
 } from "@/components/molecules";
@@ -37,7 +36,6 @@ import { Education, Employment } from "@/types/user";
 
 export default function FreelancerProfil() {
   const [portfolioTabIdx, setPortfolioTabIdx] = useState(0);
-  const [shareOpen, setShareOpen] = useState(false);
   const [titleOpen, setTitleOpen] = useState(false);
   const [rateOpen, setRateOpen] = useState(false);
   const [overviewOpen, setOverviewOpen] = useState(false);
@@ -66,8 +64,11 @@ export default function FreelancerProfil() {
           isOnline
           location="London, United Kingdom"
           localTime="10:42 am local time"
+          jobSuccessScore={80}
+          badge="TOP_RATED_PLUS"
+          isAvailableNow
           onEditAvatar={() => {}}
-          onShare={() => setShareOpen(true)}
+          isSharable
         >
           <div className="flex items-center gap-4">
             <Button
@@ -116,9 +117,7 @@ export default function FreelancerProfil() {
               />
 
               <FreelancerProfileLanguages
-                languages={[
-                  { name: "English", level: "Native or Bilingual" },
-                ]}
+                languages={[{ name: "English", level: "Native or Bilingual" }]}
                 onAdd={() => {}}
                 onEdit={() => {}}
               />
@@ -243,12 +242,6 @@ export default function FreelancerProfil() {
       <FreelancerProfileOtherExperiences
         onAdd={() => setOtherExperienceOpen(true)}
         onEmptyAction={() => setOtherExperienceOpen(true)}
-      />
-
-      <ShareProfileDialog
-        url="https://www.worklanc.com/freelancers/1"
-        open={shareOpen}
-        onClose={() => setShareOpen(false)}
       />
 
       <EmploymentDialog
