@@ -8,3 +8,6 @@ export { default as EmploymentHistoryItem } from "./EmploymentHistoryItem";
 export { default as CertificationItem } from "./CertificationItem";
 export { default as TalentDiscoverItem } from "./TalentDiscoverItem";
 export { BadgeIcons, BadgeTitles } from "./TalentBadges";
+export { default as CollapsableText } from "./CollapsableText";
+export { default as RecentlyViewedTalentCard } from "./RecentlyViewedTalentCard";
+export type { RecentlyViewedTalentCardItem } from "./RecentlyViewedTalentCard";

@@ -13,12 +13,12 @@ interface DropdownProps {
   placeholder?: string;
   icon?: string;
   options: string[] | DropdownOption[];
-  value: string;
+  value: any;
   labelClassName?: string;
   classname?: string;
   error?: string;
   disabled?: boolean;
-  onSelect: (value: string) => void;
+  onSelect: (value: any) => void;
 }
 
 function normalizeOptions(
@@ -144,7 +144,9 @@ export default function Dropdown({
                       ) : (
                         <div className="w-[14px]" />
                       )}
-                      <span className="min-w-0 flex-1 truncate">{option.label}</span>
+                      <span className="min-w-0 flex-1 truncate">
+                        {option.label}
+                      </span>
                     </li>
                   );
                 })

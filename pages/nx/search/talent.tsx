@@ -60,8 +60,6 @@ export default function SearchTalent() {
     keyword: false,
   });
 
-  const locationOptions = makeLocationOptions();
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchFormData({ ...searchFormData, [e.target.name]: e.target.value });
   };

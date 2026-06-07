@@ -106,7 +106,7 @@ export default function ClientHeader() {
         heading: "Find freelancers",
         items: [
           { label: "Post a job", href: "#" },
-          { label: "Search for talent", href: "#" },
+          { label: "Search for talent", href: "/nx/search/talent" },
           { label: "Talent you've hired", href: "/browse/bench/my-hires" },
           { label: "Talent you've saved", href: "#" },
           { label: "Direct contracts", href: "#" },
