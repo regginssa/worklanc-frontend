@@ -28,7 +28,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { MOCK_SKILLS, type MockSkill } from "@/static/data/mock-skills";
-import { Education, Employment, Language, LanguageLevel } from "@/types/user";
+import {
+  Education,
+  EmploymentFormInput,
+  Language,
+  LanguageLevel,
+} from "@/types/user";
 import { formatMonthYear } from "@/utils/df";
 import { Icon } from "@iconify/react";
 import { countries, languages as countryLanguages } from "country-data-list";
@@ -76,13 +81,11 @@ type LanguageDraft = {
   level: LanguageLevel | "";
 };
 
-const createEmptyExperience = (): Employment => ({
+const createEmptyExperience = (): EmploymentFormInput => ({
   title: "",
   company: "",
-  location: {
-    city: "",
-    country: "",
-  },
+  city: "",
+  country: "",
   isCurrent: false,
   startedAt: new Date(),
   endAt: new Date(),
@@ -93,14 +96,13 @@ const createEmptyEducation = (): Education => ({
   school: "",
   degree: "",
   fieldOfStudy: "",
-  startedAt: null,
-  endAt: null,
+  startedYear: null,
+  endYear: null,
   description: "",
 });
 
-const cloneExperience = (experience: Employment): Employment => ({
+const cloneExperience = (experience: EmploymentFormInput): EmploymentFormInput => ({
   ...experience,
-  location: { ...experience.location },
   startedAt: new Date(experience.startedAt),
   endAt: new Date(experience.endAt),
 });
@@ -168,9 +170,9 @@ export default function Submit() {
   const [skillError, setSkillError] = useState<string | null>(null);
   const [skillsOpen, setSkillsOpen] = useState(false);
 
-  const [workHistory, setWorkHistory] = useState<Employment[]>([]);
+  const [workHistory, setWorkHistory] = useState<EmploymentFormInput[]>([]);
   const [employmentOpen, setEmploymentOpen] = useState(false);
-  const [employmentDraft, setEmploymentDraft] = useState<Employment>(
+  const [employmentDraft, setEmploymentDraft] = useState<EmploymentFormInput>(
     createEmptyExperience()
   );
   const [employmentEditingIndex, setEmploymentEditingIndex] = useState<
@@ -254,7 +256,8 @@ export default function Submit() {
         profile.employment.map((item: any) => ({
           title: item.title || "",
           company: item.company || "",
-          location: { city: item.city || "", country: item.country || "" },
+          city: item.city || "",
+          country: item.country || "",
           isCurrent: Boolean(item.isCurrent),
           startedAt: item.startedAt ? new Date(item.startedAt) : new Date(),
           endAt: item.endAt ? new Date(item.endAt) : new Date(),
@@ -268,8 +271,8 @@ export default function Submit() {
           school: item.school || "",
           degree: item.degree || "",
           fieldOfStudy: item.fieldOfStudy || "",
-          startedAt: item.startedYear ?? null,
-          endAt: item.endYear ?? null,
+          startedYear: item.startedYear ?? null,
+          endYear: item.endYear ?? null,
           description: item.description || "",
         }))
       );
@@ -1027,7 +1030,7 @@ export default function Submit() {
                           : formatMonthYear(work.endAt)}
                       </p>
                       <p className="text-sm text-slate-600 mt-1">
-                        {work.location.city}, {work.location.country}
+                        {work.city}, {work.country}
                       </p>
                       <p className="text-sm line-clamp-3 mt-2">
                         {work.description}
@@ -1076,7 +1079,7 @@ export default function Submit() {
                       </h5>
                       <p className="text-sm text-slate-600">
                         {education.degree}, {education.fieldOfStudy}{" "}
-                        {education.startedAt} - {education.endAt}
+                        {education.startedYear} - {education.endYear}
                       </p>
                       <p className="text-sm line-clamp-3 mt-2">
                         {education.description}
@@ -1573,14 +1576,11 @@ export default function Submit() {
                     placeholder="Ex: London"
                     labelClassName="text-sm font-medium"
                     required
-                    value={employmentDraft.location.city}
+                    value={employmentDraft.city}
                     onChange={(e) =>
                       setEmploymentDraft({
                         ...employmentDraft,
-                        location: {
-                          ...employmentDraft.location,
-                          city: e.target.value,
-                        },
+                        city: e.target.value,
                       })
                     }
                   />
@@ -1590,14 +1590,11 @@ export default function Submit() {
                     name="country"
                     placeholder="Country"
                     options={countries.all.map((country) => country.name)}
-                    defaultOption={employmentDraft.location.country}
+                    defaultOption={employmentDraft.country}
                     onSelect={(value: string) =>
                       setEmploymentDraft({
                         ...employmentDraft,
-                        location: {
-                          ...employmentDraft.location,
-                          country: value,
-                        },
+                        country: value,
                       })
                     }
                   />
@@ -1741,7 +1738,7 @@ export default function Submit() {
               <div className="flex items-center gap-6 mt-1">
                 <Dropdown
                   placeholder="From"
-                  name="startedAt"
+                  name="startedYear"
                   options={Array.from(
                     { length: 20 },
                     (_, index) => index + 2005
@@ -1749,18 +1746,18 @@ export default function Submit() {
                     label: year.toString(),
                     value: year.toString(),
                   }))}
-                  value={educationDraft.startedAt?.toString() || ""}
+                  value={educationDraft.startedYear?.toString() || ""}
                   onSelect={(value: string) =>
                     setEducationDraft({
                       ...educationDraft,
-                      startedAt: Number(value),
+                      startedYear: Number(value),
                     })
                   }
                 />
 
                 <Dropdown
                   placeholder="To (or expected graduation year)"
-                  name="endAt"
+                  name="endYear"
                   options={Array.from(
                     { length: 20 },
                     (_, index) => index + 2005
@@ -1768,11 +1765,11 @@ export default function Submit() {
                     label: year.toString(),
                     value: year.toString(),
                   }))}
-                  value={educationDraft.endAt?.toString() || ""}
+                  value={educationDraft.endYear?.toString() || ""}
                   onSelect={(value: string) =>
                     setEducationDraft({
                       ...educationDraft,
-                      endAt: Number(value),
+                      endYear: Number(value),
                     })
                   }
                 />
@@ -1783,7 +1780,7 @@ export default function Submit() {
               name="description"
               label="Description"
               labelClassName="text-sm font-medium"
-              value={educationDraft.description}
+              value={educationDraft.description ?? ""}
               onChange={(e) =>
                 setEducationDraft({
                   ...educationDraft,

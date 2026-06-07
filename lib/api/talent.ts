@@ -1,35 +1,39 @@
 import { request } from "./client";
-import type { TalentProfile, LanguageLevel } from "@/types/user";
+import type {
+  EmploymentFormInput,
+  LanguageLevel,
+  TalentEducation,
+  TalentProfile,
+} from "@/types/user";
 
-// Flattened wire shapes the backend expects (children are sent as plain arrays
-// the controller maps onto its child tables).
-export interface EmploymentInput {
-  title: string;
-  company: string;
-  city?: string;
-  country?: string;
+/** Wire shape for `talent_employment` rows sent to the API. */
+export type EmploymentInput = Pick<
+  EmploymentFormInput,
+  "title" | "company" | "isCurrent" | "description"
+> & {
+  city?: string | null;
+  country?: string | null;
   startedAt?: Date | string | null;
   endAt?: Date | string | null;
-  isCurrent?: boolean;
-  description?: string;
-}
+};
 
-export interface EducationInput {
-  school: string;
-  degree?: string;
-  fieldOfStudy?: string;
-  startedYear?: number | null;
-  endYear?: number | null;
-  description?: string;
-}
+/** Wire shape for `talent_education` rows sent to the API. */
+export type EducationInput = Pick<
+  TalentEducation,
+  | "school"
+  | "degree"
+  | "fieldOfStudy"
+  | "startedYear"
+  | "endYear"
+  | "description"
+>;
 
 export interface LanguageInput {
   name: string;
   level: LanguageLevel;
 }
 
-// Patch payload for an onboarding step: any subset of profile scalar fields,
-// plus children and the onboarding-progress controls handled on the account.
+/** Patch payload for an onboarding step or profile update. */
 export type TalentProfilePatch = Partial<
   Pick<
     TalentProfile,
@@ -43,6 +47,9 @@ export type TalentProfilePatch = Partial<
     | "projectPreference"
     | "photoUrl"
     | "importSource"
+    | "videoIntroUrl"
+    | "hoursPerWeek"
+    | "openToContractToHire"
   >
 > & {
   categorySlug?: string | null;

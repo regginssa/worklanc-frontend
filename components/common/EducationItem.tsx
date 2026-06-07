@@ -7,8 +7,8 @@ export type EducationItemType = {
   school: string;
   degree: string;
   fieldOfStudy: string;
-  startedAt: number | null;
-  endAt?: number | null;
+  startedYear: number | null;
+  endYear?: number | null;
   description?: string;
   isCurrent?: boolean;
   onEdit?: () => void;
@@ -19,8 +19,8 @@ export default function EducationItem({
   school,
   degree,
   fieldOfStudy,
-  startedAt,
-  endAt,
+  startedYear,
+  endYear,
   description,
   isCurrent,
   onEdit,
@@ -42,7 +42,7 @@ export default function EducationItem({
           {degree}, {fieldOfStudy}
         </p>
         <p className="text-slate-600">
-          {startedAt} - {isCurrent ? "Present" : endAt}
+          {startedYear} - {isCurrent ? "Present" : endYear}
         </p>
         {description && (
           <p className="text-slate-600 line-clamp-3 mt-2">

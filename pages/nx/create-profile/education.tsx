@@ -32,8 +32,8 @@ export default function ProfileEducation() {
     school: "",
     degree: "",
     fieldOfStudy: "",
-    startedAt: null,
-    endAt: null,
+    startedYear: null,
+    endYear: null,
     description: "",
   });
   const [open, setOpen] = useState(false);
@@ -51,8 +51,8 @@ export default function ProfileEducation() {
           school: item.school || "",
           degree: item.degree || "",
           fieldOfStudy: item.fieldOfStudy || "",
-          startedAt: item.startedYear ?? null,
-          endAt: item.endYear ?? null,
+          startedYear: item.startedYear ?? null,
+          endYear: item.endYear ?? null,
           description: item.description || "",
         }))
       );
@@ -66,8 +66,8 @@ export default function ProfileEducation() {
           school: education.school,
           degree: education.degree,
           fieldOfStudy: education.fieldOfStudy,
-          startedYear: education.startedAt,
-          endYear: education.endAt,
+          startedYear: education.startedYear,
+          endYear: education.endYear,
           description: education.description,
         })),
       },
@@ -92,8 +92,8 @@ export default function ProfileEducation() {
       school: "",
       degree: "",
       fieldOfStudy: "",
-      startedAt: null,
-      endAt: null,
+      startedYear: null,
+      endYear: null,
       description: "",
     });
     setOpen(false);
@@ -150,7 +150,7 @@ export default function ProfileEducation() {
                             {education.degree}, {education.fieldOfStudy}
                           </p>
                           <p className="">
-                            {education.startedAt} - {education.endAt}
+                            {education.startedYear} - {education.endYear}
                           </p>
                         </div>
 
@@ -281,31 +281,31 @@ export default function ProfileEducation() {
               <div className="flex items-center gap-6 mt-1">
                 <Dropdown
                   placeholder="From"
-                  name="startedAt"
+                  name="startedYear"
                   options={Array.from({ length: 20 }, (_, i) => i + 2005).map(
                     (year) => ({
                       label: year.toString(),
                       value: year.toString(),
                     })
                   )}
-                  value={formData.startedAt?.toString() || ""}
+                  value={formData.startedYear?.toString() || ""}
                   onSelect={(v: string) =>
-                    setFormData({ ...formData, startedAt: Number(v) })
+                    setFormData({ ...formData, startedYear: Number(v) })
                   }
                 />
 
                 <Dropdown
                   placeholder="To (or expected graduation year)"
-                  name="endAt"
+                  name="endYear"
                   options={Array.from({ length: 20 }, (_, i) => i + 2005).map(
                     (year) => ({
                       label: year.toString(),
                       value: year.toString(),
                     })
                   )}
-                  value={formData.endAt?.toString() || ""}
+                  value={formData.endYear?.toString() || ""}
                   onSelect={(v: string) =>
-                    setFormData({ ...formData, endAt: Number(v) })
+                    setFormData({ ...formData, endYear: Number(v) })
                   }
                 />
               </div>
@@ -315,7 +315,7 @@ export default function ProfileEducation() {
               name="description"
               label="Description"
               labelClassName="text-sm font-medium"
-              value={formData.description}
+              value={formData.description ?? ""}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setFormData({ ...formData, description: e.target.value })
               }

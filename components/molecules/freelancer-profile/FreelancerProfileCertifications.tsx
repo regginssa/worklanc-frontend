@@ -43,9 +43,9 @@ export default function FreelancerProfileCertifications({
               className="flex items-start gap-10 py-6"
             >
               <div className="size-20 relative">
-                {certification.providerLogo ? (
+                {certification.providerLogoUrl ? (
                   <Image
-                    src={certification.providerLogo}
+                    src={certification.providerLogoUrl}
                     alt={certification.provider}
                     width={80}
                     height={80}
@@ -68,11 +68,12 @@ export default function FreelancerProfileCertifications({
                   Provider: {certification.provider}
                 </p>
                 <p className="text-sm text-slate-600">
-                  Issued: {formatMonthYear(certification.issuedDate)}
+                  Issued: {formatMonthYear(new Date(certification.issuedDate))}
                 </p>
                 {certification.expirationDate && (
                   <p className="text-sm text-slate-600">
-                    Expiration: {formatMonthYear(certification.expirationDate)}
+                    Expiration:{" "}
+                    {formatMonthYear(new Date(certification.expirationDate))}
                   </p>
                 )}
                 {expandedCertification === index ? (

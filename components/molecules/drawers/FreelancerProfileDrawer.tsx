@@ -131,8 +131,8 @@ export default function FreelancerProfileDrawer({
                         school: "University of London",
                         degree: "Bachelor of Accountancy (BAcc)",
                         fieldOfStudy: "Economics",
-                        startedAt: 2018,
-                        endAt: 2022,
+                        startedYear: 2018,
+                        endYear: 2022,
                       },
                     ]}
                   />

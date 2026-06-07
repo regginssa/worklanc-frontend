@@ -112,15 +112,15 @@ const educationHistory: EducationItemType[] = [
     school: "University of London",
     degree: "Bachelor of Science",
     fieldOfStudy: "Computer Science",
-    startedAt: 2020,
-    endAt: 2024,
+    startedYear: 2020,
+    endYear: 2024,
   },
   {
     school: "University of London",
     degree: "Bachelor of Science",
     fieldOfStudy: "Computer Science",
-    startedAt: 2020,
-    endAt: 2024,
+    startedYear: 2020,
+    endYear: 2024,
   },
 ];
 

@@ -97,9 +97,9 @@ export const profileDrawerCertifications: Certification[] = [
   {
     name: "Fractional CTO | Real-hand experince",
     provider: "Harvard Online programm",
-    issuedDate: new Date(),
+    issuedDate: "2024-01-01",
     expirationDate: null,
-    providerLogo: "",
+    providerLogoUrl: "",
     description:
       "I finished a few harvard programms, business and management related that is a great addition to be 10 years a real experience with development a first class projects",
     credentialId: "",
@@ -108,9 +108,9 @@ export const profileDrawerCertifications: Certification[] = [
   {
     name: "Fractional CTO | Real-hand experince",
     provider: "LinkedIn Learning",
-    issuedDate: new Date(),
+    issuedDate: "2024-01-01",
     expirationDate: null,
-    providerLogo: "",
+    providerLogoUrl: "",
     description:
       "I finished a few harvard programms, business and management related that is a great addition to be 10 years a real experience with development a first class projects",
     credentialId: "",

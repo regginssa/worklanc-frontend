@@ -76,31 +76,31 @@ export default function EducationDialog({
             <div className="flex items-center gap-6 mt-1">
               <Dropdown
                 placeholder="From"
-                name="startedAt"
+                name="startedYear"
                 options={Array.from({ length: 20 }, (_, i) => i + 2005).map(
                   (year) => ({
                     label: year.toString(),
                     value: year.toString(),
                   })
                 )}
-                value={formData?.startedAt?.toString() || ""}
+                value={formData?.startedYear?.toString() || ""}
                 onSelect={(v: string) =>
-                  onChangeFormData({ ...formData, startedAt: Number(v) })
+                  onChangeFormData({ ...formData, startedYear: Number(v) })
                 }
               />
 
               <Dropdown
                 placeholder="To (or expected graduation year)"
-                name="endAt"
+                name="endYear"
                 options={Array.from({ length: 20 }, (_, i) => i + 2005).map(
                   (year) => ({
                     label: year.toString(),
                     value: year.toString(),
                   })
                 )}
-                value={formData?.endAt?.toString() || ""}
+                value={formData?.endYear?.toString() || ""}
                 onSelect={(v: string) =>
-                  onChangeFormData({ ...formData, endAt: Number(v) })
+                  onChangeFormData({ ...formData, endYear: Number(v) })
                 }
               />
             </div>
@@ -110,7 +110,7 @@ export default function EducationDialog({
             name="description"
             label="Description"
             labelClassName="text-sm font-medium"
-            value={formData?.description}
+            value={formData?.description ?? ""}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
               onChangeFormData({ ...formData, description: e.target.value })
             }

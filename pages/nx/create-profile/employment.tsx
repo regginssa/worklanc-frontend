@@ -19,7 +19,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
-import type { Employment } from "@/types/user";
+import type { EmploymentFormInput } from "@/types/user";
 import {
   Dialog,
   DialogClose,
@@ -35,14 +35,12 @@ import Image from "next/image";
 import { formatMonthYear } from "@/utils/df";
 
 export default function Employment() {
-  const [experiences, setExperiences] = useState<Employment[]>([]);
-  const [formData, setFormData] = useState<Employment>({
+  const [experiences, setExperiences] = useState<EmploymentFormInput[]>([]);
+  const [formData, setFormData] = useState<EmploymentFormInput>({
     title: "",
     company: "",
-    location: {
-      city: "",
-      country: "",
-    },
+    city: "",
+    country: "",
     isCurrent: false,
     startedAt: new Date(),
     endAt: new Date(),
@@ -62,10 +60,8 @@ export default function Employment() {
         profile.employment.map((item: any) => ({
           title: item.title || "",
           company: item.company || "",
-          location: {
-            city: item.city || "",
-            country: item.country || "",
-          },
+          city: item.city || "",
+          country: item.country || "",
           isCurrent: Boolean(item.isCurrent),
           startedAt: item.startedAt ? new Date(item.startedAt) : new Date(),
           endAt: item.endAt ? new Date(item.endAt) : new Date(),
@@ -81,8 +77,8 @@ export default function Employment() {
         employment: experiences.map((experience) => ({
           title: experience.title,
           company: experience.company,
-          city: experience.location.city,
-          country: experience.location.country,
+          city: experience.city,
+          country: experience.country,
           startedAt: experience.startedAt,
           endAt: experience.endAt,
           isCurrent: experience.isCurrent,
@@ -101,10 +97,8 @@ export default function Employment() {
     setFormData({
       title: "",
       company: "",
-      location: {
-        city: "",
-        country: "",
-      },
+      city: "",
+      country: "",
       isCurrent: false,
       startedAt: new Date(),
       endAt: new Date(),
@@ -167,8 +161,7 @@ export default function Employment() {
                               : ` - ${formatMonthYear(experience.endAt)}`}
                           </p>
                           <p className="text-slate-600">
-                            {experience.location.city},{" "}
-                            {experience.location.country}
+                            {experience.city}, {experience.country}
                           </p>
                         </div>
                         <p className="text-slate-600 line-clamp-3 text-sm">
@@ -288,14 +281,11 @@ export default function Employment() {
                     placeholder="Ex: London"
                     labelClassName="text-sm font-medium"
                     required
-                    value={formData.location.city}
+                    value={formData.city}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setFormData({
                         ...formData,
-                        location: {
-                          ...formData.location,
-                          city: e.target.value,
-                        },
+                        city: e.target.value,
                       })
                     }
                   />
@@ -305,11 +295,11 @@ export default function Employment() {
                     name="country"
                     placeholder="Country"
                     options={countries.all.map((c) => c.name)}
-                    defaultOption={formData.location.country}
+                    defaultOption={formData.country}
                     onSelect={(v: string) =>
                       setFormData({
                         ...formData,
-                        location: { ...formData.location, country: v },
+                        country: v,
                       })
                     }
                   />
