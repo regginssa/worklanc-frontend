@@ -1,10 +1,7 @@
 import { useEffect, useRef } from "react";
-import { WorklancLogo } from "../atoms";
+import { UserAvatar, WorklancLogo } from "../atoms";
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "motion/react";
-import Image from "next/image";
-import { useQuery } from "@tanstack/react-query";
-import TalentAPI from "@/lib/api/talent";
 import { useAppSelector } from "@/store/hooks";
 
 export default function CreateProfileHeader({
@@ -17,18 +14,10 @@ export default function CreateProfileHeader({
   const menuRef = useRef<HTMLDivElement>(null);
   const { user } = useAppSelector((state) => state.user);
 
-  const { data } = useQuery({
-    queryKey: ["talent-profile"],
-    queryFn: TalentAPI.getProfile,
-  });
-  const photoUrl: string | null = data?.profile?.photoUrl ?? null;
-  console.log("talent data: ", data);
-
   const fullName = user
     ? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim()
     : "";
 
-  // Close the dropdown when clicking anywhere outside of it.
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -39,25 +28,6 @@ export default function CreateProfileHeader({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [setOpen]);
 
-  const renderAvatar = (size: number) =>
-    photoUrl ? (
-      <Image
-        src={photoUrl}
-        alt={fullName || "Profile photo"}
-        width={size}
-        height={size}
-        unoptimized
-        className="rounded-full object-cover"
-        style={{ width: size, height: size }}
-      />
-    ) : (
-      <Icon
-        icon="material-symbols-light:account-circle-outline"
-        width={size}
-        height={size}
-      />
-    );
-
   return (
     <header className="w-full max-w-[80%] mx-auto p-6 flex items-center justify-between bg-white">
       <WorklancLogo />
@@ -66,7 +36,7 @@ export default function CreateProfileHeader({
           className="cursor-pointer flex items-center"
           onClick={() => setOpen(!open)}
         >
-          {renderAvatar(32)}
+          <UserAvatar avatarUrl={user?.avatarUrl} alt={fullName || "User"} size={32} />
         </button>
 
         <AnimatePresence>
@@ -79,7 +49,7 @@ export default function CreateProfileHeader({
               className="absolute bg-white top-full w-[240px] right-0 max-h-72 overflow-y-auto z-40 mt-1 shadow-md p-1 rounded-lg border border-slate-200 flex flex-col"
             >
               <div className="flex flex-col items-center justify-center pt-6 pb-4">
-                {renderAvatar(100)}
+                <UserAvatar avatarUrl={user?.avatarUrl} alt={fullName || "User"} size={100} />
                 <div className="mt-2 text-center">
                   <h3>{fullName || "Your profile"}</h3>
                   <p className="text-xs text-slate-600">Freelancer</p>

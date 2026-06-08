@@ -4,11 +4,11 @@ import { WorklancLogo } from "../atoms";
 import { HeaderSearch } from "../molecules";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import UserPic from "@/public/assets/webps/avatars/man2.webp";
-import Image from "next/image";
+import { UserAvatar } from "../atoms";
 import { Switch } from "../ui/switch";
 import { LucideBell, LucideCircleQuestionMark } from "lucide-react";
 import { useRouter } from "next/router";
+import { useAppSelector } from "@/store/hooks";
 
 type NavLink = {
   label: string;
@@ -76,6 +76,11 @@ export default function ClientHeader() {
   const [open, setOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const router = useRouter();
+  const { user } = useAppSelector((state) => state.user);
+
+  const fullName = user
+    ? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim()
+    : "User";
 
   useEffect(() => {
     if (!open) return;
@@ -209,7 +214,7 @@ export default function ClientHeader() {
             className="cursor-pointer"
             onClick={() => setOpen((prev) => !prev)}
           >
-            <Image src={UserPic} alt="User" width={32} height={32} />
+            <UserAvatar avatarUrl={user?.avatarUrl} alt={fullName} size={32} />
 
             <AnimatePresence>
               {open && (
@@ -225,10 +230,10 @@ export default function ClientHeader() {
                       className="flex items-center gap-2 p-4 hover:bg-slate-100 cursor-pointer"
                       onClick={() => router.push("/nx/client-info")}
                     >
-                      <Image
-                        src={UserPic}
-                        alt="User"
-                        className="w-10 h-10 rounded-full object-cover"
+                      <UserAvatar
+                        avatarUrl={user?.avatarUrl}
+                        alt={fullName}
+                        size={40}
                       />
                       <div className="flex flex-col items-start">
                         <h3 className="text-sm font-medium">Jhon Smthi</h3>

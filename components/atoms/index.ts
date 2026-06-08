@@ -1,6 +1,7 @@
 export { default as Accordion } from "./Accordion";
 export { default as Autocomplete } from "./Autocomplete";
 export { default as Avatar } from "./Avatar";
+export { default as UserAvatar } from "./UserAvatar";
 export { default as AvatarGroup } from "./AvatarGroup";
 export { default as Badge } from "./Badge";
 export { default as Button } from "./Button";
