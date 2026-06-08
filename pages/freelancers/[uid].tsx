@@ -732,10 +732,7 @@ export default function FreelancerProfilePage() {
         {(profile.otherExperiences ?? []).length > 0 ? (
           <ul className="space-y-4 py-6">
             {(profile.otherExperiences ?? []).map((item) => (
-              <li
-                key={item.uid || item.subject}
-                className="rounded-xl border border-slate-200 p-4"
-              >
+              <li key={item.uid || item.subject} className="p-4">
                 <h4 className="font-medium">{item.subject}</h4>
                 {item.description && (
                   <p className="mt-2 text-sm text-slate-700">
