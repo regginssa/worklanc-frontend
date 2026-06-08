@@ -24,6 +24,8 @@ interface AutoCompleteProps {
   loading?: boolean;
   noResultsText?: string;
   maxResults?: number;
+  /** When false, options are shown as returned (for remote search). Default true. */
+  filterOptionsLocally?: boolean;
   multiple?: boolean;
   selectedValues?: string[];
   onChange: (value: string) => void;
@@ -49,6 +51,7 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({
   disabled,
   noResultsText = "No results found",
   maxResults = 10,
+  filterOptionsLocally = true,
   multiple = false,
   selectedValues = [],
   onSelectedChange,
@@ -57,6 +60,10 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({
   const rootRef = useRef<HTMLDivElement>(null);
 
   const filteredOptions = useMemo(() => {
+    if (!filterOptionsLocally) {
+      return options.slice(0, maxResults);
+    }
+
     const query = value.trim().toLowerCase();
     const list = query
       ? options.filter((option) =>
@@ -65,7 +72,7 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({
       : options;
 
     return list.slice(0, maxResults);
-  }, [value, options, maxResults]);
+  }, [value, options, maxResults, filterOptionsLocally]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

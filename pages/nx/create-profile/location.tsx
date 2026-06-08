@@ -32,6 +32,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setUser } from "@/store/slices/userSlice";
 import { useOnboarding } from "@/hooks/useOnboarding";
 import { useQueryClient } from "@tanstack/react-query";
+import { StreetAddressAutoComplete } from "@/components/molecules";
 
 const EDITOR_PREVIEW_SIZE = 300;
 
@@ -458,8 +459,14 @@ export default function Location() {
           <Button
             type="outline"
             size="medium"
-            label={formData?.photo || savedPhotoUrl ? "Edit photo" : "Upload photo"}
-            icon={formData?.photo || savedPhotoUrl ? "mdi:pencil-outline" : "mdi:plus"}
+            label={
+              formData?.photo || savedPhotoUrl ? "Edit photo" : "Upload photo"
+            }
+            icon={
+              formData?.photo || savedPhotoUrl
+                ? "mdi:pencil-outline"
+                : "mdi:plus"
+            }
             classname="font-medium! text-sm! py-1.5! px-5! rounded-full!"
             onClick={() => setAvatarOpen(true)}
           />
@@ -494,16 +501,32 @@ export default function Location() {
           />
 
           <div className="flex items-center gap-6">
-            <Input
-              type="text"
-              name="address"
+            <StreetAddressAutoComplete
               label="Street address"
               labelClassName="text-sm font-medium"
               placeholder="Enter street address"
               classname="w-2/3"
               required
               value={formData.address}
-              onChange={handleInputChange}
+              countryCode={
+                countries.all.find((c) => c.name === formData.country)?.alpha2
+              }
+              onChange={(streetAddress) =>
+                setFormData((prev: any) => ({
+                  ...prev,
+                  address: streetAddress,
+                }))
+              }
+              onAddressSelect={(details) =>
+                setFormData((prev: any) => ({
+                  ...prev,
+                  address: details.streetAddress,
+                  city: details.city || prev.city,
+                  state: details.state || prev.state,
+                  zip: details.zip || prev.zip,
+                  country: details.country || prev.country,
+                }))
+              }
             />
 
             <Input

@@ -46,3 +46,5 @@ export { default as RecentlyViewedTalentCardGroup } from "./RecentlyViewedTalent
 export * from "./freelancer-profile";
 export { default as FreelancerProfileDrawer } from "./drawers/FreelancerProfileDrawer";
 export { default as MilitaryVeteranDialog } from "./dialogs/MilitaryVeteranDialog";
+export { default as StreetAddressAutoComplete } from "./StreetAddressAutoComplete";
+export type { StreetAddressDetails } from "./StreetAddressAutoComplete";

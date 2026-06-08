@@ -137,6 +137,7 @@ const SearchCombobox: React.FC<SearchComboboxProps> = ({
                   onClick={() => {
                     onSelect(option);
                     setOpen(false);
+                    setSearch("");
                   }}
                 >
                   {option === defaultOption ? (

@@ -1,6 +1,6 @@
 import { Icon } from "@iconify/react";
 import Link from "next/link";
-import { IconButton, WorklancLogo } from "../atoms";
+import { WorklancLogo } from "../atoms";
 import { HeaderSearch } from "../molecules";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
