@@ -27,20 +27,13 @@ import { Slider } from "@/components/ui/slider";
 import { Move } from "lucide-react";
 import AuthAPI from "@/lib/api/auth";
 import TalentAPI from "@/lib/api/talent";
+import UploadAPI, { resolveMediaAssetUrl } from "@/lib/api/upload";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setUser } from "@/store/slices/userSlice";
 import { useOnboarding } from "@/hooks/useOnboarding";
 import { useQueryClient } from "@tanstack/react-query";
 
 const EDITOR_PREVIEW_SIZE = 300;
-
-const fileToDataUrl = (file: File) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
 
 export default function Location() {
   const [formData, setFormData] = useState<any>({
@@ -99,10 +92,12 @@ export default function Location() {
   }, [user]);
 
   useEffect(() => {
-    if (!profile || photoSeeded.current) return;
+    if (photoSeeded.current) return;
+    const storedAvatar = user?.avatarUrl || profile?.photoUrl;
+    if (!storedAvatar) return;
     photoSeeded.current = true;
-    if (profile.photoUrl) setSavedPhotoUrl(profile.photoUrl);
-  }, [profile]);
+    setSavedPhotoUrl(resolveMediaAssetUrl(storedAvatar));
+  }, [user, profile]);
 
   const handleNext = async () => {
     setSavingNext(true);
@@ -110,6 +105,21 @@ export default function Location() {
       const alpha2 = countries.all.find(
         (c) => c.name === formData.country
       )?.alpha2;
+
+      let avatarEncryptedUrl: string | undefined;
+
+      if (formData.photo) {
+        const croppedPhoto = previewUrl
+          ? (await buildEditedPhoto()) ?? formData.photo
+          : formData.photo;
+
+        const uploadResult = await UploadAPI.upload(croppedPhoto, "avatar");
+        if (!uploadResult?.encryptedUrl) {
+          setSavingNext(false);
+          return;
+        }
+        avatarEncryptedUrl = uploadResult.encryptedUrl;
+      }
 
       const userRes = await AuthAPI.updateMe({
         dateOfBirth: formData.birthday || undefined,
@@ -120,15 +130,12 @@ export default function Location() {
         state: formData.state || undefined,
         zipCode: formData.zip || undefined,
         phone: formData.phone || undefined,
+        ...(avatarEncryptedUrl ? { avatarUrl: avatarEncryptedUrl } : {}),
       });
-
-      const photoUrl = formData.photo
-        ? await fileToDataUrl(formData.photo)
-        : undefined;
 
       const tpRes = await TalentAPI.updateProfile({
         onboardingStep: "/nx/create-profile/submit",
-        ...(photoUrl ? { photoUrl } : {}),
+        ...(avatarEncryptedUrl ? { photoUrl: avatarEncryptedUrl } : {}),
       });
 
       if (tpRes?.profile) {

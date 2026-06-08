@@ -39,6 +39,8 @@ export interface User {
   idVerified: boolean;
   /** Null when the user has not declared veteran status yet. */
   isMilitaryVeteran: boolean | null;
+  /** Encrypted S3 token — use resolveMediaAssetUrl() to display. */
+  avatarUrl: string | null;
   dateOfBirth: ISODateString | null;
   streetAddress: string | null;
   aptSuite: string | null;
