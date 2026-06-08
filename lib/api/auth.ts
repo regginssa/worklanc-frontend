@@ -30,6 +30,30 @@ const AuthAPI = {
       method: "PATCH",
       body: JSON.stringify(body),
     }),
+
+  logout: async () => {
+    const token = getAuthToken();
+    if (!token) {
+      return { ok: true };
+    }
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/logout`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        }
+      );
+
+      return { ok: res.ok };
+    } catch {
+      return { ok: false };
+    }
+  },
 };
 
 export const TOKEN_KEY = "Authenticate-Token";

@@ -9,6 +9,7 @@ import { Switch } from "../ui/switch";
 import { LucideBell, LucideCircleQuestionMark } from "lucide-react";
 import { useRouter } from "next/router";
 import { useAppSelector } from "@/store/hooks";
+import { useLogout } from "@/hooks/useLogout";
 
 type NavLink = {
   label: string;
@@ -77,6 +78,7 @@ export default function ClientHeader() {
   const headerRef = useRef<HTMLElement>(null);
   const router = useRouter();
   const { user } = useAppSelector((state) => state.user);
+  const logout = useLogout();
 
   const fullName = user
     ? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim()
@@ -264,18 +266,32 @@ export default function ClientHeader() {
                   </div>
 
                   <ul className="py-1">
-                    {profileNavs.map((nav, index) => (
+                    {profileNavs.map((nav) => (
                       <li
                         key={nav.label}
                         className="px-4 py-2 rounded-md hover:bg-slate-100 cursor-pointer"
                       >
-                        <Link
-                          href={nav.href}
-                          className="flex items-center gap-4"
-                        >
-                          <Icon icon={nav.icon} className="w-5 h-5" />
-                          <span className="text-sm">{nav.label}</span>
-                        </Link>
+                        {nav.label === "Log out" ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setOpen(false);
+                              void logout();
+                            }}
+                            className="flex w-full items-center gap-4"
+                          >
+                            <Icon icon={nav.icon} className="w-5 h-5" />
+                            <span className="text-sm">{nav.label}</span>
+                          </button>
+                        ) : (
+                          <Link
+                            href={nav.href}
+                            className="flex items-center gap-4"
+                          >
+                            <Icon icon={nav.icon} className="w-5 h-5" />
+                            <span className="text-sm">{nav.label}</span>
+                          </Link>
+                        )}
                       </li>
                     ))}
                   </ul>

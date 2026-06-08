@@ -10,6 +10,7 @@ import { LucideBell, LucideCircleQuestionMark } from "lucide-react";
 import { useAppSelector } from "@/store/hooks";
 import { useQuery } from "@tanstack/react-query";
 import TalentAPI from "@/lib/api/talent";
+import { useLogout } from "@/hooks/useLogout";
 
 type NavLink = {
   label: string;
@@ -77,6 +78,7 @@ export default function AuthorizedHeader() {
   const [open, setOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const { user } = useAppSelector((state) => state.user);
+  const logout = useLogout();
 
   const fullName = user
     ? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim()
@@ -306,13 +308,17 @@ export default function AuthorizedHeader() {
                       key={profileNavs[6].label}
                       className="px-4 py-2 rounded-md hover:bg-slate-100 cursor-pointer"
                     >
-                      <Link
-                        href={profileNavs[6].href}
-                        className="flex items-center gap-4"
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setOpen(false);
+                          void logout();
+                        }}
+                        className="flex w-full items-center gap-4"
                       >
                         <Icon icon={profileNavs[6].icon} className="w-5 h-5" />
                         <span className="text-sm">{profileNavs[6].label}</span>
-                      </Link>
+                      </button>
                     </li>
                   </ul>
                 </motion.ul>

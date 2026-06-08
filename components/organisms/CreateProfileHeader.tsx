@@ -3,6 +3,7 @@ import { UserAvatar, WorklancLogo } from "../atoms";
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "motion/react";
 import { useAppSelector } from "@/store/hooks";
+import { useLogout } from "@/hooks/useLogout";
 
 export default function CreateProfileHeader({
   open,
@@ -13,6 +14,7 @@ export default function CreateProfileHeader({
 }) {
   const menuRef = useRef<HTMLDivElement>(null);
   const { user } = useAppSelector((state) => state.user);
+  const logout = useLogout();
 
   const fullName = user
     ? `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim()
@@ -64,7 +66,14 @@ export default function CreateProfileHeader({
                   />
                   <span className="text-xs">Close account</span>
                 </button>
-                <button className="py-2 px-4 transition-all duration-200 hover:bg-slate-200 cursor-pointer w-full rounded-md flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    void logout();
+                  }}
+                  className="py-2 px-4 transition-all duration-200 hover:bg-slate-200 cursor-pointer w-full rounded-md flex items-center gap-4"
+                >
                   <Icon icon="material-symbols-light:logout" width={24} />
                   <span className="text-xs">Log out</span>
                 </button>
