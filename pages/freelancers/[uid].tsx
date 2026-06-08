@@ -13,7 +13,6 @@ import {
   FreelancerProfileHeader,
   FreelancerProfileHoursPerWeek,
   FreelancerProfileLanguages,
-  FreelancerProfileLicenses,
   FreelancerProfileOtherExperiences,
   FreelancerProfileOverview,
   FreelancerProfilePortfolio,
@@ -53,6 +52,7 @@ import { resolveMediaAssetUrl } from "@/lib/api/upload";
 import {
   buildLanguagesPayload,
   buildMilitaryVeteranPayload,
+  buildTestimonialRequestPayload,
   toMilitaryVeteranForm,
   removeCertificationAt,
   removeEducationAt,
@@ -141,6 +141,7 @@ export default function FreelancerProfilePage() {
     saveCertifications,
     saveOtherExperiences,
     saveSkills,
+    saveTestimonialRequest,
     saveMilitaryVeteran,
     employmentItems,
     educationItems,
@@ -169,8 +170,9 @@ export default function FreelancerProfilePage() {
   const [videoIntroOpen, setVideoIntroOpen] = useState(false);
   const [availabilityDraft, setAvailabilityDraft] =
     useState<AvailabilityFormData>(emptyAvailabilityForm());
-  const [videoIntroDraft, setVideoIntroDraft] =
-    useState<VideoIntroFormData>(emptyVideoIntroForm());
+  const [videoIntroDraft, setVideoIntroDraft] = useState<VideoIntroFormData>(
+    emptyVideoIntroForm()
+  );
 
   const [titleDraft, setTitleDraft] = useState("");
   const [overviewDraft, setOverviewDraft] = useState("");
@@ -260,7 +262,7 @@ export default function FreelancerProfilePage() {
 
   const hoursLabel = formatHoursPerWeekLabel(profile?.hoursPerWeek);
   const contractPreference = formatContractToHirePreference(
-    profile?.openToContractToHire,
+    profile?.openToContractToHire
   );
 
   const ownerActions = canEdit
@@ -529,8 +531,8 @@ export default function FreelancerProfilePage() {
                           value: freelancer.militaryVeteranDeclined
                             ? "Prefer not to say"
                             : freelancer.isMilitaryVeteran == null
-                              ? ""
-                              : "No",
+                            ? ""
+                            : "No",
                           onAdd:
                             canEdit &&
                             freelancer.isMilitaryVeteran == null &&
@@ -546,7 +548,9 @@ export default function FreelancerProfilePage() {
                     ? {
                         countryCode:
                           freelancer.militaryService?.countryCode ?? "US",
-                        onEdit: canEdit ? openMilitaryVeteranEditDialog : undefined,
+                        onEdit: canEdit
+                          ? openMilitaryVeteranEditDialog
+                          : undefined,
                         deleteLoading: removingMilitaryVeteran,
                         onRemove: canEdit
                           ? async () => {
@@ -561,10 +565,6 @@ export default function FreelancerProfilePage() {
                       }
                     : undefined
                 }
-              />
-
-              <FreelancerProfileLicenses
-                onAdd={canEdit ? () => {} : undefined}
               />
 
               <FreelancerProfileSidebarEducation
@@ -669,16 +669,16 @@ export default function FreelancerProfilePage() {
       </div>
 
       <FreelancerProfileTestimonials
+        testimonials={profile.testimonials ?? []}
         onAdd={canEdit ? () => setTestimonialOpen(true) : undefined}
+        onRequestNew={canEdit ? () => setTestimonialOpen(true) : undefined}
         onEmptyAction={canEdit ? () => setTestimonialOpen(true) : undefined}
       />
 
       <FreelancerProfileCertifications
         items={(profile.certifications ?? []).map((certification, index) => ({
           ...certification,
-          onEdit: canEdit
-            ? () => openCertificationDialog(index)
-            : undefined,
+          onEdit: canEdit ? () => openCertificationDialog(index) : undefined,
           deleteLoading: removingCertificationIndex === index,
           onRemove: canEdit
             ? async () => {
@@ -694,7 +694,9 @@ export default function FreelancerProfilePage() {
             : undefined,
         }))}
         onAdd={canEdit ? () => openCertificationDialog(null) : undefined}
-        onEmptyAction={canEdit ? () => openCertificationDialog(null) : undefined}
+        onEmptyAction={
+          canEdit ? () => openCertificationDialog(null) : undefined
+        }
       />
 
       <FreelancerProfileEmploymentHistory
@@ -759,7 +761,10 @@ export default function FreelancerProfilePage() {
           setMilitaryVeteranErrors({});
         }}
         onSave={async (step) => {
-          const result = validateMilitaryVeteranForm(militaryVeteranDraft, step);
+          const result = validateMilitaryVeteranForm(
+            militaryVeteranDraft,
+            step
+          );
           setMilitaryVeteranErrors(result.errors);
           if (!result.isValid) return "stay";
 
@@ -821,7 +826,7 @@ export default function FreelancerProfilePage() {
 
           await saveAvailability(
             availabilityDraft.hoursPerWeek,
-            availabilityDraft.openToContractToHire,
+            availabilityDraft.openToContractToHire
           );
           setAvailabilityOpen(false);
         }}
@@ -937,7 +942,13 @@ export default function FreelancerProfilePage() {
       <TestimonialDialog
         open={testimonialOpen}
         onClose={() => setTestimonialOpen(false)}
-        onRequest={() => setTestimonialOpen(false)}
+        loading={saving}
+        onSave={async (formData) => {
+          await saveTestimonialRequest(
+            buildTestimonialRequestPayload(formData)
+          );
+          setTestimonialOpen(false);
+        }}
       />
 
       <CertificationDialog
@@ -1068,6 +1079,7 @@ export default function FreelancerProfilePage() {
             <AtomButton
               type="primary"
               label="Save skills"
+              classname="py-2! px-4! rounded-full! text-sm! font-medium!"
               loading={saving}
               onClick={async () => {
                 const result = validateSkillsForm(skillDrafts);

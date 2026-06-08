@@ -35,11 +35,7 @@ export type PortfolioAssetType =
   | "text"
   | "link"
   | "audio";
-export type TestimonialStatus =
-  | "pending"
-  | "submitted"
-  | "verified"
-  | "declined";
+export type TestimonialStatus = "pending" | "confirmed" | "declined";
 
 /** UI-only badge; not stored in the database yet. */
 export type TalentBadge =

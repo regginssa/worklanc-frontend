@@ -7,6 +7,7 @@ import TalentAPI, {
   type FreelancerProfileResponse,
   type LanguageInput,
   type TalentProfilePatch,
+  type TestimonialRequestInput,
 } from "@/lib/api/talent";
 import AuthAPI from "@/lib/api/auth";
 import type { CertificationFormData } from "@/components/molecules/dialogs/CertificationDialog";
@@ -235,6 +236,34 @@ export function useFreelancerProfilePage(uid?: string) {
     [patchProfile]
   );
 
+  const saveTestimonialRequest = useCallback(
+    async (request: TestimonialRequestInput) => {
+      if (!canEdit) return null;
+      setSaving(true);
+      try {
+        const res = await TalentAPI.updateProfile({ testimonialRequest: request });
+        if (res?.profile) {
+          setData((current) =>
+            current
+              ? {
+                  ...current,
+                  profile: res.profile,
+                }
+              : null
+          );
+          queryClient.setQueryData(["talent-profile"], {
+            profile: res.profile,
+            account: res.account ?? null,
+          });
+        }
+        return res;
+      } finally {
+        setSaving(false);
+      }
+    },
+    [canEdit, queryClient]
+  );
+
   const saveMilitaryVeteran = useCallback(
     async (payload: MilitaryVeteranSavePayload) => {
       if (!canEdit) return null;
@@ -285,6 +314,7 @@ export function useFreelancerProfilePage(uid?: string) {
     saveCertifications,
     saveOtherExperiences,
     saveSkills,
+    saveTestimonialRequest,
     saveMilitaryVeteran,
     employmentItems,
     educationItems,
@@ -507,6 +537,26 @@ export function toMilitaryVeteranForm(
       ? new Date(service.activeDutyEndDate)
       : null,
     branch: service.branch,
+  };
+}
+
+export function buildTestimonialRequestPayload(form: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  linkedinUrl: string;
+  title: string;
+  projectType: string;
+  message: string;
+}): TestimonialRequestInput {
+  return {
+    clientFirstName: form.firstName.trim(),
+    clientLastName: form.lastName.trim(),
+    clientEmail: form.email.trim(),
+    clientLinkedinUrl: form.linkedinUrl.trim(),
+    clientTitle: form.title.trim() || null,
+    projectType: form.projectType.trim() || null,
+    requestMessage: form.message.trim(),
   };
 }
 

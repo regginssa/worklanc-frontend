@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TestimonialIcon from "@/public/assets/svgs/icons/other/testinimal.svg";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
@@ -14,27 +14,48 @@ import {
   type TestimonialFormErrors,
 } from "@/utils/validateFreelancerProfileForms";
 
+export type TestimonialFormData = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  linkedinUrl: string;
+  title: string;
+  projectType: string;
+  message: string;
+};
+
+export const emptyTestimonialForm = (): TestimonialFormData => ({
+  firstName: "",
+  lastName: "",
+  email: "",
+  linkedinUrl: "",
+  title: "",
+  projectType: "",
+  message: "",
+});
+
 export default function TestimonialDialog({
   open,
   onClose,
-  onRequest,
+  onSave,
   loading = false,
 }: {
   open: boolean;
   onClose: () => void;
-  onRequest: () => void;
+  onSave: (formData: TestimonialFormData) => void;
   loading?: boolean;
 }) {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    linkedinUrl: "",
-    title: "",
-    projectType: "",
-    message: "",
-  });
+  const [formData, setFormData] = useState<TestimonialFormData>(
+    emptyTestimonialForm()
+  );
   const [errors, setErrors] = useState<TestimonialFormErrors>({});
+
+  useEffect(() => {
+    if (!open) {
+      setFormData(emptyTestimonialForm());
+      setErrors({});
+    }
+  }, [open]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -48,7 +69,7 @@ export default function TestimonialDialog({
     const result = validateTestimonialForm(formData);
     setErrors(result.errors);
     if (!result.isValid) return;
-    onRequest();
+    onSave(formData);
   };
 
   return (
@@ -61,7 +82,7 @@ export default function TestimonialDialog({
         </DialogHeader>
 
         <div className="px-4 pb-4 no-scrollbar max-h-[60vh] flex items-stretch gap-6 overflow-y-auto">
-          <form className="space-y-6 w-2/3">
+          <form className="w-2/3 space-y-6">
             <p className="text-sm text-slate-600">
               Add your client’s contact details. Don’t worry—we’ll only display
               their first name and last initial.
@@ -156,7 +177,7 @@ export default function TestimonialDialog({
             />
           </form>
 
-          <div className="flex-1 bg-slate-100 rounded-xl space-y-6 flex flex-col items-center justify-center p-4">
+          <div className="flex flex-1 flex-col items-center justify-center space-y-6 rounded-xl bg-slate-100 p-4">
             <Image
               src={TestimonialIcon}
               alt="Testimonial"
@@ -169,7 +190,7 @@ export default function TestimonialDialog({
 
             <ul className="space-y-6">
               <li className="flex items-start gap-2">
-                <Icon icon="mdi:check" className="w-5 h-5 text-blue-600" />
+                <Icon icon="mdi:check" className="h-5 w-5 text-blue-600" />
                 <span className="text-sm">
                   Showcase your skills and successes from clients outside of
                   Worklanc
@@ -177,7 +198,7 @@ export default function TestimonialDialog({
               </li>
 
               <li className="flex items-start gap-2">
-                <Icon icon="mdi:check" className="w-5 h-5 text-blue-600" />
+                <Icon icon="mdi:check" className="h-5 w-5 text-blue-600" />
                 <span className="text-sm">
                   Your clients will get an email with instructions for
                   submitting your success story
@@ -185,10 +206,10 @@ export default function TestimonialDialog({
               </li>
 
               <li className="flex items-start gap-2">
-                <Icon icon="mdi:check" className="w-5 h-5 text-blue-600" />
+                <Icon icon="mdi:check" className="h-5 w-5 text-blue-600" />
                 <span className="text-sm">
-                  The testimonial will display on your profile once it's
-                  verified by Worklanc.
+                  The testimonial will display on your profile once it&apos;s
+                  confirmed by the client.
                 </span>
               </li>
             </ul>

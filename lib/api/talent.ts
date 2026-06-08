@@ -6,6 +6,7 @@ import type {
   OtherExperience,
   TalentEducation,
   TalentProfile,
+  Testimonial,
 } from "@/types/user";
 
 export type PublicFreelancer = {
@@ -120,9 +121,23 @@ export type TalentProfilePatch = Partial<
     OtherExperience,
     "id" | "uid" | "createdAt" | "updatedAt" | "sortOrder"
   >[];
+  testimonialRequest?: Omit<
+    Testimonial,
+    | "id"
+    | "uid"
+    | "status"
+    | "testimonialText"
+    | "createdAt"
+    | "updatedAt"
+    | "sortOrder"
+  >;
   onboardingStep?: string | null;
   onboardingCompleted?: boolean;
 };
+
+export type TestimonialRequestInput = NonNullable<
+  TalentProfilePatch["testimonialRequest"]
+>;
 
 const TalentAPI = {
   getProfile: async () => await request("/talent/profile", { method: "GET" }),

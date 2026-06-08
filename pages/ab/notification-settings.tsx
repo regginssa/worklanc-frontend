@@ -4,7 +4,7 @@ import {
   ClientSettingsLayout,
   FreelancerSettingsLayout,
 } from "@/components/layouts";
-import { CheckBoxGroup } from "@/components/molecules";
+import CheckBoxGroup from "@/components/molecules/CheckBoxGroup";
 import { useState } from "react";
 
 export default function NotificationSettings() {
