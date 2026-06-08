@@ -5,14 +5,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import MedalIcon from "@/public/assets/svgs/icons/other/medal.svg";
 import Image from "next/image";
-import { Icon } from "@iconify/react";
 import {
   Button,
   DatePicker,
@@ -21,10 +15,10 @@ import {
   RadioGroup,
   SearchCombobox,
 } from "@/components/atoms";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { countries } from "country-data-list";
 
-const branchOptions = [
+export const MILITARY_BRANCH_OPTIONS = [
   { label: "Army & Ground forces", value: "army_and_ground_forces" },
   {
     label: "Navy, Coast Guard and Marine forces",
@@ -32,41 +26,95 @@ const branchOptions = [
   },
   { label: "Air Force", value: "air_force" },
   { label: "Space Force", value: "space_force" },
-];
+] as const;
+
+export type MilitaryVeteranFormStatus =
+  | "served"
+  | "not_served"
+  | "dont_want_to_disclose";
+
+export type MilitaryVeteranFormData = {
+  status: MilitaryVeteranFormStatus;
+  country: string;
+  countryCode: string;
+  firstName: string;
+  lastName: string;
+  activeDutyStartDate: Date | null;
+  activeDutyEndDate: Date | null;
+  branch: string;
+};
+
+const countryCodeFromName = (countryName: string) =>
+  countries.all.find((country) => country.name === countryName)?.alpha2 || "US";
+
+export const emptyMilitaryVeteranForm = (): MilitaryVeteranFormData => ({
+  status: "served",
+  country: "United States",
+  countryCode: "US",
+  firstName: "",
+  lastName: "",
+  activeDutyStartDate: new Date(),
+  activeDutyEndDate: new Date(),
+  branch: "",
+});
+
+export type MilitaryVeteranFormErrors = {
+  status?: string;
+  country?: string;
+  firstName?: string;
+  lastName?: string;
+  activeDutyStartDate?: string;
+  activeDutyEndDate?: string;
+  branch?: string;
+};
 
 export default function MilitaryVeteranDialog({
   open,
   onClose,
-  onSubmit,
+  onSave,
   loading = false,
+  startAtServiceForm = false,
+  isEditing = false,
+  formData,
+  onChangeFormData,
+  errors = {},
 }: {
   open: boolean;
   onClose: () => void;
-  onSubmit?: () => void;
+  onSave: (
+    step: "selection" | "service"
+  ) => Promise<"close" | "stay" | "advance"> | "close" | "stay" | "advance";
   loading?: boolean;
+  startAtServiceForm?: boolean;
+  isEditing?: boolean;
+  formData: MilitaryVeteranFormData;
+  onChangeFormData: (data: MilitaryVeteranFormData) => void;
+  errors?: MilitaryVeteranFormErrors;
 }) {
-  const [formData, setFormData] = useState({
-    status: "served",
-    country: "United States",
-    firstName: "",
-    lastName: "",
-    activeDutyStartDate: new Date(),
-    activeDutyEndDate: new Date(),
-    branch: "",
-  });
   const [isNext, setIsNext] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (!open) {
+      setIsNext(false);
+      return;
+    }
+    setIsNext(startAtServiceForm);
+  }, [open, startAtServiceForm]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (isNext) {
-      onSubmit?.();
-    } else {
+    const step = isNext ? "service" : "selection";
+    const outcome = await onSave(step);
+
+    if (outcome === "close") {
+      onClose();
+    } else if (outcome === "advance") {
       setIsNext(true);
     }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    onChangeFormData({ ...formData, [e.target.name]: e.target.value });
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -74,7 +122,9 @@ export default function MilitaryVeteranDialog({
         {isNext && (
           <DialogHeader className="px-4 pt-6">
             <DialogTitle className="text-3xl">
-              Add your military service history
+              {isEditing
+                ? "Edit your military service history"
+                : "Add your military service history"}
             </DialogTitle>
             <DialogDescription>
               Please ensure the details below match your official service
@@ -89,11 +139,11 @@ export default function MilitaryVeteranDialog({
           }`}
         >
           {!isNext && (
-            <div className="w-2/5 flex flex-col items-center justify-center">
+            <div className="flex w-2/5 flex-col items-center justify-center">
               <Image
                 src={MedalIcon}
                 alt="Medal"
-                className="w-[140px] h-[130px]"
+                className="h-[130px] w-[140px]"
               />
             </div>
           )}
@@ -104,7 +154,7 @@ export default function MilitaryVeteranDialog({
                   Tell us about your military service history.
                 </h1>
 
-                <p className="text-sm text-slate-800 inline-block">
+                <p className="inline-block text-sm text-slate-800">
                   Looking for a way to stand out from the crowd? Military
                   veterans are routinely sought after by clients who are looking
                   to increase their engagement with the veteran business
@@ -125,18 +175,30 @@ export default function MilitaryVeteranDialog({
                     ]}
                     value={formData.status}
                     onChange={(value) =>
-                      setFormData({ ...formData, status: value })
+                      onChangeFormData({
+                        ...formData,
+                        status: value as MilitaryVeteranFormStatus,
+                      })
                     }
                   />
 
-                  <SearchCombobox
-                    name="country"
-                    options={countries.all.map((c) => c.name)}
-                    defaultOption={formData?.country}
-                    onSelect={(v: string) =>
-                      setFormData({ ...formData, country: v })
-                    }
-                  />
+                  {formData.status === "served" && (
+                    <SearchCombobox
+                      name="country"
+                      options={countries.all.map((c) => c.name)}
+                      defaultOption={formData.country}
+                      onSelect={(value: string) =>
+                        onChangeFormData({
+                          ...formData,
+                          country: value,
+                          countryCode: countryCodeFromName(value),
+                        })
+                      }
+                    />
+                  )}
+                  {errors.country && (
+                    <p className="text-sm text-red-600">{errors.country}</p>
+                  )}
 
                   <RadioGroup
                     options={[
@@ -151,12 +213,37 @@ export default function MilitaryVeteranDialog({
                     ]}
                     value={formData.status}
                     onChange={(value) =>
-                      setFormData({ ...formData, status: value })
+                      onChangeFormData({
+                        ...formData,
+                        status: value as MilitaryVeteranFormStatus,
+                      })
                     }
                   />
+                  {errors.status && (
+                    <p className="text-sm text-red-600">{errors.status}</p>
+                  )}
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-8">
+                  {isEditing && (
+                    <div className="col-span-2">
+                      <SearchCombobox
+                        name="country"
+                        label="Country"
+                        labelClassName="text-sm! font-medium! mb-1! block!"
+                        options={countries.all.map((country) => country.name)}
+                        defaultOption={formData.country}
+                        onSelect={(value: string) =>
+                          onChangeFormData({
+                            ...formData,
+                            country: value,
+                            countryCode: countryCodeFromName(value),
+                          })
+                        }
+                        error={errors.country}
+                      />
+                    </div>
+                  )}
                   <Input
                     type="text"
                     name="firstName"
@@ -165,6 +252,7 @@ export default function MilitaryVeteranDialog({
                     placeholder="Enter first name"
                     value={formData.firstName}
                     onChange={handleInputChange}
+                    error={errors.firstName}
                   />
                   <Input
                     type="text"
@@ -174,6 +262,7 @@ export default function MilitaryVeteranDialog({
                     placeholder="Enter last name"
                     value={formData.lastName}
                     onChange={handleInputChange}
+                    error={errors.lastName}
                   />
                   <DatePicker
                     name="activeDutyStartDate"
@@ -181,11 +270,12 @@ export default function MilitaryVeteranDialog({
                     labelClassName="text-sm! font-medium! mb-1! block!"
                     value={formData.activeDutyStartDate}
                     onChange={(date: Date) =>
-                      setFormData({
+                      onChangeFormData({
                         ...formData,
-                        activeDutyStartDate: date as any,
+                        activeDutyStartDate: date,
                       })
                     }
+                    error={errors.activeDutyStartDate}
                   />
                   <DatePicker
                     name="activeDutyEndDate"
@@ -193,30 +283,34 @@ export default function MilitaryVeteranDialog({
                     labelClassName="text-sm! font-medium! mb-1! block!"
                     value={formData.activeDutyEndDate}
                     onChange={(date: Date) =>
-                      setFormData({
+                      onChangeFormData({
                         ...formData,
-                        activeDutyEndDate: date as any,
+                        activeDutyEndDate: date,
                       })
                     }
+                    error={errors.activeDutyEndDate}
                   />
                   <Dropdown
                     name="branch"
                     label="Service Branch"
                     placeholder="Select branch"
                     labelClassName="text-sm! font-medium! mb-1! block!"
-                    options={branchOptions}
+                    options={[...MILITARY_BRANCH_OPTIONS]}
                     value={formData.branch}
-                    onSelect={(v) => setFormData({ ...formData, branch: v })}
+                    onSelect={(value) =>
+                      onChangeFormData({ ...formData, branch: value })
+                    }
+                    error={errors.branch}
                   />
                 </div>
               )}
 
-              <div className="flex items-center justify-end gap-2 mt-10">
+              <div className="mt-10 flex items-center justify-end gap-2">
                 <button
                   type="button"
-                  className="text-sm font-medium cursor-pointer py-2 px-4 hover:underline"
+                  className="cursor-pointer px-4 py-2 text-sm font-medium hover:underline"
                   onClick={() => {
-                    if (isNext) {
+                    if (isNext && !startAtServiceForm) {
                       setIsNext(false);
                     } else {
                       onClose();
@@ -229,7 +323,7 @@ export default function MilitaryVeteranDialog({
                   type="primary"
                   label={isNext ? "Save" : "Next"}
                   isSubmit
-                  loading={isNext && loading}
+                  loading={loading}
                   disabled={loading}
                   classname="py-2! px-4! rounded-full! text-sm! font-medium!"
                 />

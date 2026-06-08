@@ -29,6 +29,9 @@ import {
   HourlyRateDialog,
   LanguagesDialog,
   MilitaryVeteranDialog,
+  emptyMilitaryVeteranForm,
+  type MilitaryVeteranFormData,
+  type MilitaryVeteranFormErrors,
   OtherExperienceDialog,
   emptyOtherExperienceForm,
   ProfileOverviewDialog,
@@ -41,10 +44,16 @@ import {
   emptyAvailabilityForm,
   type AvailabilityFormData,
   type AvailabilityFormErrors,
+  VideoIntroductionDialog,
+  emptyVideoIntroForm,
+  type VideoIntroFormData,
+  type VideoIntroFormErrors,
 } from "@/components/molecules";
 import { resolveMediaAssetUrl } from "@/lib/api/upload";
 import {
   buildLanguagesPayload,
+  buildMilitaryVeteranPayload,
+  toMilitaryVeteranForm,
   removeCertificationAt,
   removeEducationAt,
   removeEmploymentAt,
@@ -76,6 +85,8 @@ import {
   validateOverviewForm,
   validateSkillsForm,
   validateTitleForm,
+  validateVideoIntroForm,
+  validateMilitaryVeteranForm,
   type CertificationFormErrors,
   type EducationFormErrors,
   type EmploymentFormErrors,
@@ -123,6 +134,7 @@ export default function FreelancerProfilePage() {
     saveOverview,
     saveHourlyRate,
     saveAvailability,
+    saveVideoIntroUrl,
     saveEmployment,
     saveEducation,
     saveLanguages,
@@ -146,11 +158,19 @@ export default function FreelancerProfilePage() {
   const [certificationOpen, setCertificationOpen] = useState(false);
   const [otherExperienceOpen, setOtherExperienceOpen] = useState(false);
   const [militaryVeteranOpen, setMilitaryVeteranOpen] = useState(false);
+  const [militaryVeteranStartAtService, setMilitaryVeteranStartAtService] =
+    useState(false);
+  const [removingMilitaryVeteran, setRemovingMilitaryVeteran] = useState(false);
+  const [militaryVeteranDraft, setMilitaryVeteranDraft] =
+    useState<MilitaryVeteranFormData>(emptyMilitaryVeteranForm());
   const [languagesOpen, setLanguagesOpen] = useState(false);
   const [skillsOpen, setSkillsOpen] = useState(false);
   const [availabilityOpen, setAvailabilityOpen] = useState(false);
+  const [videoIntroOpen, setVideoIntroOpen] = useState(false);
   const [availabilityDraft, setAvailabilityDraft] =
     useState<AvailabilityFormData>(emptyAvailabilityForm());
+  const [videoIntroDraft, setVideoIntroDraft] =
+    useState<VideoIntroFormData>(emptyVideoIntroForm());
 
   const [titleDraft, setTitleDraft] = useState("");
   const [overviewDraft, setOverviewDraft] = useState("");
@@ -212,6 +232,10 @@ export default function FreelancerProfilePage() {
   const [skillErrors, setSkillErrors] = useState<{ skills?: string }>({});
   const [availabilityErrors, setAvailabilityErrors] =
     useState<AvailabilityFormErrors>({});
+  const [videoIntroErrors, setVideoIntroErrors] =
+    useState<VideoIntroFormErrors>({});
+  const [militaryVeteranErrors, setMilitaryVeteranErrors] =
+    useState<MilitaryVeteranFormErrors>({});
 
   const displayName = freelancer ? formatFreelancerDisplayName(freelancer) : "";
   const locationText = freelancer ? formatFreelancerLocation(freelancer) : "";
@@ -333,6 +357,29 @@ export default function FreelancerProfilePage() {
     setAvailabilityOpen(true);
   };
 
+  const openMilitaryVeteranDialog = () => {
+    setMilitaryVeteranDraft(emptyMilitaryVeteranForm());
+    setMilitaryVeteranStartAtService(false);
+    setMilitaryVeteranErrors({});
+    setMilitaryVeteranOpen(true);
+  };
+
+  const openMilitaryVeteranEditDialog = () => {
+    if (!freelancer?.militaryService) return;
+    setMilitaryVeteranDraft(toMilitaryVeteranForm(freelancer.militaryService));
+    setMilitaryVeteranStartAtService(true);
+    setMilitaryVeteranErrors({});
+    setMilitaryVeteranOpen(true);
+  };
+
+  const openVideoIntroDialog = () => {
+    setVideoIntroDraft({
+      url: profile?.videoIntroUrl ?? "",
+    });
+    setVideoIntroErrors({});
+    setVideoIntroOpen(true);
+  };
+
   if (isLoading || !profile || !freelancer) {
     return (
       <FreelancerLayout
@@ -441,7 +488,9 @@ export default function FreelancerProfilePage() {
               {canEdit && <FreelancerProfileConnects count={0} />}
 
               <FreelancerProfileVideoIntro
-                onAdd={canEdit ? () => {} : undefined}
+                videoIntroUrl={profile.videoIntroUrl}
+                onAdd={canEdit ? openVideoIntroDialog : undefined}
+                onEdit={canEdit ? openVideoIntroDialog : undefined}
               />
 
               <FreelancerProfileHoursPerWeek
@@ -473,20 +522,45 @@ export default function FreelancerProfilePage() {
                     value: freelancer.phoneVerified ? "Verified" : "Unverified",
                     verified: freelancer.phoneVerified,
                   },
-                  {
-                    label: "Military veteran:",
-                    value:
-                      freelancer.isMilitaryVeteran == null
-                        ? ""
-                        : freelancer.isMilitaryVeteran
-                        ? "Yes"
-                        : "No",
-                    onAdd:
-                      canEdit && freelancer.isMilitaryVeteran == null
-                        ? () => setMilitaryVeteranOpen(true)
-                        : undefined,
-                  },
+                  ...(freelancer.isMilitaryVeteran !== true
+                    ? [
+                        {
+                          label: "Military veteran:",
+                          value: freelancer.militaryVeteranDeclined
+                            ? "Prefer not to say"
+                            : freelancer.isMilitaryVeteran == null
+                              ? ""
+                              : "No",
+                          onAdd:
+                            canEdit &&
+                            freelancer.isMilitaryVeteran == null &&
+                            !freelancer.militaryVeteranDeclined
+                              ? openMilitaryVeteranDialog
+                              : undefined,
+                        },
+                      ]
+                    : []),
                 ]}
+                militaryVeteranServed={
+                  freelancer.isMilitaryVeteran === true
+                    ? {
+                        countryCode:
+                          freelancer.militaryService?.countryCode ?? "US",
+                        onEdit: canEdit ? openMilitaryVeteranEditDialog : undefined,
+                        deleteLoading: removingMilitaryVeteran,
+                        onRemove: canEdit
+                          ? async () => {
+                              setRemovingMilitaryVeteran(true);
+                              try {
+                                await saveMilitaryVeteran({ status: "unset" });
+                              } finally {
+                                setRemovingMilitaryVeteran(false);
+                              }
+                            }
+                          : undefined,
+                      }
+                    : undefined
+                }
               />
 
               <FreelancerProfileLicenses
@@ -676,9 +750,31 @@ export default function FreelancerProfilePage() {
         open={militaryVeteranOpen}
         onClose={() => setMilitaryVeteranOpen(false)}
         loading={saving}
-        onSubmit={async () => {
-          await saveMilitaryVeteran();
-          setMilitaryVeteranOpen(false);
+        startAtServiceForm={militaryVeteranStartAtService}
+        isEditing={militaryVeteranStartAtService}
+        formData={militaryVeteranDraft}
+        errors={militaryVeteranErrors}
+        onChangeFormData={(data) => {
+          setMilitaryVeteranDraft(data);
+          setMilitaryVeteranErrors({});
+        }}
+        onSave={async (step) => {
+          const result = validateMilitaryVeteranForm(militaryVeteranDraft, step);
+          setMilitaryVeteranErrors(result.errors);
+          if (!result.isValid) return "stay";
+
+          if (
+            step === "selection" &&
+            militaryVeteranDraft.status === "served" &&
+            !militaryVeteranStartAtService
+          ) {
+            return "advance";
+          }
+
+          await saveMilitaryVeteran(
+            buildMilitaryVeteranPayload(militaryVeteranDraft)
+          );
+          return "close";
         }}
       />
 
@@ -728,6 +824,27 @@ export default function FreelancerProfilePage() {
             availabilityDraft.openToContractToHire,
           );
           setAvailabilityOpen(false);
+        }}
+      />
+
+      <VideoIntroductionDialog
+        open={videoIntroOpen}
+        onClose={() => setVideoIntroOpen(false)}
+        loading={saving}
+        isEditing={Boolean(profile.videoIntroUrl)}
+        formData={videoIntroDraft}
+        errors={videoIntroErrors}
+        onChangeFormData={(data) => {
+          setVideoIntroDraft(data);
+          setVideoIntroErrors({});
+        }}
+        onSave={async () => {
+          const result = validateVideoIntroForm(videoIntroDraft);
+          setVideoIntroErrors(result.errors);
+          if (!result.isValid) return;
+
+          await saveVideoIntroUrl(videoIntroDraft.url.trim());
+          setVideoIntroOpen(false);
         }}
       />
 

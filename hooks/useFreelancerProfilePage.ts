@@ -10,6 +10,11 @@ import TalentAPI, {
 } from "@/lib/api/talent";
 import AuthAPI from "@/lib/api/auth";
 import type { CertificationFormData } from "@/components/molecules/dialogs/CertificationDialog";
+import type { MilitaryVeteranFormData } from "@/components/molecules/dialogs/MilitaryVeteranDialog";
+import type {
+  MilitaryService,
+  MilitaryVeteranSavePayload,
+} from "@/lib/api/talent";
 import type {
   Certification,
   Education,
@@ -176,6 +181,11 @@ export function useFreelancerProfilePage(uid?: string) {
     [patchProfile]
   );
 
+  const saveVideoIntroUrl = useCallback(
+    async (videoIntroUrl: string | null) => patchProfile({ videoIntroUrl }),
+    [patchProfile]
+  );
+
   const saveEmployment = useCallback(
     async (items: EmploymentInput[]) => patchProfile({ employment: items }),
     [patchProfile]
@@ -225,13 +235,23 @@ export function useFreelancerProfilePage(uid?: string) {
     [patchProfile]
   );
 
-  const saveMilitaryVeteran = useCallback(async () => {
-    const res = await AuthAPI.updateMe({ isMilitaryVeteran: true });
-    if (res?.user) {
-      dispatch(setUser(res.user));
-      await refreshProfile();
-    }
-  }, [dispatch, refreshProfile]);
+  const saveMilitaryVeteran = useCallback(
+    async (payload: MilitaryVeteranSavePayload) => {
+      if (!canEdit) return null;
+      setSaving(true);
+      try {
+        const res = await AuthAPI.updateMe({ militaryVeteran: payload });
+        if (res?.user) {
+          dispatch(setUser(res.user));
+          await refreshProfile();
+        }
+        return res;
+      } finally {
+        setSaving(false);
+      }
+    },
+    [canEdit, dispatch, refreshProfile]
+  );
 
   const employmentItems = useMemo(
     () => profile?.employment ?? [],
@@ -258,6 +278,7 @@ export function useFreelancerProfilePage(uid?: string) {
     saveOverview,
     saveHourlyRate,
     saveAvailability,
+    saveVideoIntroUrl,
     saveEmployment,
     saveEducation,
     saveLanguages,
@@ -468,4 +489,48 @@ export function removeCertificationAt(
   index: number
 ): Certification[] {
   return items.filter((_, itemIndex) => itemIndex !== index);
+}
+
+export function toMilitaryVeteranForm(
+  service: MilitaryService
+): MilitaryVeteranFormData {
+  return {
+    status: "served",
+    country: service.country,
+    countryCode: service.countryCode,
+    firstName: service.firstName ?? "",
+    lastName: service.lastName ?? "",
+    activeDutyStartDate: service.activeDutyStartDate
+      ? new Date(service.activeDutyStartDate)
+      : null,
+    activeDutyEndDate: service.activeDutyEndDate
+      ? new Date(service.activeDutyEndDate)
+      : null,
+    branch: service.branch,
+  };
+}
+
+export function buildMilitaryVeteranPayload(
+  form: MilitaryVeteranFormData
+): MilitaryVeteranSavePayload {
+  if (form.status === "dont_want_to_disclose") {
+    return { status: "declined" };
+  }
+
+  if (form.status === "not_served") {
+    return { status: "not_served" };
+  }
+
+  return {
+    status: "served",
+    country: form.country.trim(),
+    countryCode: form.countryCode.trim().toUpperCase(),
+    firstName: form.firstName.trim(),
+    lastName: form.lastName.trim(),
+    activeDutyStartDate: form.activeDutyStartDate!
+      .toISOString()
+      .slice(0, 10),
+    activeDutyEndDate: form.activeDutyEndDate!.toISOString().slice(0, 10),
+    branch: form.branch,
+  };
 }

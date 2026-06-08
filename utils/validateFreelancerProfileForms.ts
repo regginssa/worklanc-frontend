@@ -1,10 +1,17 @@
 import type { CertificationFormData } from "@/components/molecules/dialogs/CertificationDialog";
+import type {
+  VideoIntroFormData,
+  VideoIntroFormErrors,
+} from "@/components/molecules/dialogs/VideoIntroductionDialog";
+import type {
+  MilitaryVeteranFormData,
+  MilitaryVeteranFormErrors,
+} from "@/components/molecules/dialogs/MilitaryVeteranDialog";
 import type { OtherExperienceFormData } from "@/components/molecules/dialogs/OtherExperienceDialog";
 import type { LanguageDraft } from "@/hooks/useFreelancerProfilePage";
-import type {
-  AvailabilityFormData,
-} from "@/components/molecules/dialogs/AvailabilityDialog";
+import type { AvailabilityFormData } from "@/components/molecules/dialogs/AvailabilityDialog";
 import type { Education, LanguageLevel } from "@/types/user";
+import { isValidYouTubeUrl } from "@/utils/youtube";
 
 const EMAIL_REGEX = /^\S+@\S+\.\S+$/;
 export const TITLE_MIN_LENGTH = 4;
@@ -44,7 +51,7 @@ export function isValidLinkedInUrl(url: string): boolean {
 
 function optionalUrlError(
   value: string | undefined | null,
-  fieldLabel = "URL",
+  fieldLabel = "URL"
 ): string | undefined {
   const trimmed = value?.trim();
   if (!trimmed) return undefined;
@@ -55,7 +62,7 @@ function optionalUrlError(
 }
 
 function optionalLinkedInUrlError(
-  value: string | undefined | null,
+  value: string | undefined | null
 ): string | undefined {
   const trimmed = value?.trim();
   if (!trimmed) return undefined;
@@ -87,7 +94,7 @@ export function validateTitleForm(title: string): ValidationResult<"title"> {
 }
 
 export function validateHourlyRateForm(
-  rate: string | number,
+  rate: string | number
 ): ValidationResult<"rate"> {
   const errors: Partial<Record<"rate", string>> = {};
   const raw = typeof rate === "number" ? String(rate) : rate.trim();
@@ -107,7 +114,7 @@ export function validateHourlyRateForm(
 }
 
 export function validateOverviewForm(
-  overview: string,
+  overview: string
 ): ValidationResult<"overview"> {
   const errors: Partial<Record<"overview", string>> = {};
   const trimmed = overview.trim();
@@ -164,8 +171,12 @@ export function validateEmploymentForm(form: {
     if (!isValidDate(form.endAt)) {
       errors.endAt = "End date is required";
     } else if (isValidDate(form.startedAt)) {
-      const start = form.startedAt instanceof Date ? form.startedAt : new Date(form.startedAt);
-      const end = form.endAt instanceof Date ? form.endAt : new Date(form.endAt);
+      const start =
+        form.startedAt instanceof Date
+          ? form.startedAt
+          : new Date(form.startedAt);
+      const end =
+        form.endAt instanceof Date ? form.endAt : new Date(form.endAt);
       if (end < start) {
         errors.endAt = "End date must be after the start date";
       }
@@ -184,7 +195,7 @@ export type EducationFormErrors = {
 };
 
 export function validateEducationForm(
-  form: Education,
+  form: Education
 ): ValidationResult<keyof EducationFormErrors> {
   const errors: EducationFormErrors = {};
 
@@ -206,10 +217,7 @@ export function validateEducationForm(
 
   if (form.endYear == null) {
     errors.endYear = "End year is required";
-  } else if (
-    form.startedYear != null &&
-    form.endYear < form.startedYear
-  ) {
+  } else if (form.startedYear != null && form.endYear < form.startedYear) {
     errors.endYear = "End year must be after the start year";
   }
 
@@ -226,7 +234,7 @@ export type CertificationFormErrors = {
 };
 
 export function validateCertificationForm(
-  form: CertificationFormData,
+  form: CertificationFormData
 ): ValidationResult<keyof CertificationFormErrors> {
   const errors: CertificationFormErrors = {};
 
@@ -246,7 +254,10 @@ export function validateCertificationForm(
     if (!isValidDate(form.expirationDate)) {
       errors.expirationDate = "Enter a valid expiration date";
     } else if (isValidDate(form.issueDate)) {
-      const issue = form.issueDate instanceof Date ? form.issueDate : new Date(form.issueDate);
+      const issue =
+        form.issueDate instanceof Date
+          ? form.issueDate
+          : new Date(form.issueDate);
       const expiration =
         form.expirationDate instanceof Date
           ? form.expirationDate
@@ -259,7 +270,7 @@ export function validateCertificationForm(
 
   const providerLogoUrlError = optionalUrlError(
     form.providerLogoUrl,
-    "provider logo URL",
+    "provider logo URL"
   );
   if (providerLogoUrlError) {
     errors.providerLogoUrl = providerLogoUrlError;
@@ -267,7 +278,7 @@ export function validateCertificationForm(
 
   const credentialUrlError = optionalUrlError(
     form.credentialUrl,
-    "certification URL",
+    "certification URL"
   );
   if (credentialUrlError) {
     errors.credentialUrl = credentialUrlError;
@@ -284,7 +295,7 @@ const HOURS_PER_WEEK_VALUES = [
 ] as const;
 
 export function validateAvailabilityForm(
-  form: AvailabilityFormData,
+  form: AvailabilityFormData
 ): ValidationResult<"hoursPerWeek"> {
   const errors: Partial<Record<"hoursPerWeek", string>> = {};
 
@@ -292,7 +303,7 @@ export function validateAvailabilityForm(
     errors.hoursPerWeek = "Select how many hours per week you can work";
   } else if (
     !HOURS_PER_WEEK_VALUES.includes(
-      form.hoursPerWeek as (typeof HOURS_PER_WEEK_VALUES)[number],
+      form.hoursPerWeek as (typeof HOURS_PER_WEEK_VALUES)[number]
     )
   ) {
     errors.hoursPerWeek = "Select a valid availability option";
@@ -302,7 +313,7 @@ export function validateAvailabilityForm(
 }
 
 export function validateOtherExperienceForm(
-  form: OtherExperienceFormData,
+  form: OtherExperienceFormData
 ): ValidationResult<"subject"> {
   const errors: Partial<Record<"subject", string>> = {};
 
@@ -322,7 +333,7 @@ export type LanguageFormErrors = {
 
 export function validateLanguagesForm(
   englishLevel: LanguageLevel | "",
-  additionalLanguages: LanguageDraft[],
+  additionalLanguages: LanguageDraft[]
 ): ValidationResult<string> {
   const errors: LanguageFormErrors = {};
 
@@ -345,19 +356,19 @@ export function validateLanguagesForm(
 
 /** @deprecated Use validateLanguagesForm instead. */
 export function validateLanguageDrafts(
-  drafts: LanguageDraft[],
+  drafts: LanguageDraft[]
 ): ValidationResult<string> {
   const english = drafts.find((language) => language.name === "English");
   const additional = drafts.filter((language) => language.name !== "English");
 
   return validateLanguagesForm(
     (english?.level ?? "") as LanguageLevel | "",
-    additional,
+    additional
   );
 }
 
 export function validateSkillsForm(
-  skills: { value: string }[],
+  skills: { value: string }[]
 ): ValidationResult<"skills"> {
   const errors: Partial<Record<"skills", string>> = {};
 
@@ -412,6 +423,66 @@ export function validateTestimonialForm(form: {
 
   if (!form.message.trim()) {
     errors.message = "Message is required";
+  }
+
+  return { isValid: Object.keys(errors).length === 0, errors };
+}
+
+export function validateVideoIntroForm(
+  form: VideoIntroFormData
+): ValidationResult<"url"> {
+  const errors: VideoIntroFormErrors = {};
+  const trimmed = form.url.trim();
+
+  if (!trimmed) {
+    errors.url = "YouTube video URL is required";
+  } else if (!isValidYouTubeUrl(trimmed)) {
+    errors.url = "Enter a valid YouTube video URL";
+  }
+
+  return { isValid: Object.keys(errors).length === 0, errors };
+}
+
+export function validateMilitaryVeteranForm(
+  form: MilitaryVeteranFormData,
+  step: "selection" | "service"
+): ValidationResult<keyof MilitaryVeteranFormErrors> {
+  const errors: MilitaryVeteranFormErrors = {};
+
+  if (step === "selection") {
+    if (form.status === "served" && !form.country?.trim()) {
+      errors.country = "Country is required";
+    }
+    if (form.status === "served" && !form.countryCode?.trim()) {
+      errors.country = "Country is required";
+    }
+    return { isValid: Object.keys(errors).length === 0, errors };
+  }
+
+  if (!form.country?.trim() || !form.countryCode?.trim()) {
+    errors.country = "Country is required";
+  }
+  if (!form.firstName.trim()) {
+    errors.firstName = "First name is required";
+  }
+  if (!form.lastName.trim()) {
+    errors.lastName = "Last name is required";
+  }
+  if (!form.activeDutyStartDate) {
+    errors.activeDutyStartDate = "Start date is required";
+  }
+  if (!form.activeDutyEndDate) {
+    errors.activeDutyEndDate = "End date is required";
+  }
+  if (!form.branch) {
+    errors.branch = "Service branch is required";
+  }
+  if (
+    form.activeDutyStartDate &&
+    form.activeDutyEndDate &&
+    form.activeDutyEndDate < form.activeDutyStartDate
+  ) {
+    errors.activeDutyEndDate = "End date must be on or after start date";
   }
 
   return { isValid: Object.keys(errors).length === 0, errors };

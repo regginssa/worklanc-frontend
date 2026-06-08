@@ -51,6 +51,7 @@ export type {
   FreelancerProfileLanguagesProps,
 } from "./FreelancerProfileLanguages";
 export type {
+  FreelancerProfileMilitaryVeteranServed,
   FreelancerProfileVerification,
   FreelancerProfileVerificationsProps,
 } from "./FreelancerProfileVerifications";

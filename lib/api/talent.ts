@@ -19,7 +19,40 @@ export type PublicFreelancer = {
   phoneVerified: boolean;
   idVerified: boolean;
   isMilitaryVeteran: boolean | null;
+  militaryVeteranDeclined: boolean;
+  militaryService: MilitaryService | null;
 };
+
+export type MilitaryService = {
+  country: string;
+  countryCode: string;
+  branch: string;
+  firstName?: string;
+  lastName?: string;
+  activeDutyStartDate?: string;
+  activeDutyEndDate?: string;
+};
+
+export type MilitaryVeteranStatus =
+  | "served"
+  | "not_served"
+  | "declined"
+  | "unset";
+
+export type MilitaryVeteranSavePayload =
+  | { status: "not_served" }
+  | { status: "declined" }
+  | { status: "unset" }
+  | {
+      status: "served";
+      country: string;
+      countryCode: string;
+      firstName: string;
+      lastName: string;
+      activeDutyStartDate: string;
+      activeDutyEndDate: string;
+      branch: string;
+    };
 
 export type FreelancerProfileResponse = {
   profile: TalentProfile;

@@ -54,6 +54,11 @@ export { default as RecentlyViewedTalentCardGroup } from "./RecentlyViewedTalent
 export * from "./freelancer-profile";
 export { default as FreelancerProfileDrawer } from "./drawers/FreelancerProfileDrawer";
 export { default as MilitaryVeteranDialog } from "./dialogs/MilitaryVeteranDialog";
+export {
+  emptyMilitaryVeteranForm,
+  type MilitaryVeteranFormData,
+  type MilitaryVeteranFormErrors,
+} from "./dialogs/MilitaryVeteranDialog";
 export { default as StreetAddressAutoComplete } from "./StreetAddressAutoComplete";
 export type { StreetAddressDetails } from "./StreetAddressAutoComplete";
 export { default as AvailabilityDialog } from "./dialogs/AvailabilityDialog";
@@ -62,3 +67,9 @@ export {
   type AvailabilityFormData,
   type AvailabilityFormErrors,
 } from "./dialogs/AvailabilityDialog";
+export { default as VideoIntroductionDialog } from "./dialogs/VideoIntroductionDialog";
+export {
+  emptyVideoIntroForm,
+  type VideoIntroFormData,
+  type VideoIntroFormErrors,
+} from "./dialogs/VideoIntroductionDialog";
