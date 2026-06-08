@@ -45,3 +45,4 @@ export { default as EducationItemGroup } from "./EducationItemGroup";
 export { default as RecentlyViewedTalentCardGroup } from "./RecentlyViewedTalentCardGroup";
 export * from "./freelancer-profile";
 export { default as FreelancerProfileDrawer } from "./drawers/FreelancerProfileDrawer";
+export { default as MilitaryVeteranDialog } from "./dialogs/MilitaryVeteranDialog";

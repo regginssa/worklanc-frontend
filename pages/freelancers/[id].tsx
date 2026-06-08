@@ -26,6 +26,7 @@ import {
   FreelancerProfileVideoIntro,
   FreelancerProfileWorkHistory,
   HourlyRateDialog,
+  MilitaryVeteranDialog,
   OtherExperienceDialog,
   ProfileOverviewDialog,
   TestimonialDialog,
@@ -44,6 +45,7 @@ export default function FreelancerProfil() {
   const [educationOpen, setEducationOpen] = useState(false);
   const [certificationOpen, setCertificationOpen] = useState(false);
   const [otherExperienceOpen, setOtherExperienceOpen] = useState(false);
+  const [militaryVeteranOpen, setMilitaryVeteranOpen] = useState(false);
   const [employments, setEmployments] = useState<Employment[]>([]);
   const [educations, setEducations] = useState<Education[]>([]);
   const [title, setTitle] = useState("Accounting & Consulting");
@@ -138,7 +140,7 @@ export default function FreelancerProfil() {
                   {
                     label: "Military veteran:",
                     value: "",
-                    onAdd: () => {},
+                    onAdd: () => setMilitaryVeteranOpen(true),
                   },
                 ]}
               />
@@ -243,6 +245,11 @@ export default function FreelancerProfil() {
       <FreelancerProfileOtherExperiences
         onAdd={() => setOtherExperienceOpen(true)}
         onEmptyAction={() => setOtherExperienceOpen(true)}
+      />
+
+      <MilitaryVeteranDialog
+        open={militaryVeteranOpen}
+        onClose={() => setMilitaryVeteranOpen(false)}
       />
 
       <EmploymentDialog
