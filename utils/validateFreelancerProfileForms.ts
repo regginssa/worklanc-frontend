@@ -221,6 +221,7 @@ export type CertificationFormErrors = {
   provider?: string;
   issueDate?: string;
   expirationDate?: string;
+  providerLogoUrl?: string;
   credentialUrl?: string;
 };
 
@@ -254,6 +255,14 @@ export function validateCertificationForm(
         errors.expirationDate = "Expiration date must be after the issue date";
       }
     }
+  }
+
+  const providerLogoUrlError = optionalUrlError(
+    form.providerLogoUrl,
+    "provider logo URL",
+  );
+  if (providerLogoUrlError) {
+    errors.providerLogoUrl = providerLogoUrlError;
   }
 
   const credentialUrlError = optionalUrlError(

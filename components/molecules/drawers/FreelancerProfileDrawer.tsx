@@ -178,7 +178,7 @@ export default function FreelancerProfileDrawer({
           </div>
 
           <FreelancerProfileCertifications
-            certifications={profileDrawerCertifications}
+            items={profileDrawerCertifications}
           />
 
           <FreelancerProfileEmploymentHistory

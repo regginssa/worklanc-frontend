@@ -30,7 +30,10 @@ export type {
 } from "./FreelancerProfileSkills";
 export type { FreelancerProfileProjectCatalogProps } from "./FreelancerProfileProjectCatalog";
 export type { FreelancerProfileTestimonialsProps } from "./FreelancerProfileTestimonials";
-export type { FreelancerProfileCertificationsProps } from "./FreelancerProfileCertifications";
+export type {
+  FreelancerProfileCertificationItem,
+  FreelancerProfileCertificationsProps,
+} from "./FreelancerProfileCertifications";
 export type {
   FreelancerProfileEmploymentItem,
   FreelancerProfileEmploymentHistoryProps,

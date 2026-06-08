@@ -45,11 +45,14 @@ import {
 import { resolveMediaAssetUrl } from "@/lib/api/upload";
 import {
   buildLanguagesPayload,
+  removeCertificationAt,
   removeEducationAt,
   removeEmploymentAt,
+  serializeCertificationList,
   serializeEducationList,
   serializeEmploymentList,
   splitLanguageDrafts,
+  toCertificationForm,
   useFreelancerProfilePage,
   type LanguageDraft,
 } from "@/hooks/useFreelancerProfilePage";
@@ -181,6 +184,12 @@ export default function FreelancerProfilePage() {
   const [removingEducationIndex, setRemovingEducationIndex] = useState<
     number | null
   >(null);
+  const [certificationEditingIndex, setCertificationEditingIndex] = useState<
+    number | null
+  >(null);
+  const [removingCertificationIndex, setRemovingCertificationIndex] = useState<
+    number | null
+  >(null);
 
   const [titleErrors, setTitleErrors] = useState<{ title?: string }>({});
   const [rateErrors, setRateErrors] = useState<{ rate?: string }>({});
@@ -298,8 +307,13 @@ export default function FreelancerProfilePage() {
     setSkillsOpen(true);
   };
 
-  const openCertificationDialog = () => {
-    setCertificationDraft(emptyCertificationForm());
+  const openCertificationDialog = (index: number | null = null) => {
+    setCertificationEditingIndex(index);
+    setCertificationDraft(
+      index == null
+        ? emptyCertificationForm()
+        : toCertificationForm((profile?.certifications ?? [])[index])
+    );
     setCertificationErrors({});
     setCertificationOpen(true);
   };
@@ -586,9 +600,27 @@ export default function FreelancerProfilePage() {
       />
 
       <FreelancerProfileCertifications
-        certifications={profile.certifications ?? []}
-        onAdd={canEdit ? openCertificationDialog : undefined}
-        onEmptyAction={canEdit ? openCertificationDialog : undefined}
+        items={(profile.certifications ?? []).map((certification, index) => ({
+          ...certification,
+          onEdit: canEdit
+            ? () => openCertificationDialog(index)
+            : undefined,
+          deleteLoading: removingCertificationIndex === index,
+          onRemove: canEdit
+            ? async () => {
+                setRemovingCertificationIndex(index);
+                try {
+                  await saveCertifications(
+                    removeCertificationAt(profile.certifications ?? [], index)
+                  );
+                } finally {
+                  setRemovingCertificationIndex(null);
+                }
+              }
+            : undefined,
+        }))}
+        onAdd={canEdit ? () => openCertificationDialog(null) : undefined}
+        onEmptyAction={canEdit ? () => openCertificationDialog(null) : undefined}
       />
 
       <FreelancerProfileEmploymentHistory
@@ -796,6 +828,7 @@ export default function FreelancerProfilePage() {
         onClose={() => setCertificationOpen(false)}
         formData={certificationDraft}
         errors={certificationErrors}
+        isEditing={certificationEditingIndex != null}
         onChangeFormData={(data) => {
           setCertificationDraft(data);
           setCertificationErrors({});
@@ -806,24 +839,13 @@ export default function FreelancerProfilePage() {
           setCertificationErrors(result.errors);
           if (!result.isValid || !certificationDraft.issueDate) return;
 
-          const next = [
-            ...(profile.certifications ?? []),
-            {
-              name: certificationDraft.name.trim(),
-              provider: certificationDraft.provider.trim(),
-              providerLogoUrl: null,
-              issuedDate: certificationDraft.issueDate
-                .toISOString()
-                .slice(0, 10),
-              expirationDate: certificationDraft.expirationDate
-                ? certificationDraft.expirationDate.toISOString().slice(0, 10)
-                : null,
-              description: certificationDraft.description || null,
-              credentialId: certificationDraft.credentialId || null,
-              credentialUrl: certificationDraft.credentialUrl || null,
-            },
-          ];
-          await saveCertifications(next);
+          await saveCertifications(
+            serializeCertificationList(
+              profile.certifications ?? [],
+              certificationDraft,
+              certificationEditingIndex
+            )
+          );
           setCertificationOpen(false);
         }}
       />

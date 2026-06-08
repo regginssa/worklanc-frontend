@@ -9,6 +9,7 @@ import TalentAPI, {
   type TalentProfilePatch,
 } from "@/lib/api/talent";
 import AuthAPI from "@/lib/api/auth";
+import type { CertificationFormData } from "@/components/molecules/dialogs/CertificationDialog";
 import type {
   Certification,
   Education,
@@ -407,4 +408,64 @@ export function removeEducationAt(
       endYear: item.endYear,
       description: item.description,
     }));
+}
+
+export function toCertificationForm(
+  certification: Certification
+): CertificationFormData {
+  return {
+    name: certification.name,
+    provider: certification.provider,
+    providerLogoUrl: certification.providerLogoUrl ?? "",
+    issueDate: certification.issuedDate
+      ? new Date(certification.issuedDate)
+      : null,
+    expirationDate: certification.expirationDate
+      ? new Date(certification.expirationDate)
+      : null,
+    description: certification.description ?? "",
+    credentialId: certification.credentialId ?? "",
+    credentialUrl: certification.credentialUrl ?? "",
+  };
+}
+
+export function fromCertificationForm(
+  form: CertificationFormData
+): Certification {
+  return {
+    name: form.name.trim(),
+    provider: form.provider.trim(),
+    providerLogoUrl: form.providerLogoUrl.trim() || null,
+    issuedDate: form.issueDate!.toISOString().slice(0, 10),
+    expirationDate: form.expirationDate
+      ? form.expirationDate.toISOString().slice(0, 10)
+      : null,
+    description: form.description || null,
+    credentialId: form.credentialId || null,
+    credentialUrl: form.credentialUrl || null,
+  };
+}
+
+export function serializeCertificationList(
+  items: Certification[],
+  form: CertificationFormData,
+  editingIndex: number | null
+): Certification[] {
+  const next = items.map((item) => ({ ...item }));
+  const payload = fromCertificationForm(form);
+
+  if (editingIndex == null) {
+    next.push(payload);
+  } else {
+    next[editingIndex] = { ...next[editingIndex], ...payload };
+  }
+
+  return next;
+}
+
+export function removeCertificationAt(
+  items: Certification[],
+  index: number
+): Certification[] {
+  return items.filter((_, itemIndex) => itemIndex !== index);
 }

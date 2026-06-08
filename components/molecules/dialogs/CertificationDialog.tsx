@@ -11,6 +11,7 @@ import {
 export type CertificationFormData = {
   name: string;
   provider: string;
+  providerLogoUrl: string;
   issueDate: Date | null;
   expirationDate: Date | null;
   description: string;
@@ -21,6 +22,7 @@ export type CertificationFormData = {
 export const emptyCertificationForm = (): CertificationFormData => ({
   name: "",
   provider: "",
+  providerLogoUrl: "",
   issueDate: null,
   expirationDate: null,
   description: "",
@@ -35,6 +37,7 @@ export default function CertificationDialog({
   formData,
   onChangeFormData,
   loading = false,
+  isEditing = false,
   errors = {},
 }: {
   open: boolean;
@@ -43,11 +46,13 @@ export default function CertificationDialog({
   formData: CertificationFormData;
   onChangeFormData: (data: CertificationFormData) => void;
   loading?: boolean;
+  isEditing?: boolean;
   errors?: {
     name?: string;
     provider?: string;
     issueDate?: string;
     expirationDate?: string;
+    providerLogoUrl?: string;
     credentialUrl?: string;
   };
 }) {
@@ -59,7 +64,9 @@ export default function CertificationDialog({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="flex min-w-3xl flex-col">
         <DialogHeader className="shrink-0 p-4">
-          <DialogTitle className="text-3xl">Add certification</DialogTitle>
+          <DialogTitle className="text-3xl">
+            {isEditing ? "Edit certification" : "Add certification"}
+          </DialogTitle>
         </DialogHeader>
 
         <form className="px-4 pb-4 no-scrollbar max-h-[60vh] space-y-6 overflow-y-auto">
@@ -87,6 +94,17 @@ export default function CertificationDialog({
             error={errors.provider}
           />
 
+          <Input
+            type="url"
+            name="providerLogoUrl"
+            label="Provider logo URL (Optional)"
+            placeholder="https://example.com/logo.png"
+            labelClassName="text-sm font-medium"
+            value={formData.providerLogoUrl}
+            onChange={handleInputChange}
+            error={errors.providerLogoUrl}
+          />
+
           <div className="flex items-center gap-6">
             <DatePicker
               label="Issue date"
@@ -100,6 +118,7 @@ export default function CertificationDialog({
                   issueDate: date,
                 })
               }
+              error={errors.issueDate}
             />
             <DatePicker
               label="Expiration date (Optional)"
