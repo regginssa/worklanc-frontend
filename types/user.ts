@@ -1,12 +1,21 @@
-import type { ISODateString, ISOTimestampString } from "./common";
+import type {
+  ISODateString,
+  ISOTimestampString,
+  PublicUid,
+} from "./common";
 
 export type AccountType = "talent" | "client";
 export type AuthProvider = "email" | "google" | "apple";
 
+/** Subscription tier on an account (`accounts.membership_tier`). */
+export type MembershipTier = "basic" | "plus";
+
 /** Row in `accounts` (public API shape). */
 export interface Account {
   id: number;
+  uid: PublicUid;
   type: AccountType;
+  membershipTier: MembershipTier;
   onboardingCompleted: boolean;
   /** Next onboarding route to resume at; null once onboarding is complete. */
   onboardingStep: string | null;
@@ -16,6 +25,7 @@ export interface Account {
 /** Row in `users` (public API shape). */
 export interface User {
   id: number;
+  uid: PublicUid;
   firstName: string;
   lastName: string;
   email: string;

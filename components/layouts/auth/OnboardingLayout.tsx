@@ -3,6 +3,7 @@ import { SocialGroup } from "@/components/molecules";
 import { TSEO } from "@/types/components.types";
 import { SEO } from "@/components/atoms";
 import { Header } from "@/components/organisms";
+import { Icon } from "@iconify/react";
 
 interface OnboardingLayoutProps {
   children: React.ReactNode;

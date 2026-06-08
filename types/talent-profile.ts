@@ -1,5 +1,11 @@
 import type { CategoryRef } from "./category";
-import type { ISODateString, ISOTimestampString, Timestamps } from "./common";
+import type {
+  ISODateString,
+  ISOTimestampString,
+  PublicUid,
+  Timestamps,
+  WithPublicUid,
+} from "./common";
 import type { PortfolioSkill, TalentSkill } from "./skill";
 
 export type ProfileKind = "individual" | "agency";
@@ -43,7 +49,7 @@ export type TalentBadge =
   | "RISING_TALENT";
 
 /** Row in `talent_languages`. */
-export interface TalentLanguage {
+export interface TalentLanguage extends Partial<WithPublicUid> {
   id?: number;
   name: string;
   level: LanguageLevel;
@@ -63,7 +69,7 @@ export interface EmploymentFormInput {
 }
 
 /** Row in `talent_employment`. */
-export interface TalentEmployment {
+export interface TalentEmployment extends Partial<WithPublicUid> {
   id?: number;
   title: string;
   company: string;
@@ -79,7 +85,7 @@ export interface TalentEmployment {
 }
 
 /** Row in `talent_education`. */
-export interface TalentEducation {
+export interface TalentEducation extends Partial<WithPublicUid> {
   id?: number;
   school: string;
   degree: string | null;
@@ -93,7 +99,7 @@ export interface TalentEducation {
 }
 
 /** Row in `talent_certifications`. */
-export interface TalentCertification {
+export interface TalentCertification extends Partial<WithPublicUid> {
   id?: number;
   name: string;
   provider: string;
@@ -109,7 +115,7 @@ export interface TalentCertification {
 }
 
 /** Row in `talent_other_experiences`. */
-export interface OtherExperience extends Partial<Timestamps> {
+export interface OtherExperience extends Partial<Timestamps>, Partial<WithPublicUid> {
   id?: number;
   subject: string;
   description: string | null;
@@ -117,7 +123,7 @@ export interface OtherExperience extends Partial<Timestamps> {
 }
 
 /** Row in `talent_licenses`. */
-export interface License extends Partial<Timestamps> {
+export interface License extends Partial<Timestamps>, Partial<WithPublicUid> {
   id?: number;
   profession: string;
   jurisdiction: string;
@@ -129,7 +135,7 @@ export interface License extends Partial<Timestamps> {
 }
 
 /** Row in `talent_portfolios` with nested skills and assets. */
-export interface Portfolio extends Partial<Timestamps> {
+export interface Portfolio extends Partial<Timestamps>, Partial<WithPublicUid> {
   id?: number;
   title: string;
   role: string | null;
@@ -141,7 +147,7 @@ export interface Portfolio extends Partial<Timestamps> {
 }
 
 /** Row in `talent_portfolio_assets`. */
-export interface PortfolioAsset extends Partial<Timestamps> {
+export interface PortfolioAsset extends Partial<Timestamps>, Partial<WithPublicUid> {
   id?: number;
   assetType: PortfolioAssetType;
   fileUrl: string | null;
@@ -154,7 +160,7 @@ export interface PortfolioAsset extends Partial<Timestamps> {
 }
 
 /** Row in `talent_testimonials`. */
-export interface Testimonial extends Partial<Timestamps> {
+export interface Testimonial extends Partial<Timestamps>, Partial<WithPublicUid> {
   id?: number;
   clientFirstName: string;
   clientLastName: string;
@@ -169,7 +175,8 @@ export interface Testimonial extends Partial<Timestamps> {
 }
 
 /** Full talent profile (`talent_profiles` + child collections). */
-export interface TalentProfile extends Partial<Timestamps> {
+export interface TalentProfile extends Partial<Timestamps>, WithPublicUid {
+  /** Internal PK — do not use in public URLs. */
   id: number;
   accountId: number;
   kind: ProfileKind;

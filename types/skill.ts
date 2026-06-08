@@ -1,4 +1,4 @@
-import type { ISOTimestampString } from "./common";
+import type { ISOTimestampString, WithPublicUid } from "./common";
 
 /** Row in the `skills` catalogue table. */
 export interface Skill {
@@ -12,7 +12,7 @@ export interface Skill {
 }
 
 /** Row in `talent_skills`. */
-export interface TalentSkill {
+export interface TalentSkill extends WithPublicUid {
   id: number;
   skillId: number | null;
   name: string;
@@ -20,7 +20,7 @@ export interface TalentSkill {
 }
 
 /** Row in `talent_portfolio_skills`. */
-export interface PortfolioSkill {
+export interface PortfolioSkill extends WithPublicUid {
   id: number;
   skillId: number | null;
   name: string;

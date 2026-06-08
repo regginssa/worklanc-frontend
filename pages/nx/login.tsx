@@ -81,6 +81,7 @@ const Login = () => {
             type="password"
             name="password"
             placeholder="Password"
+            icon="mdi:lock-outline"
             error={errors?.password}
             value={formData?.password}
             onChange={handleInputChange}
