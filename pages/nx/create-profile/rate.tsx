@@ -4,13 +4,13 @@ import { motion } from "motion/react";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { useOnboarding } from "@/hooks/useOnboarding";
+import {
+  buildHourlyRateForm,
+  SERVICE_FEE_PERCENT,
+} from "@/utils/rate";
 
 export default function Rate() {
-  const [formData, setFormData] = useState({
-    rate: "",
-    fee: "",
-    estimated: "",
-  });
+  const [formData, setFormData] = useState(() => buildHourlyRateForm(""));
 
   const router = useRouter();
   const { profile, saveStep, saving } = useOnboarding();
@@ -20,12 +20,12 @@ export default function Rate() {
     if (!profile || seeded.current) return;
     seeded.current = true;
     if (profile.hourlyRate != null) {
-      setFormData((prev) => ({ ...prev, rate: String(profile.hourlyRate) }));
+      setFormData(buildHourlyRateForm(String(profile.hourlyRate)));
     }
   }, [profile]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(buildHourlyRateForm(e.target.value));
   };
 
   const handleNext = () =>
@@ -61,7 +61,7 @@ export default function Rate() {
               name="rate"
               placeholder="$0.00"
               value={formData.rate}
-              onChange={handleInputChange}
+              onChange={handleRateChange}
             />
             <span className="text-sm text-slate-600">/ hr</span>
           </div>
@@ -75,8 +75,7 @@ export default function Rate() {
               protection and customer support.
             </p>
             <p className="text-sm text-slate-900">
-              Fees vary and are shown before contract acceptance. $0.00 /hr per
-              hour -$0.00/hr
+              {SERVICE_FEE_PERCENT}% service fee — ${formData.fee}/hr
             </p>
           </div>
 
@@ -87,7 +86,7 @@ export default function Rate() {
               placeholder="$0.00"
               disabled={true}
               value={formData.fee}
-              onChange={handleInputChange}
+              onChange={() => {}}
             />
             <span className="text-sm text-slate-600">/ hr</span>
           </div>
@@ -108,7 +107,7 @@ export default function Rate() {
               placeholder="$0.00"
               disabled={true}
               value={formData.estimated}
-              onChange={handleInputChange}
+              onChange={() => {}}
             />
             <span className="text-sm text-slate-600">/ hr</span>
           </div>

@@ -1,6 +1,5 @@
 import { Button, Input } from "@/components/atoms";
 import { OnboardingLayout } from "@/components/layouts/auth/OnboardingLayout";
-import { Icon } from "@iconify/react";
 import {
   Dialog,
   DialogContent,
@@ -9,14 +8,43 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useState } from "react";
-import { useRouter } from "next/router";
-import VerifyEmailIcon from "@/public/assets/svgs/icons/other/verify_email.svg";
+import { useAppSelector } from "@/store/hooks";
+import { getVerifiedUserDestination } from "@/utils/user";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import VerifyEmailIcon from "@/public/assets/svgs/icons/other/verify_email.svg";
 
 const PleaseVerify = () => {
   const [email, setEmail] = useState("");
   const router = useRouter();
+  const { user, status } = useAppSelector((state) => state.user);
+
+  useEffect(() => {
+    if (status === "idle" || status === "loading") return;
+
+    if (!user) {
+      router.replace("/nx/login");
+      return;
+    }
+
+    const destination = getVerifiedUserDestination(user);
+    if (destination) {
+      router.replace(destination);
+    }
+  }, [user, status, router]);
+
+  if (status === "idle" || status === "loading" || !user) {
+    return null;
+  }
+
+  if (getVerifiedUserDestination(user)) {
+    return null;
+  }
+
+  const talent = user.accounts.find((account) => account.type === "talent");
+  const onboardingPath =
+    talent?.onboardingStep ?? "/nx/create-profile";
 
   return (
     <OnboardingLayout
@@ -37,7 +65,7 @@ const PleaseVerify = () => {
         <div className="text-sm text-slate-600 text-center">
           <p>
             We just sent an email to the address:{" "}
-            <strong className="font-medium">owner@charlieunicornai.eu</strong>
+            <strong className="font-medium">{user.email}</strong>
           </p>
           <p>
             Please check your email and select the link provided to verify your
@@ -49,7 +77,7 @@ const PleaseVerify = () => {
             type="primary"
             label="Send again"
             classname="font-semibold! rounded-full! text-sm!"
-            onClick={() => router.push("/nx/create-profile")}
+            onClick={() => router.push(onboardingPath)}
           />
         </div>
 
@@ -101,7 +129,9 @@ const PleaseVerify = () => {
                   name="email"
                   classname="w-2/3"
                   value={email}
-                  onChange={(e: any) => setEmail(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setEmail(e.target.value)
+                  }
                 />
                 <Button
                   type="outline"

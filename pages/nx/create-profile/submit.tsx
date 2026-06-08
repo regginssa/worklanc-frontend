@@ -35,6 +35,7 @@ import {
   LanguageLevel,
 } from "@/types/user";
 import { formatMonthYear } from "@/utils/df";
+import { buildHourlyRateForm } from "@/utils/rate";
 import { Icon } from "@iconify/react";
 import { countries, languages as countryLanguages } from "country-data-list";
 import { Move } from "lucide-react";
@@ -107,25 +108,7 @@ const cloneExperience = (experience: EmploymentFormInput): EmploymentFormInput =
   endAt: new Date(experience.endAt),
 });
 
-const buildRateForm = (rate: string): RateForm => {
-  const trimmedRate = rate.trim();
-
-  if (!trimmedRate) {
-    return {
-      rate: "",
-      fee: "0.00",
-      estimated: "0.00",
-    };
-  }
-
-  const parsedRate = Number(trimmedRate);
-
-  return {
-    rate,
-    fee: "0.00",
-    estimated: Number.isFinite(parsedRate) ? parsedRate.toFixed(2) : "0.00",
-  };
-};
+const buildRateForm = (rate: string): RateForm => buildHourlyRateForm(rate);
 
 const getTitleError = (value: string) => {
   const trimmedValue = value.trim();

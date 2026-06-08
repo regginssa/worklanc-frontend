@@ -106,7 +106,7 @@ export default function Categories() {
         <div className="flex-1 min-w-0">
           <div>
             <p className="text-xs text-slate-500 mb-6">
-              Now, select 1 to 3 specialties
+              Now, select {selectedSpecialties.length} to 3 specialties
             </p>
 
             {!selectedCategorySlug ? (
