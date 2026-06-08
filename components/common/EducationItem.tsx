@@ -13,6 +13,7 @@ export type EducationItemType = {
   isCurrent?: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
+  deleteLoading?: boolean;
 };
 
 export default function EducationItem({
@@ -25,6 +26,7 @@ export default function EducationItem({
   isCurrent,
   onEdit,
   onDelete,
+  deleteLoading = false,
 }: EducationItemType) {
   const [isExpanded, setIsExpanded] = useState(false);
   const isLongDescription =
@@ -85,6 +87,8 @@ export default function EducationItem({
               icon="mdi:trash-can-outline"
               className="p-1!"
               onClick={onDelete}
+              loading={deleteLoading}
+              disabled={deleteLoading}
             />
           )}
         </div>

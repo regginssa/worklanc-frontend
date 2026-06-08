@@ -15,12 +15,16 @@ export default function ProfileOverviewDialog({
   overview,
   onChangeOverview,
   onSave,
+  loading = false,
+  errors = {},
 }: {
   open: boolean;
   onClose: () => void;
   overview: string;
   onChangeOverview: (overview: string) => void;
   onSave: () => void;
+  loading?: boolean;
+  errors?: { overview?: string };
 }) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -51,6 +55,7 @@ export default function ProfileOverviewDialog({
               rows={5}
               value={overview}
               onChange={(e: any) => onChangeOverview(e.target.value)}
+              error={errors.overview}
             />
             <p className="text-right text-slate-600 text-sm">
               5000 characters left
@@ -68,6 +73,7 @@ export default function ProfileOverviewDialog({
             type="primary"
             label="Save"
             classname="py-2.5! px-5! rounded-full! text-sm! font-medium!"
+            loading={loading}
             onClick={onSave}
           />
         </DialogFooter>

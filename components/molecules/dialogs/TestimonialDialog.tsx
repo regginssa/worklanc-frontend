@@ -9,15 +9,21 @@ import React, { useState } from "react";
 import TestimonialIcon from "@/public/assets/svgs/icons/other/testinimal.svg";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
+import {
+  validateTestimonialForm,
+  type TestimonialFormErrors,
+} from "@/utils/validateFreelancerProfileForms";
 
 export default function TestimonialDialog({
   open,
   onClose,
   onRequest,
+  loading = false,
 }: {
   open: boolean;
   onClose: () => void;
   onRequest: () => void;
+  loading?: boolean;
 }) {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -28,9 +34,22 @@ export default function TestimonialDialog({
     projectType: "",
     message: "",
   });
+  const [errors, setErrors] = useState<TestimonialFormErrors>({});
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name as keyof TestimonialFormErrors]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+  };
+
+  const handleRequest = () => {
+    const result = validateTestimonialForm(formData);
+    setErrors(result.errors);
+    if (!result.isValid) return;
+    onRequest();
+  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -56,6 +75,7 @@ export default function TestimonialDialog({
                 classname="flex-1"
                 value={formData.firstName}
                 onChange={handleInputChange}
+                error={errors.firstName}
               />
               <Input
                 type="text"
@@ -64,6 +84,7 @@ export default function TestimonialDialog({
                 classname="flex-1"
                 value={formData.lastName}
                 onChange={handleInputChange}
+                error={errors.lastName}
               />
             </div>
 
@@ -75,6 +96,7 @@ export default function TestimonialDialog({
                 classname="flex-1"
                 value={formData.email}
                 onChange={handleInputChange}
+                error={errors.email}
               />
               <Input
                 type="url"
@@ -84,6 +106,7 @@ export default function TestimonialDialog({
                 classname="flex-1"
                 value={formData.linkedinUrl}
                 onChange={handleInputChange}
+                error={errors.linkedinUrl}
               />
             </div>
 
@@ -98,7 +121,7 @@ export default function TestimonialDialog({
                 onChange={handleInputChange}
               />
               <Input
-                type="url"
+                type="text"
                 label="Project type Optional"
                 name="projectType"
                 placeholder="Marketing Brand Reference"
@@ -115,16 +138,21 @@ export default function TestimonialDialog({
               subLabel="800 characters left"
               rows={4}
               value={formData.message}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setFormData({ ...formData, message: e.target.value })
-              }
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                setFormData({ ...formData, message: e.target.value });
+                if (errors.message) {
+                  setErrors((prev) => ({ ...prev, message: undefined }));
+                }
+              }}
+              error={errors.message}
             />
 
             <Button
               type="primary"
               label="Request testimonial"
               classname="py-2.5! px-5! text-sm! font-medium!"
-              onClick={onRequest}
+              loading={loading}
+              onClick={handleRequest}
             />
           </form>
 

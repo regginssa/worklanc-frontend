@@ -5,6 +5,7 @@ interface ProfileSectionActionsProps {
   onRemove?: () => void;
   onAdd?: () => void;
   className?: string;
+  loadingRemove?: boolean;
 }
 
 export default function ProfileSectionActions({
@@ -12,6 +13,7 @@ export default function ProfileSectionActions({
   onRemove,
   onAdd,
   className = "flex items-center gap-4",
+  loadingRemove = false,
 }: ProfileSectionActionsProps) {
   if (!onEdit && !onRemove && !onAdd) return null;
 
@@ -39,6 +41,8 @@ export default function ProfileSectionActions({
           icon="mdi:trash-can-outline"
           className="p-1!"
           onClick={onRemove}
+          loading={loadingRemove}
+          disabled={loadingRemove}
         />
       )}
     </div>

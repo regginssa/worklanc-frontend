@@ -54,7 +54,10 @@ export default function FreelancerProfileHeader({
             <Image
               src={avatar}
               alt={name}
-              className="h-[96px] w-[96px] rounded-full object-contain"
+              width={96}
+              height={96}
+              unoptimized={typeof avatar === "string"}
+              className="h-[96px] w-[96px] rounded-full object-cover"
             />
             {onEditAvatar && (
               <IconButton

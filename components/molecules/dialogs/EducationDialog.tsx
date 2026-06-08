@@ -16,12 +16,22 @@ export default function EducationDialog({
   onSave,
   formData,
   onChangeFormData,
+  loading = false,
+  errors = {},
 }: {
   open: boolean;
   onClose: () => void;
   onSave: () => void;
   formData: Education;
   onChangeFormData: (data: Education) => void;
+  loading?: boolean;
+  errors?: {
+    school?: string;
+    degree?: string;
+    fieldOfStudy?: string;
+    startedYear?: string;
+    endYear?: string;
+  };
 }) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChangeFormData({ ...formData, [e.target.name]: e.target.value });
@@ -48,6 +58,7 @@ export default function EducationDialog({
             required
             value={formData?.school}
             onChange={handleInputChange}
+            error={errors.school}
           />
           <Input
             type="text"
@@ -58,6 +69,7 @@ export default function EducationDialog({
             required
             value={formData?.degree}
             onChange={handleInputChange}
+            error={errors.degree}
           />
 
           <Input
@@ -69,6 +81,7 @@ export default function EducationDialog({
             required
             value={formData?.fieldOfStudy}
             onChange={handleInputChange}
+            error={errors.fieldOfStudy}
           />
 
           <div>
@@ -87,6 +100,7 @@ export default function EducationDialog({
                 onSelect={(v: string) =>
                   onChangeFormData({ ...formData, startedYear: Number(v) })
                 }
+                error={errors.startedYear}
               />
 
               <Dropdown
@@ -102,6 +116,7 @@ export default function EducationDialog({
                 onSelect={(v: string) =>
                   onChangeFormData({ ...formData, endYear: Number(v) })
                 }
+                error={errors.endYear}
               />
             </div>
           </div>
@@ -130,6 +145,7 @@ export default function EducationDialog({
             type="primary"
             label="Save"
             classname="py-2.5! px-5! rounded-full! text-sm! font-medium!"
+            loading={loading}
             onClick={onSave}
           />
         </DialogFooter>

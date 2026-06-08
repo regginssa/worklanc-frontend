@@ -21,12 +21,16 @@ export default function HourlyRateDialog({
   rate,
   onChangeRate,
   onSave,
+  loading = false,
+  errors = {},
 }: {
   open: boolean;
   onClose: () => void;
   rate: number;
   onChangeRate: (rate: number) => void;
   onSave: () => void;
+  loading?: boolean;
+  errors?: { rate?: string };
 }) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -60,6 +64,7 @@ export default function HourlyRateDialog({
                   placeholder="$0.00"
                   value={rate}
                   onChange={(e) => onChangeRate(Number(e.target.value))}
+                  error={errors.rate}
                 />
                 <span className="text-sm text-slate-600">/ hr</span>
               </div>
@@ -138,6 +143,7 @@ export default function HourlyRateDialog({
             type="primary"
             label="Save"
             classname="py-2.5! px-5! rounded-full! text-sm! font-medium!"
+            loading={loading}
             onClick={onSave}
           />
         </DialogFooter>

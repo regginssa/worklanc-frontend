@@ -13,6 +13,7 @@ interface InputProps {
   error?: string;
   required?: boolean;
   disabled?: boolean;
+  maxLength?: number;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -29,6 +30,7 @@ const Input: React.FC<InputProps> = ({
   onChange,
   required,
   disabled,
+  maxLength,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -64,6 +66,7 @@ const Input: React.FC<InputProps> = ({
           value={value}
           onChange={(e: any) => onChange(e)}
           disabled={disabled}
+          maxLength={maxLength}
         />
 
         {type === "password" && (

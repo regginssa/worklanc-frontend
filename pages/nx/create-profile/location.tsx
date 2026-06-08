@@ -11,7 +11,8 @@ import {
 } from "@/components/atoms";
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { countries } from "country-data-list";
-import { Value } from "react-phone-number-input";
+import { Value, type Country } from "react-phone-number-input";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 import { motion } from "motion/react";
 import { useRouter } from "next/router";
 import {
@@ -27,12 +28,17 @@ import { Slider } from "@/components/ui/slider";
 import { Move } from "lucide-react";
 import AuthAPI from "@/lib/api/auth";
 import TalentAPI from "@/lib/api/talent";
-import UploadAPI, { resolveMediaAssetUrl } from "@/lib/api/upload";
+import { replaceUserAvatar } from "@/lib/api/avatar";
+import { resolveMediaAssetUrl } from "@/lib/api/upload";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setUser } from "@/store/slices/userSlice";
 import { useOnboarding } from "@/hooks/useOnboarding";
 import { useQueryClient } from "@tanstack/react-query";
 import { StreetAddressAutoComplete } from "@/components/molecules";
+import {
+  validateLocationForm,
+  type LocationFormField,
+} from "@/utils/validateLocationForm";
 
 const EDITOR_PREVIEW_SIZE = 300;
 
@@ -40,6 +46,7 @@ export default function Location() {
   const [formData, setFormData] = useState<any>({
     birthday: null,
     country: "United States",
+    phoneCountryCode: "US",
     address: "",
     photo: null,
     code: "",
@@ -70,8 +77,14 @@ export default function Location() {
     offsetY: number;
   } | null>(null);
 
-  const handleInputChange = (e: any) =>
+  const clearError = (field: LocationFormField) => {
+    setErrors((prev: any) => ({ ...prev, [field]: false }));
+  };
+
+  const handleInputChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    clearError(e.target.name as LocationFormField);
+  };
 
   useEffect(() => {
     if (!user || seeded.current) return;
@@ -79,10 +92,19 @@ export default function Location() {
     const countryName = user.countryCode
       ? countries.all.find((c) => c.alpha2 === user.countryCode)?.name
       : undefined;
+    const parsedPhone = user.phone
+      ? parsePhoneNumberFromString(user.phone)
+      : undefined;
+
     setFormData((prev: any) => ({
       ...prev,
       birthday: user.dateOfBirth ? new Date(user.dateOfBirth) : prev.birthday,
       country: countryName || prev.country,
+      phoneCountryCode:
+        parsedPhone?.country ||
+        user.countryCode ||
+        prev.phoneCountryCode ||
+        "US",
       address: user.streetAddress || "",
       aptSuite: user.aptSuite || "",
       city: user.city || "",
@@ -101,25 +123,35 @@ export default function Location() {
   }, [user, profile]);
 
   const handleNext = async () => {
+    const { isValid, errors: validationErrors } = validateLocationForm(
+      formData,
+      {
+        hasSavedAvatar: !!(formData.photo || savedPhotoUrl || user?.avatarUrl),
+      }
+    );
+
+    setErrors(validationErrors);
+    if (!isValid) return;
+
     setSavingNext(true);
     try {
       const alpha2 = countries.all.find(
         (c) => c.name === formData.country
       )?.alpha2;
 
-      let avatarEncryptedUrl: string | undefined;
+      let avatarResult: Awaited<ReturnType<typeof replaceUserAvatar>> = null;
 
       if (formData.photo) {
         const croppedPhoto = previewUrl
           ? (await buildEditedPhoto()) ?? formData.photo
           : formData.photo;
 
-        const uploadResult = await UploadAPI.upload(croppedPhoto, "avatar");
-        if (!uploadResult?.encryptedUrl) {
+        const previousToken = user?.avatarUrl || profile?.photoUrl || null;
+        avatarResult = await replaceUserAvatar(croppedPhoto, previousToken);
+        if (!avatarResult) {
           setSavingNext(false);
           return;
         }
-        avatarEncryptedUrl = uploadResult.encryptedUrl;
       }
 
       const userRes = await AuthAPI.updateMe({
@@ -131,33 +163,32 @@ export default function Location() {
         state: formData.state || undefined,
         zipCode: formData.zip || undefined,
         phone: formData.phone || undefined,
-        ...(avatarEncryptedUrl ? { avatarUrl: avatarEncryptedUrl } : {}),
       });
 
       const tpRes = await TalentAPI.updateProfile({
         onboardingStep: "/nx/create-profile/submit",
-        ...(avatarEncryptedUrl ? { photoUrl: avatarEncryptedUrl } : {}),
       });
 
-      if (tpRes?.profile) {
-        queryClient.setQueryData(["talent-profile"], {
-          profile: tpRes.profile,
-          account: tpRes.account ?? null,
-        });
-      }
-
-      let nextUser = userRes?.user ?? user;
-      if (nextUser && tpRes?.account) {
+      let nextUser = avatarResult?.user ?? userRes?.user ?? user;
+      const accountPatch = avatarResult?.account ?? tpRes?.account;
+      if (nextUser && accountPatch) {
         nextUser = {
           ...nextUser,
           accounts: nextUser.accounts.map((account: any) =>
-            account.id === tpRes.account.id
-              ? { ...account, ...tpRes.account }
+            account.id === accountPatch.id
+              ? { ...account, ...accountPatch }
               : account
           ),
         };
       }
       if (nextUser) dispatch(setUser(nextUser));
+
+      if (avatarResult?.profile || tpRes?.profile) {
+        queryClient.setQueryData(["talent-profile"], {
+          profile: avatarResult?.profile ?? tpRes?.profile,
+          account: accountPatch ?? null,
+        });
+      }
 
       router.push("/nx/create-profile/submit");
     } finally {
@@ -179,6 +210,7 @@ export default function Location() {
 
   const handlePhotoChange = (file: File | null) => {
     setFormData((prev: any) => ({ ...prev, photo: file }));
+    clearError("avatar");
     setPhotoZoom(0);
     setPhotoRotation(0);
     setPhotoOffset({ x: 0, y: 0 });
@@ -434,10 +466,10 @@ export default function Location() {
         onChange={(e) => handlePhotoChange(e.target.files?.[0] || null)}
       />
       <div className="flex items-start">
-        <div className="flex flex-col items-center gap-6 px-6">
+        <div className="flex flex-col items-center gap-2 px-6">
           <button
             type="button"
-            className="cursor-pointer"
+            className="cursor-pointer rounded-full"
             onClick={() => setAvatarOpen(true)}
           >
             {previewUrl ? (
@@ -470,6 +502,18 @@ export default function Location() {
             classname="font-medium! text-sm! py-1.5! px-5! rounded-full!"
             onClick={() => setAvatarOpen(true)}
           />
+          {!!errors?.avatar && (
+            <div className="flex items-center gap-2">
+              <Icon
+                icon="mdi:information-outline"
+                width={16}
+                className="text-red-500"
+              />
+              <p className="text-red-600 text-sm text-center">
+                {errors.avatar}
+              </p>
+            </div>
+          )}
         </div>
 
         <form className="flex-1 space-y-6">
@@ -479,10 +523,12 @@ export default function Location() {
               placeholder="Select date"
               name="birthday"
               value={formData.birthday}
+              error={errors?.birthday}
               required
-              onChange={(date: Date) =>
-                handleInputChange({ target: { name: "birthday", value: date } })
-              }
+              onChange={(date: Date) => {
+                setFormData({ ...formData, birthday: date });
+                clearError("birthday");
+              }}
             />
           </div>
 
@@ -497,27 +543,38 @@ export default function Location() {
             error={errors?.country}
             defaultOption={formData?.country}
             required
-            onSelect={(v: string) => setFormData({ ...formData, country: v })}
+            onSelect={(v: string) => {
+              const nextCountryCode =
+                countries.all.find((c) => c.name === v)?.alpha2 || "US";
+              setFormData({
+                ...formData,
+                country: v,
+                phoneCountryCode: nextCountryCode,
+              });
+              clearError("country");
+            }}
           />
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-start gap-6">
             <StreetAddressAutoComplete
               label="Street address"
               labelClassName="text-sm font-medium"
               placeholder="Enter street address"
               classname="w-2/3"
               required
+              error={errors?.address}
               value={formData.address}
               countryCode={
                 countries.all.find((c) => c.name === formData.country)?.alpha2
               }
-              onChange={(streetAddress) =>
+              onChange={(streetAddress) => {
                 setFormData((prev: any) => ({
                   ...prev,
                   address: streetAddress,
-                }))
-              }
-              onAddressSelect={(details) =>
+                }));
+                clearError("address");
+              }}
+              onAddressSelect={(details) => {
                 setFormData((prev: any) => ({
                   ...prev,
                   address: details.streetAddress,
@@ -525,8 +582,15 @@ export default function Location() {
                   state: details.state || prev.state,
                   zip: details.zip || prev.zip,
                   country: details.country || prev.country,
-                }))
-              }
+                  phoneCountryCode:
+                    details.countryCode || prev.phoneCountryCode,
+                }));
+                clearError("address");
+                if (details.city) clearError("city");
+                if (details.state) clearError("state");
+                if (details.zip) clearError("zip");
+                if (details.country) clearError("country");
+              }}
             />
 
             <Input
@@ -550,6 +614,7 @@ export default function Location() {
               placeholder="Enter city"
               classname="flex-1"
               required
+              error={errors?.city}
               value={formData.city}
               onChange={handleInputChange}
             />
@@ -562,6 +627,7 @@ export default function Location() {
               placeholder="Enter state/province"
               classname="flex-1"
               required
+              error={errors?.state}
               value={formData.state}
               onChange={handleInputChange}
             />
@@ -574,6 +640,7 @@ export default function Location() {
               placeholder="Enter ZIP/Postal code"
               classname="flex-1"
               required
+              error={errors?.zip}
               value={formData.zip}
               onChange={handleInputChange}
             />
@@ -582,11 +649,19 @@ export default function Location() {
           <PhoneInput
             label="Phone"
             placeholder="Enter number"
-            defaultCountry="US"
+            country={formData.phoneCountryCode as Country}
             required
+            error={errors?.phone}
             classname="w-1/2!"
             value={formData.phone}
-            onChange={(v: Value) => setFormData({ ...formData, phone: v })}
+            onCountryChange={(code: Country) => {
+              setFormData({ ...formData, phoneCountryCode: code });
+              clearError("phone");
+            }}
+            onChange={(v: Value) => {
+              setFormData({ ...formData, phone: v });
+              clearError("phone");
+            }}
           />
         </form>
       </div>

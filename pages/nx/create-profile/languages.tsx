@@ -146,7 +146,7 @@ export default function Languages() {
                   whileTap={{ scale: 0.97 }}
                   className="p-1 rounded-full border border-slate-400 transition-all duration-200 cursor-pointer hover:bg-slate-100"
                   onClick={() =>
-                    setLanguages((prev) => prev.filter((_, i) => i !== 0))
+                    setLanguages((prev) => prev.filter((_, i) => i !== index))
                   }
                 >
                   <Icon icon="mdi:trash-can-outline" width={20} />

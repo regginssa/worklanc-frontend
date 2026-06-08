@@ -9,27 +9,52 @@ import {
 } from "@/components/ui/dialog";
 import { useState } from "react";
 
+export type CertificationFormData = {
+  name: string;
+  provider: string;
+  issueDate: Date | null;
+  expirationDate: Date | null;
+  description: string;
+  credentialId: string;
+  credentialUrl: string;
+};
+
+export const emptyCertificationForm = (): CertificationFormData => ({
+  name: "",
+  provider: "",
+  issueDate: null,
+  expirationDate: null,
+  description: "",
+  credentialId: "",
+  credentialUrl: "",
+});
+
 export default function CertificationDialog({
   open,
   onClose,
-  onAdd,
+  onSave,
+  formData,
+  onChangeFormData,
+  loading = false,
+  errors = {},
 }: {
   open: boolean;
   onClose: () => void;
-  onAdd: () => void;
+  onSave: () => void;
+  formData: CertificationFormData;
+  onChangeFormData: (data: CertificationFormData) => void;
+  loading?: boolean;
+  errors?: {
+    name?: string;
+    provider?: string;
+    issueDate?: string;
+    expirationDate?: string;
+    credentialUrl?: string;
+  };
 }) {
-  const [formData, setFormData] = useState({
-    name: "",
-    provider: "",
-    issueDate: null,
-    expirationDate: null,
-    description: "",
-    credentialId: "",
-    credentialUrl: "",
-  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    onChangeFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (
@@ -49,17 +74,19 @@ export default function CertificationDialog({
             required
             value={formData.name}
             onChange={handleInputChange}
+            error={errors.name}
           />
 
           <Input
             type="text"
-            name="name"
+            name="provider"
             label="Provider"
             placeholder="Ex: Scrum Alliance"
             labelClassName="text-sm font-medium"
             required
             value={formData.provider}
             onChange={handleInputChange}
+            error={errors.provider}
           />
 
           <div className="flex items-center gap-6">
@@ -70,9 +97,9 @@ export default function CertificationDialog({
               classname="flex-1"
               value={formData.issueDate ? new Date(formData.issueDate) : null}
               onChange={(date: Date) =>
-                setFormData({
+                onChangeFormData({
                   ...formData,
-                  issueDate: date as any,
+                  issueDate: date,
                 })
               }
             />
@@ -87,9 +114,9 @@ export default function CertificationDialog({
                   : null
               }
               onChange={(date: Date) =>
-                setFormData({
+                onChangeFormData({
                   ...formData,
-                  expirationDate: date as any,
+                  expirationDate: date,
                 })
               }
             />
@@ -101,7 +128,7 @@ export default function CertificationDialog({
             name="description"
             value={formData.description}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-              setFormData({ ...formData, description: e.target.value })
+              onChangeFormData({ ...formData, description: e.target.value })
             }
           />
 
@@ -121,6 +148,7 @@ export default function CertificationDialog({
             labelClassName="text-sm font-medium"
             value={formData.credentialUrl}
             onChange={handleInputChange}
+            error={errors.credentialUrl}
           />
         </form>
 
@@ -132,10 +160,10 @@ export default function CertificationDialog({
           </DialogClose>
           <Button
             type="primary"
-            label="Add certification"
+            label="Save certification"
             classname="py-2.5! px-5! rounded-full! text-sm! font-medium!"
-            disabled
-            onClick={onAdd}
+            loading={loading}
+            onClick={onSave}
           />
         </DialogFooter>
       </DialogContent>

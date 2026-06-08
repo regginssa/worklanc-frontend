@@ -34,6 +34,7 @@ export default function StreetAddressAutoComplete({
   classname = "",
   placeholder,
   label,
+  error,
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -45,6 +46,7 @@ export default function StreetAddressAutoComplete({
   classname?: string;
   placeholder?: string;
   label?: string;
+  error?: string;
 }) {
   const [keyword, setKeyword] = useState(value);
   const [loading, setLoading] = useState(false);
@@ -128,6 +130,7 @@ export default function StreetAddressAutoComplete({
       options={options}
       loading={loading}
       filterOptionsLocally={false}
+      error={error}
       noResultsText={
         keyword.trim().length < MIN_QUERY_LENGTH
           ? "Type at least 3 characters"

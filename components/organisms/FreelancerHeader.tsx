@@ -8,6 +8,8 @@ import { UserAvatar } from "../atoms";
 import { Switch } from "../ui/switch";
 import { LucideBell, LucideCircleQuestionMark } from "lucide-react";
 import { useAppSelector } from "@/store/hooks";
+import { useQuery } from "@tanstack/react-query";
+import TalentAPI from "@/lib/api/talent";
 
 type NavLink = {
   label: string;
@@ -144,11 +146,18 @@ export default function AuthorizedHeader() {
     ],
   };
 
+  const { data: talentProfileData } = useQuery({
+    queryKey: ["talent-profile"],
+    queryFn: TalentAPI.getProfile,
+    enabled: Boolean(user),
+  });
+  const profileUid = talentProfileData?.profile?.uid;
+
   const profileNavs = [
     {
       label: "Your profile",
       icon: "material-symbols-light:account-circle-outline",
-      href: "#",
+      href: profileUid ? `/freelancers/${profileUid}` : "#",
     },
     {
       label: "Stats and trends",

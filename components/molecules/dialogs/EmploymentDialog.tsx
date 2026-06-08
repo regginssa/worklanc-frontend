@@ -23,12 +23,23 @@ export default function WorkHistoryDialog({
   onSave,
   formData,
   onChangeFormData,
+  loading = false,
+  errors = {},
 }: {
   open: boolean;
   onClose: () => void;
   onSave: () => void;
   formData: any;
   onChangeFormData: (data: any) => void;
+  loading?: boolean;
+  errors?: {
+    title?: string;
+    company?: string;
+    city?: string;
+    country?: string;
+    startedAt?: string;
+    endAt?: string;
+  };
 }) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChangeFormData({ ...formData, [e.target.name]: e.target.value });
@@ -51,6 +62,7 @@ export default function WorkHistoryDialog({
             required
             value={formData?.title}
             onChange={handleInputChange}
+            error={errors.title}
           />
           <Input
             type="text"
@@ -61,6 +73,7 @@ export default function WorkHistoryDialog({
             required
             value={formData?.company}
             onChange={handleInputChange}
+            error={errors.company}
           />
 
           <div className="">
@@ -83,6 +96,7 @@ export default function WorkHistoryDialog({
                       },
                     })
                   }
+                  error={errors.city}
                 />
               </div>
               <div className="flex-1">
@@ -97,6 +111,7 @@ export default function WorkHistoryDialog({
                       location: { ...formData.location, country: v },
                     })
                   }
+                  error={errors.country}
                 />
               </div>
             </div>
@@ -125,6 +140,7 @@ export default function WorkHistoryDialog({
                 onChangeFormData({ ...formData, startedAt: v })
               }
               classname="flex-1"
+              error={errors.startedAt}
             />
             <DateDropdown
               label="End Date"
@@ -136,6 +152,7 @@ export default function WorkHistoryDialog({
               }
               classname="flex-1"
               disabled={formData?.isCurrent}
+              error={errors.endAt}
             />
           </div>
 
@@ -163,6 +180,7 @@ export default function WorkHistoryDialog({
             type="primary"
             label="Save"
             classname="py-2.5! px-5! rounded-full! text-sm! font-medium!"
+            loading={loading}
             onClick={onSave}
           />
         </DialogFooter>

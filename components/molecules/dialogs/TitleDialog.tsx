@@ -1,4 +1,5 @@
 import { Button, Input } from "@/components/atoms";
+import { TITLE_MAX_LENGTH } from "@/utils/validateFreelancerProfileForms";
 import {
   Dialog,
   DialogClose,
@@ -15,12 +16,16 @@ export default function TitleDialog({
   title,
   onChangeTitle,
   onSave,
+  loading = false,
+  errors = {},
 }: {
   open: boolean;
   onClose: () => void;
   title?: string;
   onChangeTitle: (title: string) => void;
   onSave: () => void;
+  loading?: boolean;
+  errors?: { title?: string };
 }) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -42,8 +47,13 @@ export default function TitleDialog({
             labelClassName="text-sm font-medium"
             required
             value={title}
+            maxLength={TITLE_MAX_LENGTH}
             onChange={(e) => onChangeTitle(e.target.value)}
+            error={errors.title}
           />
+          <p className="text-right text-sm text-slate-600">
+            {(title ?? "").length}/{TITLE_MAX_LENGTH} characters
+          </p>
         </div>
 
         <DialogFooter>
@@ -56,6 +66,8 @@ export default function TitleDialog({
             type="primary"
             label="Save"
             classname="py-2.5! px-5! rounded-full! text-sm! font-medium!"
+            loading={loading}
+            onClick={onSave}
           />
         </DialogFooter>
       </DialogContent>

@@ -4,6 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { useRouter } from "next/router";
 import { useOnboarding } from "@/hooks/useOnboarding";
+import {
+  TITLE_MAX_LENGTH,
+  validateTitleForm,
+} from "@/utils/validateFreelancerProfileForms";
 
 export default function Title() {
   const [title, setTitle] = useState("");
@@ -18,14 +22,9 @@ export default function Title() {
     if (profile.title) setTitle(profile.title);
   }, [profile]);
 
-  const validateTitle = () => {
-    if (title.trim() === "") {
-      setTitleError("Enter a title with at least 4 characters.");
-    } else if (title.length > 62) {
-      setTitleError("Title must be less than 62 characters");
-    } else {
-      setTitleError(null);
-    }
+  const validateTitle = (value = title) => {
+    const result = validateTitleForm(value);
+    setTitleError(result.errors.title ?? null);
   };
 
   return (
@@ -49,12 +48,16 @@ export default function Title() {
           name="title"
           classname="text-sm!"
           value={title}
+          maxLength={TITLE_MAX_LENGTH}
           onChange={(e) => {
             setTitle(e.target.value);
-            validateTitle();
+            validateTitle(e.target.value);
           }}
           error={titleError ?? undefined}
         />
+        <p className="text-right text-sm text-slate-600 mt-1">
+          {title.length}/{TITLE_MAX_LENGTH} characters
+        </p>
       </div>
 
       <div className="mt-36 flex items-center justify-between font-medium">
@@ -72,7 +75,9 @@ export default function Title() {
           loading={saving}
           classname="font-medium! text-sm! py-2.5! px-5! rounded-full!"
           onClick={() => {
-            if (titleError || title.trim().length < 4) return;
+            const result = validateTitleForm(title);
+            setTitleError(result.errors.title ?? null);
+            if (!result.isValid) return;
             saveStep({ title: title.trim() }, "/nx/create-profile/employment");
           }}
         />

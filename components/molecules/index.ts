@@ -20,7 +20,15 @@ export { default as ProfileOverviewDialog } from "./dialogs/ProfileOverviewDialo
 export { default as ShareProfileDialog } from "./dialogs/ShareProfileDialog";
 export { default as TestimonialDialog } from "./dialogs/TestimonialDialog";
 export { default as CertificationDialog } from "./dialogs/CertificationDialog";
+export type { CertificationFormData } from "./dialogs/CertificationDialog";
+export { emptyCertificationForm } from "./dialogs/CertificationDialog";
+export { default as LanguagesDialog } from "./dialogs/LanguagesDialog";
+export type { LanguagesDialogErrors } from "./dialogs/LanguagesDialog";
 export { default as OtherExperienceDialog } from "./dialogs/OtherExperienceDialog";
+export {
+  emptyOtherExperienceForm,
+  type OtherExperienceFormData,
+} from "./dialogs/OtherExperienceDialog";
 export { default as SecurityQuestionDialog } from "./dialogs/SecurityQuestionDialog";
 export { default as ViewToggle } from "./ViewToggle";
 export { default as DraftJobCard } from "./DraftJobCard";

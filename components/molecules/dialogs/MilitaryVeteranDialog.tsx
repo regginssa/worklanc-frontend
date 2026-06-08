@@ -38,10 +38,12 @@ export default function MilitaryVeteranDialog({
   open,
   onClose,
   onSubmit,
+  loading = false,
 }: {
   open: boolean;
   onClose: () => void;
   onSubmit?: () => void;
+  loading?: boolean;
 }) {
   const [formData, setFormData] = useState({
     status: "served",
@@ -227,6 +229,8 @@ export default function MilitaryVeteranDialog({
                   type="primary"
                   label={isNext ? "Save" : "Next"}
                   isSubmit
+                  loading={isNext && loading}
+                  disabled={loading}
                   classname="py-2! px-4! rounded-full! text-sm! font-medium!"
                 />
               </div>

@@ -13,6 +13,7 @@ export type EmploymentHistoryItemType = {
   description: string;
   onEdit?: () => void;
   onDelete?: () => void;
+  deleteLoading?: boolean;
 };
 
 export default function EmploymentHistoryItem({
@@ -24,6 +25,7 @@ export default function EmploymentHistoryItem({
   description,
   onEdit,
   onDelete,
+  deleteLoading = false,
 }: EmploymentHistoryItemType) {
   const [isExpanded, setIsExpanded] = useState(false);
   const isLongDescription = description.length > DESCRIPTION_PREVIEW_LENGTH;
@@ -80,6 +82,8 @@ export default function EmploymentHistoryItem({
               icon="mdi:trash-can-outline"
               className="p-1!"
               onClick={onDelete}
+              loading={deleteLoading}
+              disabled={deleteLoading}
             />
           )}
         </div>

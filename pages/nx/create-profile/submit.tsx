@@ -12,7 +12,9 @@ import type { AutoCompleteOption } from "@/components/atoms/AutoCompleteSelector
 import { DateDropdown } from "@/components/molecules";
 import { CreateProfilePageLayout } from "@/components/layouts";
 import DocEditIcon from "@/public/assets/svgs/icons/other/doc_edit.svg";
-import UserPic from "@/public/assets/webps/avatars/man2.webp";
+import AvatarImage from "@/public/assets/svgs/icons/other/avatar.svg";
+import { replaceUserAvatar } from "@/lib/api/avatar";
+import { resolveMediaAssetUrl } from "@/lib/api/upload";
 import {
   Dialog,
   DialogClose,
@@ -45,7 +47,9 @@ import Link from "next/link";
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { useRouter } from "next/router";
 import { useOnboarding } from "@/hooks/useOnboarding";
-import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { setUser } from "@/store/slices/userSlice";
+import { useQueryClient } from "@tanstack/react-query";
 
 const EDITOR_PREVIEW_SIZE = 300;
 
@@ -178,6 +182,7 @@ export default function Submit() {
   const [avatarOpen, setAvatarOpen] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
   const [profilePhotoUrl, setProfilePhotoUrl] = useState<string | null>(null);
+  const [savedPhotoUrl, setSavedPhotoUrl] = useState<string | null>(null);
   const [draftPhoto, setDraftPhoto] = useState<File | null>(null);
   const [draftPhotoUrl, setDraftPhotoUrl] = useState<string | null>(null);
   const [photoZoom, setPhotoZoom] = useState(0);
@@ -192,9 +197,12 @@ export default function Submit() {
     offsetY: number;
   } | null>(null);
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   const { profile, complete, saving } = useOnboarding();
   const { user } = useAppSelector((state) => state.user);
   const seeded = useRef(false);
+  const photoSeeded = useRef(false);
 
   const displayName = user
     ? `${user.firstName}${user.lastName ? ` ${user.lastName[0]}.` : ""}`
@@ -268,10 +276,15 @@ export default function Submit() {
         }))
       );
     }
-    if (profile.photoUrl) {
-      setProfilePhotoUrl(profile.photoUrl);
-    }
   }, [profile]);
+
+  useEffect(() => {
+    if (photoSeeded.current) return;
+    const storedAvatar = user?.avatarUrl || profile?.photoUrl;
+    if (!storedAvatar) return;
+    photoSeeded.current = true;
+    setSavedPhotoUrl(resolveMediaAssetUrl(storedAvatar));
+  }, [user, profile]);
 
   useEffect(() => {
     if (!profilePhoto) {
@@ -323,7 +336,8 @@ export default function Submit() {
 
   const scale = 1 + photoZoom / 100;
   const canMovePhoto = !!draftPhotoUrl && photoZoom > 0;
-  const profileImageSrc: string | StaticImageData = profilePhotoUrl ?? UserPic;
+  const profileImageSrc: string | StaticImageData | null =
+    profilePhotoUrl ?? savedPhotoUrl;
 
   const clampPhotoOffset = (
     offset: { x: number; y: number },
@@ -442,10 +456,37 @@ export default function Submit() {
     try {
       setIsAttachingPhoto(true);
       const editedPhoto = await buildEditedPhoto();
-
       if (!editedPhoto) return;
 
-      setProfilePhoto(editedPhoto);
+      const previousToken = user?.avatarUrl || profile?.photoUrl || null;
+      const result = await replaceUserAvatar(editedPhoto, previousToken);
+      if (!result) return;
+
+      if (result.user) {
+        let nextUser = result.user;
+        if (result.account) {
+          nextUser = {
+            ...nextUser,
+            accounts: nextUser.accounts.map((account: (typeof nextUser.accounts)[number]) =>
+              account.id === result.account!.id
+                ? { ...account, ...result.account }
+                : account,
+            ),
+          };
+        }
+        dispatch(setUser(nextUser));
+      }
+
+      if (result.profile) {
+        queryClient.setQueryData(["talent-profile"], {
+          profile: result.profile,
+          account: result.account ?? null,
+        });
+      }
+
+      setSavedPhotoUrl(result.displayUrl);
+      setProfilePhoto(null);
+      photoSeeded.current = true;
       setAvatarOpen(false);
     } catch (error) {
       console.error("Failed to attach edited photo", error);
@@ -491,8 +532,9 @@ export default function Submit() {
   const renderPhotoPreview = (
     size: number,
     showMoveLabel = false,
-    source: string | StaticImageData = profileImageSrc
+    source: string | StaticImageData | null = profileImageSrc
   ) => {
+    const imageSrc = source ?? AvatarImage;
     const previewOffset = draftPhotoUrl
       ? getPreviewOffset(size)
       : { x: 0, y: 0 };
@@ -525,10 +567,10 @@ export default function Submit() {
             }}
           >
             <Image
-              src={source}
+              src={imageSrc}
               alt="Photo"
               fill
-              unoptimized={typeof source === "string"}
+              unoptimized={typeof imageSrc === "string"}
               className="object-cover select-none pointer-events-none"
             />
           </div>
@@ -847,14 +889,24 @@ export default function Submit() {
             <div className="border border-slate-300 rounded-3xl p-8 space-y-6">
               <div className="flex items-center gap-6">
                 <div className="relative w-[128px] h-[128px]">
-                  <Image
-                    src={profileImageSrc}
-                    alt="User"
-                    width={128}
-                    height={128}
-                    unoptimized={typeof profileImageSrc === "string"}
-                    className="rounded-full object-cover w-full h-full"
-                  />
+                  {profileImageSrc ? (
+                    <Image
+                      src={profileImageSrc}
+                      alt={displayName || "User"}
+                      width={128}
+                      height={128}
+                      unoptimized={typeof profileImageSrc === "string"}
+                      className="rounded-full object-cover w-full h-full"
+                    />
+                  ) : (
+                    <Image
+                      src={AvatarImage}
+                      alt="Avatar"
+                      width={128}
+                      height={128}
+                      className="rounded-full object-cover w-full h-full"
+                    />
+                  )}
 
                   <button
                     type="button"

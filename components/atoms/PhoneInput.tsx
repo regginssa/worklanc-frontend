@@ -1,11 +1,12 @@
 import { PhoneInput as PhoneInputComponent } from "@/components/reui/phone-input";
 import { Icon } from "@iconify/react";
-import { Value } from "react-phone-number-input";
+import { Value, type Country } from "react-phone-number-input";
 
 interface PhoneInputProps {
   label?: string;
   placeholder?: string;
-  defaultCountry: any;
+  defaultCountry?: Country;
+  country?: Country;
   value: Value | undefined;
   required?: boolean;
   error?: string;
@@ -14,6 +15,7 @@ interface PhoneInputProps {
   icon?: string;
   disabled?: boolean;
   onChange: (value: Value) => void;
+  onCountryChange?: (country: Country) => void;
 }
 
 export default function PhoneInput({
@@ -22,12 +24,14 @@ export default function PhoneInput({
   onChange,
   classname,
   defaultCountry,
+  country,
   disabled,
   error,
   icon,
   labelClassName,
   required,
   value,
+  onCountryChange,
 }: PhoneInputProps) {
   return (
     <div className={`flex flex-col items-start gap-1 ${classname}`}>
@@ -40,7 +44,9 @@ export default function PhoneInput({
       <PhoneInputComponent
         variant="default"
         placeholder={placeholder || "Enter phone number"}
-        defaultCountry={defaultCountry || "US"}
+        defaultCountry={defaultCountry || country || "US"}
+        country={country}
+        onCountryChange={onCountryChange}
         className={`w-full! h-10! flex items-center gap-2 rounded-lg ${
           error
             ? "border-2 border-red-500"

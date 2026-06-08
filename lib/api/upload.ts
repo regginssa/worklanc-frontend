@@ -1,3 +1,4 @@
+import { getAuthToken } from "./auth";
 import { uploadRequest } from "./client";
 
 export type UploadPurpose = "avatar" | "portfolio" | "asset";
@@ -13,6 +14,13 @@ export type UploadedMedia = {
   purpose: UploadPurpose;
 };
 
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+const normalizeEncryptedToken = (storedUrl: string) =>
+  storedUrl.startsWith("/api/upload/asset/")
+    ? storedUrl.replace("/api/upload/asset/", "")
+    : storedUrl;
+
 const UploadAPI = {
   upload: async (
     file: File,
@@ -22,6 +30,25 @@ const UploadAPI = {
     formData.append("file", file);
     formData.append("purpose", purpose);
     return await uploadRequest("/upload", formData);
+  },
+
+  /** Delete a stored asset by its encrypted token. Fails silently if already gone. */
+  delete: async (encryptedUrl: string): Promise<boolean> => {
+    const token = normalizeEncryptedToken(encryptedUrl);
+    if (!token) return false;
+
+    const authToken = getAuthToken();
+    const res = await fetch(
+      `${BASE_URL}/api/upload/${encodeURIComponent(token)}`,
+      {
+        method: "DELETE",
+        headers: {
+          ...(authToken ? { Authorization: authToken } : {}),
+        },
+      },
+    );
+
+    return res.ok;
   },
 };
 

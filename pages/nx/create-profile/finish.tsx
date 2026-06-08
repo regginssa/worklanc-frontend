@@ -143,7 +143,10 @@ export default function Finish() {
 
         <div className="flex items-center gap-2 text-sm">
           <p>Subscribe or buy later so you can bid on jobs.</p>
-          <Link href="#" className="flex items-center gap-1 underline">
+          <Link
+            href="/nx/find-work"
+            className="flex items-center gap-1 underline"
+          >
             <span>Browse without bidding</span>{" "}
             <Icon
               icon="material-symbols-light:arrow-right-alt"
