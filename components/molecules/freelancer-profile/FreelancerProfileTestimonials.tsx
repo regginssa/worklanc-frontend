@@ -44,7 +44,10 @@ function renderTestimonialContent(
   if (testimonial.status === "declined") {
     return (
       <div className="flex items-center gap-2 text-sm text-slate-700">
-        <Icon icon="mdi:close-circle-outline" className="h-5 w-5 text-slate-500" />
+        <Icon
+          icon="mdi:close-circle-outline"
+          className="h-5 w-5 text-slate-500"
+        />
         <span>{clientName} declined your testimonial request</span>
       </div>
     );
@@ -89,7 +92,7 @@ export default function FreelancerProfileTestimonials({
               return (
                 <li
                   key={testimonial.uid ?? `${clientName}-${testimonial.status}`}
-                  className="rounded-xl border border-slate-200 p-4"
+                  className="border-b border-slate-200 p-4"
                 >
                   {renderTestimonialContent(testimonial, clientName)}
                 </li>
