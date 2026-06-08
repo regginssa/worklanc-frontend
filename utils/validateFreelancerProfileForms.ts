@@ -1,6 +1,9 @@
 import type { CertificationFormData } from "@/components/molecules/dialogs/CertificationDialog";
 import type { OtherExperienceFormData } from "@/components/molecules/dialogs/OtherExperienceDialog";
 import type { LanguageDraft } from "@/hooks/useFreelancerProfilePage";
+import type {
+  AvailabilityFormData,
+} from "@/components/molecules/dialogs/AvailabilityDialog";
 import type { Education, LanguageLevel } from "@/types/user";
 
 const EMAIL_REGEX = /^\S+@\S+\.\S+$/;
@@ -259,6 +262,31 @@ export function validateCertificationForm(
   );
   if (credentialUrlError) {
     errors.credentialUrl = credentialUrlError;
+  }
+
+  return { isValid: Object.keys(errors).length === 0, errors };
+}
+
+const HOURS_PER_WEEK_VALUES = [
+  "more_than_30",
+  "less_than_30",
+  "as_needed",
+  "none",
+] as const;
+
+export function validateAvailabilityForm(
+  form: AvailabilityFormData,
+): ValidationResult<"hoursPerWeek"> {
+  const errors: Partial<Record<"hoursPerWeek", string>> = {};
+
+  if (!form.hoursPerWeek) {
+    errors.hoursPerWeek = "Select how many hours per week you can work";
+  } else if (
+    !HOURS_PER_WEEK_VALUES.includes(
+      form.hoursPerWeek as (typeof HOURS_PER_WEEK_VALUES)[number],
+    )
+  ) {
+    errors.hoursPerWeek = "Select a valid availability option";
   }
 
   return { isValid: Object.keys(errors).length === 0, errors };

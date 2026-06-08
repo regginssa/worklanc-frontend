@@ -56,3 +56,9 @@ export { default as FreelancerProfileDrawer } from "./drawers/FreelancerProfileD
 export { default as MilitaryVeteranDialog } from "./dialogs/MilitaryVeteranDialog";
 export { default as StreetAddressAutoComplete } from "./StreetAddressAutoComplete";
 export type { StreetAddressDetails } from "./StreetAddressAutoComplete";
+export { default as AvailabilityDialog } from "./dialogs/AvailabilityDialog";
+export {
+  emptyAvailabilityForm,
+  type AvailabilityFormData,
+  type AvailabilityFormErrors,
+} from "./dialogs/AvailabilityDialog";

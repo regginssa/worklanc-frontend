@@ -37,6 +37,10 @@ import {
   type CertificationFormData,
   type LanguagesDialogErrors,
   type OtherExperienceFormData,
+  AvailabilityDialog,
+  emptyAvailabilityForm,
+  type AvailabilityFormData,
+  type AvailabilityFormErrors,
 } from "@/components/molecules";
 import { resolveMediaAssetUrl } from "@/lib/api/upload";
 import {
@@ -50,14 +54,16 @@ import {
   type LanguageDraft,
 } from "@/hooks/useFreelancerProfilePage";
 import {
+  formatContractToHirePreference,
   formatFreelancerDisplayName,
   formatFreelancerLocalTime,
   formatFreelancerLocation,
-  HOURS_PER_WEEK_LABELS,
+  formatHoursPerWeekLabel,
   LANGUAGE_LEVEL_LABELS,
 } from "@/utils/freelancer-profile";
 import { buildHourlyRateForm } from "@/utils/rate";
 import {
+  validateAvailabilityForm,
   validateCertificationForm,
   validateEducationForm,
   validateEmploymentForm,
@@ -71,7 +77,7 @@ import {
   type EducationFormErrors,
   type EmploymentFormErrors,
 } from "@/utils/validateFreelancerProfileForms";
-import type { Education, HoursPerWeek, LanguageLevel } from "@/types/user";
+import type { Education, LanguageLevel } from "@/types/user";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
@@ -113,6 +119,7 @@ export default function FreelancerProfilePage() {
     saveTitle,
     saveOverview,
     saveHourlyRate,
+    saveAvailability,
     saveEmployment,
     saveEducation,
     saveLanguages,
@@ -138,6 +145,9 @@ export default function FreelancerProfilePage() {
   const [militaryVeteranOpen, setMilitaryVeteranOpen] = useState(false);
   const [languagesOpen, setLanguagesOpen] = useState(false);
   const [skillsOpen, setSkillsOpen] = useState(false);
+  const [availabilityOpen, setAvailabilityOpen] = useState(false);
+  const [availabilityDraft, setAvailabilityDraft] =
+    useState<AvailabilityFormData>(emptyAvailabilityForm());
 
   const [titleDraft, setTitleDraft] = useState("");
   const [overviewDraft, setOverviewDraft] = useState("");
@@ -191,6 +201,8 @@ export default function FreelancerProfilePage() {
     {}
   );
   const [skillErrors, setSkillErrors] = useState<{ skills?: string }>({});
+  const [availabilityErrors, setAvailabilityErrors] =
+    useState<AvailabilityFormErrors>({});
 
   const displayName = freelancer ? formatFreelancerDisplayName(freelancer) : "";
   const locationText = freelancer ? formatFreelancerLocation(freelancer) : "";
@@ -213,15 +225,10 @@ export default function FreelancerProfilePage() {
   const visiblePortfolios =
     portfolioTabIdx === 0 ? publishedPortfolios : draftPortfolios;
 
-  const hoursLabel = profile?.hoursPerWeek
-    ? HOURS_PER_WEEK_LABELS[profile.hoursPerWeek as HoursPerWeek]
-    : "Not set";
-
-  const contractPreference = profile?.openToContractToHire
-    ? "Open to contract-to-hire"
-    : profile?.openToContractToHire === false
-    ? "Not open to contract-to-hire"
-    : "No contract-to-hire preference set";
+  const hoursLabel = formatHoursPerWeekLabel(profile?.hoursPerWeek);
+  const contractPreference = formatContractToHirePreference(
+    profile?.openToContractToHire,
+  );
 
   const ownerActions = canEdit
     ? {
@@ -301,6 +308,15 @@ export default function FreelancerProfilePage() {
     setOtherExperienceDraft(emptyOtherExperienceForm());
     setOtherExperienceErrors({});
     setOtherExperienceOpen(true);
+  };
+
+  const openAvailabilityDialog = () => {
+    setAvailabilityDraft({
+      hoursPerWeek: profile?.hoursPerWeek ?? "",
+      openToContractToHire: profile?.openToContractToHire ?? false,
+    });
+    setAvailabilityErrors({});
+    setAvailabilityOpen(true);
   };
 
   if (isLoading || !profile || !freelancer) {
@@ -417,7 +433,7 @@ export default function FreelancerProfilePage() {
               <FreelancerProfileHoursPerWeek
                 hours={hoursLabel}
                 contractPreference={contractPreference}
-                onEdit={canEdit ? () => {} : undefined}
+                onEdit={canEdit ? openAvailabilityDialog : undefined}
               />
 
               <FreelancerProfileLanguages
@@ -657,6 +673,29 @@ export default function FreelancerProfilePage() {
         onChangeFormData={(data) => {
           setEmploymentDraft(data);
           setEmploymentErrors({});
+        }}
+      />
+
+      <AvailabilityDialog
+        open={availabilityOpen}
+        onClose={() => setAvailabilityOpen(false)}
+        loading={saving}
+        formData={availabilityDraft}
+        errors={availabilityErrors}
+        onChangeFormData={(data) => {
+          setAvailabilityDraft(data);
+          setAvailabilityErrors({});
+        }}
+        onSave={async () => {
+          const result = validateAvailabilityForm(availabilityDraft);
+          setAvailabilityErrors(result.errors);
+          if (!result.isValid || !availabilityDraft.hoursPerWeek) return;
+
+          await saveAvailability(
+            availabilityDraft.hoursPerWeek,
+            availabilityDraft.openToContractToHire,
+          );
+          setAvailabilityOpen(false);
         }}
       />
 

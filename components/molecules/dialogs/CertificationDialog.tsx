@@ -7,7 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useState } from "react";
 
 export type CertificationFormData = {
   name: string;
@@ -52,7 +51,6 @@ export default function CertificationDialog({
     credentialUrl?: string;
   };
 }) {
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChangeFormData({ ...formData, [e.target.name]: e.target.value });
   };

@@ -29,6 +29,25 @@ export function formatFreelancerLocation(freelancer: PublicFreelancer) {
   return [freelancer.city, countryName].filter(Boolean).join(", ");
 }
 
+export function formatHoursPerWeekLabel(
+  hoursPerWeek?: HoursPerWeek | null,
+): string {
+  if (!hoursPerWeek) return "Not set";
+  return HOURS_PER_WEEK_LABELS[hoursPerWeek];
+}
+
+export function formatContractToHirePreference(
+  openToContractToHire?: boolean | null,
+): string {
+  if (openToContractToHire === true) {
+    return "Open to contract-to-hire";
+  }
+  if (openToContractToHire === false) {
+    return "Not open to contract-to-hire";
+  }
+  return "No contract-to-hire preference set";
+}
+
 export function formatFreelancerLocalTime(timezone?: string | null) {
   if (!timezone) return "";
   return new Date().toLocaleTimeString("en-US", {

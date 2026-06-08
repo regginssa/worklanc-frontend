@@ -14,6 +14,7 @@ import type {
   Education,
   Employment,
   EmploymentFormInput,
+  HoursPerWeek,
   Language,
   LanguageLevel,
   OtherExperience,
@@ -168,6 +169,12 @@ export function useFreelancerProfilePage(uid?: string) {
     [patchProfile]
   );
 
+  const saveAvailability = useCallback(
+    async (hoursPerWeek: HoursPerWeek, openToContractToHire: boolean) =>
+      patchProfile({ hoursPerWeek, openToContractToHire }),
+    [patchProfile]
+  );
+
   const saveEmployment = useCallback(
     async (items: EmploymentInput[]) => patchProfile({ employment: items }),
     [patchProfile]
@@ -249,6 +256,7 @@ export function useFreelancerProfilePage(uid?: string) {
     saveTitle,
     saveOverview,
     saveHourlyRate,
+    saveAvailability,
     saveEmployment,
     saveEducation,
     saveLanguages,
