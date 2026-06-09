@@ -47,6 +47,7 @@ import {
   emptyVideoIntroForm,
   type VideoIntroFormData,
   type VideoIntroFormErrors,
+  PortflioDialog,
 } from "@/components/molecules";
 import { resolveMediaAssetUrl } from "@/lib/api/upload";
 import {
@@ -159,6 +160,7 @@ export default function FreelancerProfilePage() {
   const [certificationOpen, setCertificationOpen] = useState(false);
   const [otherExperienceOpen, setOtherExperienceOpen] = useState(false);
   const [militaryVeteranOpen, setMilitaryVeteranOpen] = useState(false);
+  const [portfolioOpen, setPortfolioOpen] = useState(false);
   const [militaryVeteranStartAtService, setMilitaryVeteranStartAtService] =
     useState(false);
   const [removingMilitaryVeteran, setRemovingMilitaryVeteran] = useState(false);
@@ -621,8 +623,10 @@ export default function FreelancerProfilePage() {
                 ]}
                 selectedTabIndex={portfolioTabIdx}
                 onTab={setPortfolioTabIdx}
-                onAdd={canEdit ? () => {} : undefined}
-                onEmptyAction={canEdit ? () => {} : undefined}
+                onAdd={canEdit ? () => setPortfolioOpen(true) : undefined}
+                onEmptyAction={
+                  canEdit ? () => setPortfolioOpen(true) : undefined
+                }
               >
                 {visiblePortfolios.length > 0 ? (
                   <ul className="space-y-4">
@@ -1033,6 +1037,11 @@ export default function FreelancerProfilePage() {
           );
           setLanguagesOpen(false);
         }}
+      />
+
+      <PortflioDialog
+        open={portfolioOpen}
+        onClose={() => setPortfolioOpen(false)}
       />
 
       <Dialog open={skillsOpen} onOpenChange={setSkillsOpen}>

@@ -35,6 +35,9 @@ export type PortfolioAssetType =
   | "text"
   | "link"
   | "audio";
+
+/** How a text portfolio asset is stored in `talent_portfolio_assets`. */
+export type PortfolioTextFormat = "markdown" | "plain";
 export type TestimonialStatus = "pending" | "confirmed" | "declined";
 
 /** UI-only badge; not stored in the database yet. */
@@ -135,9 +138,10 @@ export interface Portfolio extends Partial<Timestamps>, Partial<WithPublicUid> {
   id?: number;
   title: string;
   role: string | null;
-  description: string | null;
+  description: string;
   status: PortfolioStatus;
   sortOrder?: number;
+  /** Skills and deliverables (stored in `talent_portfolio_skills`). */
   skills: PortfolioSkill[];
   assets: PortfolioAsset[];
 }
@@ -149,11 +153,61 @@ export interface PortfolioAsset extends Partial<Timestamps>, Partial<WithPublicU
   fileUrl: string | null;
   fileName: string | null;
   mimeType: string | null;
+  /** Set when assetType is `text`. */
+  textFormat: PortfolioTextFormat | null;
+  /** Plain-text heading when textFormat is `plain`. */
+  textHeading: string | null;
+  /** Markdown body, or plain-text description when textFormat is `plain`. */
   textContent: string | null;
   linkUrl: string | null;
   linkTitle: string | null;
   sortOrder?: number;
 }
+
+export interface PortfolioTextAssetForm {
+  assetType: "text";
+  textFormat: PortfolioTextFormat;
+  textHeading: string;
+  textContent: string;
+}
+
+export interface PortfolioFileAssetForm {
+  assetType: "image" | "pdf" | "video" | "audio";
+  fileUrl: string;
+  fileName: string;
+  mimeType: string;
+}
+
+export interface PortfolioLinkAssetForm {
+  assetType: "link";
+  linkUrl: string;
+  linkTitle: string;
+}
+
+export type PortfolioAssetFormInput =
+  | PortfolioTextAssetForm
+  | PortfolioFileAssetForm
+  | PortfolioLinkAssetForm;
+
+/** Create/edit portfolio dialog form state. */
+export interface PortfolioForm {
+  title: string;
+  role: string;
+  description: string;
+  /** Skills and deliverables — stored as `talent_portfolio_skills` rows. */
+  skills: string[];
+  assets: PortfolioAssetFormInput[];
+  status: PortfolioStatus;
+}
+
+export const createEmptyPortfolioForm = (): PortfolioForm => ({
+  title: "",
+  role: "",
+  description: "",
+  skills: [],
+  assets: [],
+  status: "draft",
+});
 
 /** Row in `talent_testimonials`. */
 export interface Testimonial extends Partial<Timestamps>, Partial<WithPublicUid> {

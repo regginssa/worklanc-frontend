@@ -28,6 +28,7 @@ export type { CertificationFormData } from "./dialogs/CertificationDialog";
 export { emptyCertificationForm } from "./dialogs/CertificationDialog";
 export { default as LanguagesDialog } from "./dialogs/LanguagesDialog";
 export type { LanguagesDialogErrors } from "./dialogs/LanguagesDialog";
+export { default as PortflioDialog } from "./dialogs/PortflioDialog";
 export { default as OtherExperienceDialog } from "./dialogs/OtherExperienceDialog";
 export {
   emptyOtherExperienceForm,
