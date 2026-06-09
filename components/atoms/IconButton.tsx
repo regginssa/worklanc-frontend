@@ -6,6 +6,8 @@ interface IconButtonProps {
   icon: string;
   className?: string;
   onClick: () => void;
+  onHover?: () => void;
+  onLeave?: () => void;
   loading?: boolean;
   disabled?: boolean;
 }
@@ -25,6 +27,8 @@ export default function IconButton({
   icon,
   className,
   onClick,
+  onHover,
+  onLeave,
   loading = false,
   disabled = false,
 }: IconButtonProps) {
@@ -34,11 +38,15 @@ export default function IconButton({
     <motion.button
       type="button"
       whileTap={isDisabled ? undefined : { scale: 0.95 }}
-      className={`flex items-center justify-center p-2.5 transition-colors duration-200 ease-in-out ${variantClasses[variant]} ${className} ${
+      className={`flex items-center justify-center p-2.5 transition-colors duration-200 ease-in-out ${
+        variantClasses[variant]
+      } ${className} ${
         isDisabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
       }`}
       onClick={onClick}
       disabled={isDisabled}
+      onMouseEnter={onHover}
+      onMouseLeave={onLeave}
     >
       {loading ? (
         <Icon icon="svg-spinners:bars-rotate-fade" className="w-5 h-5" />

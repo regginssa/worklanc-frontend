@@ -103,7 +103,7 @@ const AIServices = () => {
       <NavLayout>
         <nav role="navigation" aria-label="AI services categories">
           <ul className="flex flex-row items-center gap-6">
-            {navs.map((nav, index) => (
+            {navs.map((nav: any, index: number) => (
               <li key={index}>
                 <Link
                   href={nav.path}

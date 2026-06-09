@@ -35,6 +35,7 @@ export {
   type OtherExperienceFormData,
 } from "./dialogs/OtherExperienceDialog";
 export { default as SecurityQuestionDialog } from "./dialogs/SecurityQuestionDialog";
+export { default as PortflioVideoUploadDialog } from "./dialogs/PortflioVideoUploadDialog";
 export { default as ViewToggle } from "./ViewToggle";
 export { default as DraftJobCard } from "./DraftJobCard";
 export { default as JobListItem } from "./JobListItem";

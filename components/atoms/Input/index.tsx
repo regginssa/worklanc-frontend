@@ -5,6 +5,7 @@ interface InputProps {
   type: string;
   name: string;
   label?: string;
+  subLabel?: string;
   placeholder?: string;
   labelClassName?: string;
   classname?: string;
@@ -14,6 +15,7 @@ interface InputProps {
   required?: boolean;
   disabled?: boolean;
   maxLength?: number;
+  loading?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -21,6 +23,7 @@ const Input: React.FC<InputProps> = ({
   type,
   name,
   label,
+  subLabel,
   placeholder,
   labelClassName,
   classname,
@@ -31,6 +34,7 @@ const Input: React.FC<InputProps> = ({
   required,
   disabled,
   maxLength,
+  loading,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -69,6 +73,13 @@ const Input: React.FC<InputProps> = ({
           maxLength={maxLength}
         />
 
+        {loading && (
+          <Icon
+            icon="svg-spinners:bars-rotate-fade"
+            className={`w-4 h-4 text-slate-500`}
+          />
+        )}
+
         {type === "password" && (
           <Icon
             icon={showPassword ? "mdi:eye-off-outline" : "mdi:eye-outline"}
@@ -78,14 +89,19 @@ const Input: React.FC<InputProps> = ({
           />
         )}
       </div>
-      {!!error && (
-        <div className="flex items-center gap-2">
-          <Icon
-            icon="mdi:information-outline"
-            width={16}
-            className="text-red-500"
-          />
-          <p className="text-red-600 text-sm">{error}</p>
+      {(subLabel || error) && (
+        <div className="flex items-center justify-between gap-6">
+          {!!error && (
+            <div className="flex items-center gap-2 flex-1">
+              <Icon
+                icon="mdi:information-outline"
+                width={16}
+                className="text-red-500"
+              />
+              <p className="text-red-600 text-sm">{error}</p>
+            </div>
+          )}
+          {subLabel && <p className="text-xs text-slate-600">{subLabel}</p>}
         </div>
       )}
     </div>

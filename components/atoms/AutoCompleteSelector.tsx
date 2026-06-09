@@ -16,9 +16,11 @@ interface AutoCompleteProps {
   options: AutoCompleteOption[];
   value: string;
   selectedValues?: AutoCompleteOption[];
+  labelClassName?: string;
   className?: string;
   error?: string;
   loading?: boolean;
+  required?: boolean;
   onChange: (value: string) => void;
   onSelect: (option: AutoCompleteOption) => void;
   onRemove: (option: AutoCompleteOption) => void;
@@ -33,9 +35,11 @@ export default function AutoComplete({
   options,
   value,
   selectedValues = [],
+  labelClassName,
   className,
   error,
   loading = false,
+  required = false,
   onChange,
   onSelect,
   onRemove,
@@ -71,7 +75,10 @@ export default function AutoComplete({
     <div ref={rootRef}>
       {label && (
         <div className="mb-2">
-          <label className="text-sm">{label}</label>
+          <label className={`text-sm ${labelClassName}`}>
+            {label}
+            {required && <span className="">*</span>}
+          </label>
         </div>
       )}
       <div className="relative">
@@ -110,6 +117,7 @@ export default function AutoComplete({
               value={value}
               onFocus={() => setIsOpen(true)}
               onChange={(e) => onChange(e.target.value)}
+              required={required}
             />
           </div>
 
