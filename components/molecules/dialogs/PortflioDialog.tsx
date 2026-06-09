@@ -32,7 +32,12 @@ export default function PortflioDialog({
   const [search, setSearch] = useState("");
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) onClose();
+      }}
+    >
       <DialogContent className="top-0! left-0! flex h-full max-w-full! min-w-full translate-x-0! translate-y-0! flex-col items-stretch gap-0 rounded-none p-0">
         <DialogHeader className="shrink-0 px-16 py-10">
           <DialogTitle className="text-3xl font-medium">

@@ -24,7 +24,7 @@ export default function PortflioVideoUploadDialog({
 }: {
   open: boolean;
   onClose: () => void;
-  onAdd: () => void;
+  onAdd: (link: string) => void;
   onUpload: () => void;
   loading?: boolean;
 }) {
@@ -151,7 +151,11 @@ export default function PortflioVideoUploadDialog({
             classname="py-2.5! px-5! rounded-full! text-sm! font-medium!"
             loading={loading}
             disabled={!previewEmbedUrl || linkLoading}
-            onClick={onAdd}
+            onClick={() => {
+              if (debouncedLink) {
+                onAdd(debouncedLink);
+              }
+            }}
           />
         </DialogFooter>
       </DialogContent>
