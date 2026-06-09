@@ -1,21 +1,30 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { IconButton } from "../atoms";
 import { PortfolioAssetType } from "@/types";
-import { PortflioVideoUploadDialog } from "../molecules";
+import {
+  PortflioVideoUploadDialog,
+  PortfolioWebLinkDialog,
+} from "../molecules";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
+import { toPortfolioVideoEmbedUrl } from "@/utils/videoEmbed";
+import Link from "next/link";
+import { getPortfolioWebLinkSiteName } from "@/utils/portfolioLink";
+import { ExternalLink } from "lucide-react";
 
 export default function PortflioUploadItem() {
-  const [asset, setAsset] = useState<File | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const [videoLink, setVideoLink] = useState<string | null>(null);
+  const [webLink, setWebLink] = useState<string | null>(null);
   const [description, setDescription] = useState<string>("Add content");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [videoUploadDialogOpen, setVideoUploadDialogOpen] = useState(false);
+  const [webLinkDialogOpen, setWebLinkDialogOpen] = useState(false);
   const [errors, setErrors] = useState<{ size?: string } | null>(null);
 
   const previewUrl = useMemo(
-    () => (asset ? URL.createObjectURL(asset) : null),
-    [asset]
+    () => (file ? URL.createObjectURL(file) : null),
+    [file]
   );
 
   useEffect(() => {
@@ -30,7 +39,7 @@ export default function PortflioUploadItem() {
     const file = e.target.files?.[0] ?? null;
 
     if (!file) {
-      setAsset(null);
+      setFile(null);
       setErrors(null);
       return;
     }
@@ -41,7 +50,7 @@ export default function PortflioUploadItem() {
       setErrors(null);
     }
 
-    setAsset(file);
+    setFile(file);
   };
 
   const openFilePicker = (accept: string) => {
@@ -78,42 +87,124 @@ export default function PortflioUploadItem() {
     }
   };
 
-  const renderAssetContent = (file: File) => {
+  const previewFrameClass =
+    "relative aspect-[4/3] w-full overflow-hidden rounded-3xl";
+
+  const clearPreview = () => {
+    setFile(null);
+    setVideoLink(null);
+    setWebLink(null);
+    setErrors(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const renderPreviewActions = () => (
+    <>
+      {errors?.size && (
+        <div className="absolute left-1/2 top-1/2 z-10 flex w-[70%] -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-full bg-red-50 p-4">
+          <Icon
+            icon="mdi:information-outline"
+            className="text-red-500"
+            width={16}
+          />
+          <p className="text-xs text-red-500 font-medium">{errors.size}</p>
+        </div>
+      )}
+      <IconButton
+        variant="secondary"
+        icon="mdi:close"
+        className="absolute top-4 right-4 z-10 p-1!"
+        onClick={clearPreview}
+      />
+    </>
+  );
+
+  const renderPreview = () => {
+    if (videoLink) {
+      const embedUrl = toPortfolioVideoEmbedUrl(videoLink);
+      if (!embedUrl) return null;
+
+      return (
+        <div className="relative w-full">
+          <div className={previewFrameClass}>
+            <iframe
+              src={embedUrl}
+              title="Video preview"
+              className="absolute inset-0 h-full w-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
+          {renderPreviewActions()}
+        </div>
+      );
+    }
+
+    if (webLink) {
+      return (
+        <div className="flex items-start justify-between rounded-lg bg-slate-100 p-4">
+          <div className="flex-1 text-sm space-y-4">
+            <Link
+              href={webLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block cursor-pointer underline"
+            >
+              {webLink}
+            </Link>
+
+            <h4 className="mt-1 text-slate-600">
+              {getPortfolioWebLinkSiteName(webLink)}
+            </h4>
+          </div>
+          <ExternalLink className="size-5 text-slate-600" />
+        </div>
+      );
+    }
+
+    if (!file) return null;
+
     if (file.type.startsWith("image/") && previewUrl) {
       return (
-        <div className="relative w-full h-full">
-          <Image
-            src={previewUrl}
-            alt={file.name}
-            width={400}
-            height={300}
-            unoptimized
-            className="h-auto w-full object-cover rounded-3xl"
-          />
-          {errors?.size && (
-            <div className="absolute traslate-y-1/2 w-[70%] mx-auto bg-white p-4 rounded-full">
-              <Icon icon="mdi:information-outline" width={16} />
-              <p className="text-xs text-red-500">{errors.size}</p>
-            </div>
-          )}
-          <IconButton
-            variant="secondary"
-            icon="mdi:close"
-            className="p-1! absolute top-4 right-4"
-            onClick={() => setAsset(null)}
-          />
+        <div className="relative w-full">
+          <div className={previewFrameClass}>
+            <Image
+              src={previewUrl}
+              alt={file.name}
+              fill
+              unoptimized
+              className="object-cover"
+            />
+          </div>
+          {renderPreviewActions()}
         </div>
       );
     }
 
     if (file.type.startsWith("video/") && previewUrl) {
       return (
-        <video src={previewUrl} controls className="h-auto w-full rounded-xl" />
+        <div className="relative w-full">
+          <div className={previewFrameClass}>
+            <video
+              src={previewUrl}
+              controls
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          </div>
+          {renderPreviewActions()}
+        </div>
       );
     }
 
     if (file.type.startsWith("audio/") && previewUrl) {
-      return <audio src={previewUrl} controls className="w-full" />;
+      return (
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium">{file.name}</h4>
+          <audio src={previewUrl} controls className="w-full" />
+        </div>
+      );
     }
 
     return <p className="p-6 text-sm text-slate-600">{file.name}</p>;
@@ -129,7 +220,7 @@ export default function PortflioUploadItem() {
           ref={fileInputRef}
           onChange={handleFileChange}
         />
-        {!asset ? (
+        {!file && !videoLink && !webLink ? (
           <div className="flex flex-col items-center justify-center py-20 gap-6">
             <div className="flex items-center gap-8">
               <IconButton
@@ -148,7 +239,7 @@ export default function PortflioUploadItem() {
               />
               <IconButton
                 variant="secondary"
-                icon="ri:text"
+                icon="mingcute:text-line"
                 onClick={() => {}}
                 onHover={() => handleHoverIconButtons("text")}
                 onLeave={() => setDescription("Add content")}
@@ -156,7 +247,7 @@ export default function PortflioUploadItem() {
               <IconButton
                 variant="secondary"
                 icon="material-symbols-light:link"
-                onClick={() => {}}
+                onClick={() => setWebLinkDialogOpen(true)}
                 onHover={() => handleHoverIconButtons("link")}
                 onLeave={() => setDescription("Add content")}
               />
@@ -178,43 +269,56 @@ export default function PortflioUploadItem() {
             <p className="text-sm font-light">{description}</p>
           </div>
         ) : (
-          <div className="flex-1">{renderAssetContent(asset)}</div>
+          <div className="flex-1 p-4">{renderPreview()}</div>
         )}
-
-        <PortflioVideoUploadDialog
-          open={videoUploadDialogOpen}
-          onClose={() => setVideoUploadDialogOpen(false)}
-          onAdd={(link: string) => {
-            setVideoLink(link);
-            setAsset(null);
-            setVideoUploadDialogOpen(false);
-          }}
-          onUpload={() => {
-            setVideoUploadDialogOpen(false);
-            openFilePicker("video/*");
-          }}
-        />
       </div>
 
-      {asset && (
+      {(file || videoLink || webLink) && (
         <div className="flex flex-col items-center gap-2">
           <IconButton
-            variant="secondary"
-            icon="mdi:arrow-up-bold"
+            variant="outline"
+            icon="mdi:arrow-up"
+            className="p-1!"
             onClick={() => {}}
           />
           <IconButton
-            variant="secondary"
-            icon="mdi:arrow-down-bold"
+            variant="outline"
+            icon="mdi:arrow-down"
+            className="p-1!"
             onClick={() => {}}
           />
           <IconButton
-            variant="secondary"
+            variant="primary"
             icon="mdi:trash-can-outline"
-            onClick={() => {}}
+            className="p-1!"
+            onClick={clearPreview}
           />
         </div>
       )}
+
+      <PortflioVideoUploadDialog
+        open={videoUploadDialogOpen}
+        onClose={() => setVideoUploadDialogOpen(false)}
+        onAdd={(link: string) => {
+          setVideoLink(link);
+          setFile(null);
+          setVideoUploadDialogOpen(false);
+        }}
+        onUpload={() => {
+          setVideoUploadDialogOpen(false);
+          openFilePicker("video/*");
+        }}
+      />
+      <PortfolioWebLinkDialog
+        open={webLinkDialogOpen}
+        onClose={() => setWebLinkDialogOpen(false)}
+        onAdd={(link: string) => {
+          setFile(null);
+          setVideoLink(null);
+          setWebLink(link);
+          setWebLinkDialogOpen(false);
+        }}
+      />
     </div>
   );
 }
