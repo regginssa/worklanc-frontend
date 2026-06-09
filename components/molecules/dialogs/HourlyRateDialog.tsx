@@ -14,11 +14,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Icon } from "@iconify/react";
+import { SERVICE_FEE_PERCENT, type HourlyRateForm } from "@/utils/rate";
 
 export default function HourlyRateDialog({
   open,
   onClose,
-  rate,
+  rateForm,
+  currentRate,
   onChangeRate,
   onSave,
   loading = false,
@@ -26,12 +28,18 @@ export default function HourlyRateDialog({
 }: {
   open: boolean;
   onClose: () => void;
-  rate: number;
-  onChangeRate: (rate: number) => void;
+  rateForm: HourlyRateForm;
+  currentRate?: number | null;
+  onChangeRate: (rate: string) => void;
   onSave: () => void;
   loading?: boolean;
   errors?: { rate?: string };
 }) {
+  const formattedCurrentRate =
+    currentRate != null && currentRate > 0
+      ? `$${currentRate.toFixed(2)}`
+      : "Not set";
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="flex min-w-3xl flex-col">
@@ -45,10 +53,11 @@ export default function HourlyRateDialog({
 
         <div className="px-4 pb-4 no-scrollbar max-h-[60vh] space-y-4 overflow-y-auto">
           <p className="text-sm text-slate-600">
-            Your profile rate: <strong>$52.00</strong>/hr
+            Your profile rate: <strong>{formattedCurrentRate}</strong>
+            {currentRate != null && currentRate > 0 ? "/hr" : null}
           </p>
 
-          <ul className="">
+          <ul>
             <li className="flex items-center justify-between border-b border-slate-300 py-4">
               <div>
                 <label className="text-sm font-medium">Hourly Rate *</label>
@@ -58,36 +67,40 @@ export default function HourlyRateDialog({
               </div>
 
               <div className="flex items-center gap-2">
+                <span className="text-sm text-slate-600 font-medium">$</span>
                 <Input
-                  name="hourlyRate"
+                  name="rate"
                   type="number"
                   placeholder="$0.00"
-                  value={rate}
-                  onChange={(e) => onChangeRate(Number(e.target.value))}
+                  value={rateForm.rate}
+                  onChange={(e) => onChangeRate(e.target.value)}
                   error={errors.rate}
                 />
                 <span className="text-sm text-slate-600">/ hr</span>
               </div>
             </li>
 
-            <li className="flex items-center justify-between border-b border-slate-300 py-4">
-              <div>
-                <label className="text-sm font-medium">
-                  Worklanc Service Fee
-                </label>
+            <li className="flex items-center gap-4 justify-between border-b border-slate-300 py-4">
+              <div className="flex-1">
+                <label className="text-sm font-medium">Service fee</label>
                 <p className="text-xs text-slate-600">
-                  Fees vary and are shown before contract acceptance
+                  This helps us run the platform and provide services like
+                  payment protection and customer support.
+                </p>
+                <p className="text-xs text-slate-900">
+                  {SERVICE_FEE_PERCENT}% service fee — ${rateForm.fee}/hr
                 </p>
               </div>
 
               <div className="flex items-center gap-2">
+                <span className="text-sm text-slate-600 font-medium">$</span>
                 <Input
-                  name="hourlyRate"
+                  name="fee"
                   type="number"
                   placeholder="$0.00"
                   disabled
-                  value=""
-                  onChange={(e) => {}}
+                  value={rateForm.fee}
+                  onChange={() => {}}
                 />
                 <span className="text-sm text-slate-600">/ hr</span>
               </div>
@@ -95,7 +108,7 @@ export default function HourlyRateDialog({
 
             <li className="flex items-center justify-between py-4">
               <div>
-                <label className="text-sm font-medium">You'll Receive</label>
+                <label className="text-sm font-medium">You'll get</label>
                 <div className="flex items-center gap-2 text-slate-600">
                   <p className="text-xs">
                     The estimated amount you'll receive after service fees
@@ -105,11 +118,11 @@ export default function HourlyRateDialog({
                     <TooltipTrigger asChild>
                       <Icon
                         icon="mdi:question-mark-circle-outline"
-                        className="w-4 h-4"
+                        className="h-4 w-4"
                       />
                     </TooltipTrigger>
                     <TooltipContent side="right">
-                      <p className="text-sm p-2">
+                      <p className="p-2 text-sm">
                         Depending on hours billed, amount shown may vary
                         slightly due to rounding
                       </p>
@@ -119,13 +132,14 @@ export default function HourlyRateDialog({
               </div>
 
               <div className="flex items-center gap-2">
+                <span className="text-sm text-slate-600 font-medium">$</span>
                 <Input
-                  name="hourlyRate"
+                  name="estimated"
                   type="number"
                   placeholder="$0.00"
                   disabled
-                  value=""
-                  onChange={(e) => {}}
+                  value={rateForm.estimated}
+                  onChange={() => {}}
                 />
                 <span className="text-sm text-slate-600">/ hr</span>
               </div>
@@ -135,7 +149,7 @@ export default function HourlyRateDialog({
 
         <DialogFooter>
           <DialogClose asChild>
-            <button className="py-2.5 px-5 cursor-pointer text-sm font-medium">
+            <button className="cursor-pointer px-5 py-2.5 text-sm font-medium">
               Cancel
             </button>
           </DialogClose>

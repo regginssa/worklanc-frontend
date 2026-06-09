@@ -419,6 +419,8 @@ export default function FreelancerProfilePage() {
         <FreelancerProfileHeader
           name={displayName}
           avatar={avatarSrc}
+          profileTitle={profile.title || ""}
+          shareUrl={`/freelancers/${profile.uid}`}
           isOnline={false}
           location={locationText}
           localTime={localTime ? `${localTime} local time` : undefined}
@@ -899,9 +901,10 @@ export default function FreelancerProfilePage() {
       <HourlyRateDialog
         open={rateOpen}
         onClose={() => setRateOpen(false)}
-        rate={Number(rateDraft.rate) || 0}
+        rateForm={rateDraft}
+        currentRate={profile.hourlyRate}
         onChangeRate={(value) => {
-          setRateDraft(buildHourlyRateForm(String(value)));
+          setRateDraft(buildHourlyRateForm(value));
           setRateErrors({});
         }}
         loading={saving}

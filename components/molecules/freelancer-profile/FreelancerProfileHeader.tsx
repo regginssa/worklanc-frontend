@@ -22,6 +22,8 @@ export interface FreelancerProfileHeaderProps {
   className?: string;
   onEditAvatar?: () => void;
   isSharable?: boolean;
+  profileTitle?: string;
+  shareUrl?: string;
   children?: React.ReactNode;
 }
 
@@ -39,6 +41,8 @@ export default function FreelancerProfileHeader({
   className,
   onEditAvatar,
   isSharable,
+  profileTitle,
+  shareUrl,
   children,
 }: FreelancerProfileHeaderProps) {
   const [shareOpen, setShareOpen] = useState(false);
@@ -149,7 +153,10 @@ export default function FreelancerProfileHeader({
       )}
 
       <ShareProfileDialog
-        url="https://www.worklanc.com/freelancers/1"
+        url={shareUrl ?? ""}
+        avatar={avatar}
+        profileName={name}
+        profileTitle={profileTitle}
         open={shareOpen}
         onClose={() => setShareOpen(false)}
       />

@@ -4,8 +4,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import Image from "next/image";
-import UserPic from "@/public/assets/webps/avatars/man2.webp";
+import Image, { type StaticImageData } from "next/image";
 import { Icon } from "@iconify/react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
@@ -26,13 +25,15 @@ export default function ShareProfileDialog({
   open,
   onClose,
   url,
-  profileName = "Marti G.",
-  profileTitle = "Accounting & Consulting",
+  avatar,
+  profileName,
+  profileTitle = "",
 }: {
   open: boolean;
   onClose: () => void;
   url: string;
-  profileName?: string;
+  avatar: string | StaticImageData;
+  profileName: string;
   profileTitle?: string;
 }) {
   const absoluteUrl = getAbsoluteUrl(url);
@@ -128,14 +129,19 @@ export default function ShareProfileDialog({
         <div className="px-4 pb-4 no-scrollbar max-h-[60vh] overflow-y-auto space-y-6">
           <div className="flex items-center gap-6">
             <Image
-              src={UserPic}
-              alt="User"
-              className="w-14 h-14 rounded-full object-cover"
+              src={avatar}
+              alt={profileName}
+              width={56}
+              height={56}
+              unoptimized={typeof avatar === "string"}
+              className="h-14 w-14 rounded-full object-cover"
             />
 
             <div>
               <h3 className="text-xl font-medium">{profileName}</h3>
-              <p className="text-sm mt-1">{profileTitle}</p>
+              {profileTitle ? (
+                <p className="mt-1 text-sm">{profileTitle}</p>
+              ) : null}
             </div>
           </div>
 

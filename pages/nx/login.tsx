@@ -7,6 +7,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/store/hooks";
 import { setUser } from "@/store/slices/userSlice";
+import { getPostLoginRedirect } from "@/utils/getPostLoginRedirect";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -52,7 +53,7 @@ const Login = () => {
     setAuthToken(data.token);
     dispatch(setUser(data.user));
     toast.success("Welcome back", { position: "top-center" });
-    router.push(data.redirectTo || "/dashboard");
+    router.push(getPostLoginRedirect(data));
     setLoading(false);
   };
 
