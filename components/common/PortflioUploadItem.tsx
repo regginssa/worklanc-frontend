@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { IconButton } from "../atoms";
+import { IconButton, TabBar } from "../atoms";
 import { PortfolioAssetType } from "@/types";
 import {
   PortflioVideoUploadDialog,
@@ -13,9 +13,16 @@ import { getPortfolioWebLinkSiteName } from "@/utils/portfolioLink";
 import { ExternalLink } from "lucide-react";
 import PortfolioPdfPreviewGate from "./PortfolioPdfPreviewGate";
 
+const textTaps = [
+  { label: "Plain text", value: "plain_text" },
+  { label: "Markdown", value: "markdown" },
+];
+
 export default function PortflioUploadItem() {
   const [file, setFile] = useState<File | null>(null);
   const [videoLink, setVideoLink] = useState<string | null>(null);
+  const [textOpen, setTextOpen] = useState(false);
+  const [selectedTextTabIndex, setSelectedTextTabIndex] = useState<number>(0);
   const [webLink, setWebLink] = useState<string | null>(null);
   const [description, setDescription] = useState<string>("Add content");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -143,6 +150,45 @@ export default function PortflioUploadItem() {
       );
     }
 
+    if (textOpen) {
+      return (
+        <div className="bg-slate-100 rounded-3xl p-4 space-y-4">
+          <TabBar
+            tabs={textTaps}
+            selectedTabIndex={selectedTextTabIndex}
+            onTab={(idx: number) => setSelectedTextTabIndex(idx)}
+          />
+
+          <div className="px-6">
+            {selectedTextTabIndex === 0 ? (
+              <div className="space-y-4">
+                <input
+                  type="text"
+                  name="heading"
+                  placeholder="Heading"
+                  className="w-full text-2xl outline-none border-none placeholder:text-slate-600"
+                />
+                <textarea
+                  name="content"
+                  placeholder="Enter your text"
+                  className="w-full outline-none border-none placeholder:text-slate-600 resize-none min-h-[200px] max-h-[200px] no-scrollbar overflow-y-auto"
+                />
+              </div>
+            ) : (
+              <div>
+                <textarea
+                  name="content"
+                  placeholder="Enter your text (With Markdown, you can use special characters to format headings, code, quotes, and more)"
+                  spellCheck={false}
+                  className="w-full min-h-[200px] max-h-[200px] resize-none overflow-y-auto border-none font-mono text-sm leading-6 outline-none placeholder:text-slate-500 no-scrollbar"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
     if (webLink) {
       return (
         <div className="flex items-start justify-between rounded-lg bg-slate-100 p-4">
@@ -229,7 +275,7 @@ export default function PortflioUploadItem() {
           ref={fileInputRef}
           onChange={handleFileChange}
         />
-        {!file && !videoLink && !webLink ? (
+        {!file && !videoLink && !webLink && !textOpen ? (
           <div className="flex flex-col items-center justify-center py-20 gap-6">
             <div className="flex items-center gap-8">
               <IconButton
@@ -250,7 +296,7 @@ export default function PortflioUploadItem() {
                 variant="secondary"
                 icon="uil:text"
                 className="text-slate-600!"
-                onClick={() => setVideoUploadDialogOpen(true)}
+                onClick={() => setTextOpen(true)}
                 onHover={() => handleHoverIconButtons("video")}
                 onLeave={() => setDescription("Add content")}
               />
@@ -284,7 +330,7 @@ export default function PortflioUploadItem() {
         )}
       </div>
 
-      {(file || videoLink || webLink) && (
+      {(file || videoLink || webLink || textOpen) && (
         <div className="flex flex-col items-center gap-2">
           <IconButton
             variant="outline"
