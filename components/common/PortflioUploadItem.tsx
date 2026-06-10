@@ -248,13 +248,6 @@ export default function PortflioUploadItem() {
               />
               <IconButton
                 variant="secondary"
-                icon="mingcute:text-line"
-                onClick={() => {}}
-                onHover={() => handleHoverIconButtons("text")}
-                onLeave={() => setDescription("Add content")}
-              />
-              <IconButton
-                variant="secondary"
                 icon="material-symbols-light:link"
                 onClick={() => setWebLinkDialogOpen(true)}
                 onHover={() => handleHoverIconButtons("link")}
