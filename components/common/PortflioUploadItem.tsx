@@ -248,6 +248,14 @@ export default function PortflioUploadItem() {
               />
               <IconButton
                 variant="secondary"
+                icon="uil:text"
+                className="text-slate-600!"
+                onClick={() => setVideoUploadDialogOpen(true)}
+                onHover={() => handleHoverIconButtons("video")}
+                onLeave={() => setDescription("Add content")}
+              />
+              <IconButton
+                variant="secondary"
                 icon="material-symbols-light:link"
                 onClick={() => setWebLinkDialogOpen(true)}
                 onHover={() => handleHoverIconButtons("link")}
@@ -256,6 +264,7 @@ export default function PortflioUploadItem() {
               <IconButton
                 variant="secondary"
                 icon="f7:doc"
+                className="text-slate-600!"
                 onClick={() => openFilePicker("application/pdf")}
                 onHover={() => handleHoverIconButtons("pdf")}
                 onLeave={() => setDescription("Add content")}
