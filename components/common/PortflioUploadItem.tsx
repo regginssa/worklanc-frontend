@@ -11,6 +11,7 @@ import { toPortfolioVideoEmbedUrl } from "@/utils/videoEmbed";
 import Link from "next/link";
 import { getPortfolioWebLinkSiteName } from "@/utils/portfolioLink";
 import { ExternalLink } from "lucide-react";
+import PortfolioPdfPreviewGate from "./PortfolioPdfPreviewGate";
 
 export default function PortflioUploadItem() {
   const [file, setFile] = useState<File | null>(null);
@@ -164,9 +165,9 @@ export default function PortflioUploadItem() {
       );
     }
 
-    if (!file) return null;
+    if (!file || !previewUrl) return null;
 
-    if (file.type.startsWith("image/") && previewUrl) {
+    if (file.type.startsWith("image/")) {
       return (
         <div className="relative w-full">
           <div className={previewFrameClass}>
@@ -183,7 +184,7 @@ export default function PortflioUploadItem() {
       );
     }
 
-    if (file.type.startsWith("video/") && previewUrl) {
+    if (file.type.startsWith("video/")) {
       return (
         <div className="relative w-full">
           <div className={previewFrameClass}>
@@ -198,11 +199,19 @@ export default function PortflioUploadItem() {
       );
     }
 
-    if (file.type.startsWith("audio/") && previewUrl) {
+    if (file.type.startsWith("audio/")) {
       return (
         <div className="space-y-2">
           <h4 className="text-sm font-medium">{file.name}</h4>
           <audio src={previewUrl} controls className="w-full" />
+        </div>
+      );
+    }
+
+    if (file.type.startsWith("application/pdf") && previewUrl) {
+      return (
+        <div className="max-w-4xl mx-auto w-full p-4">
+          <PortfolioPdfPreviewGate file={file} previewUrl={previewUrl} />
         </div>
       );
     }
