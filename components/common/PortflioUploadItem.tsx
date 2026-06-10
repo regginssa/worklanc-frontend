@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { IconButton, TabBar } from "../atoms";
+import { Button, IconButton, TabBar } from "../atoms";
 import { PortfolioAssetType } from "@/types";
 import {
   PortflioVideoUploadDialog,
@@ -12,27 +12,48 @@ import Link from "next/link";
 import { getPortfolioWebLinkSiteName } from "@/utils/portfolioLink";
 import { ExternalLink } from "lucide-react";
 import PortfolioPdfPreviewGate from "./PortfolioPdfPreviewGate";
+import {
+  createEmptyPortfolioUploadDraft,
+  hasPortfolioUploadDraftContent,
+  isPortfolioUploadDraftComplete,
+  type PortfolioUploadDraft,
+} from "@/utils/portfolioUploadDraft";
 
 const textTaps = [
   { label: "Plain text", value: "plain_text" },
   { label: "Markdown", value: "markdown" },
 ];
 
-export default function PortflioUploadItem() {
-  const [file, setFile] = useState<File | null>(null);
-  const [videoLink, setVideoLink] = useState<string | null>(null);
-  const [textOpen, setTextOpen] = useState(false);
-  const [selectedTextTabIndex, setSelectedTextTabIndex] = useState<number>(0);
-  const [webLink, setWebLink] = useState<string | null>(null);
+export type PortflioUploadItemProps = {
+  value: PortfolioUploadDraft;
+  onChange: (draft: PortfolioUploadDraft) => void;
+  onComplete?: () => void;
+  readOnly?: boolean;
+  onRemove?: () => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
+};
+
+export default function PortflioUploadItem({
+  value,
+  onChange,
+  onComplete,
+  readOnly = false,
+  onRemove,
+  onMoveUp,
+  onMoveDown,
+}: PortflioUploadItemProps) {
   const [description, setDescription] = useState<string>("Add content");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [videoUploadDialogOpen, setVideoUploadDialogOpen] = useState(false);
   const [webLinkDialogOpen, setWebLinkDialogOpen] = useState(false);
   const [errors, setErrors] = useState<{ size?: string } | null>(null);
 
+  const selectedTextTabIndex = value.textFormat === "markdown" ? 1 : 0;
+
   const previewUrl = useMemo(
-    () => (file ? URL.createObjectURL(file) : null),
-    [file]
+    () => (value.file ? URL.createObjectURL(value.file) : null),
+    [value.file]
   );
 
   useEffect(() => {
@@ -43,27 +64,36 @@ export default function PortflioUploadItem() {
     };
   }, [previewUrl]);
 
+  const updateDraft = (patch: Partial<PortfolioUploadDraft>) => {
+    onChange({ ...value, ...patch });
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null;
 
     if (!file) {
-      setFile(null);
+      updateDraft({ file: null });
       setErrors(null);
       return;
     }
 
     if (file.size > 10 * 1024 * 1024) {
       setErrors({ size: "File size is too large" });
-    } else {
-      setErrors(null);
+      updateDraft({ file: null });
+      return;
     }
 
-    setFile(file);
+    setErrors(null);
+    onChange({
+      ...createEmptyPortfolioUploadDraft(),
+      file,
+    });
+    onComplete?.();
   };
 
   const openFilePicker = (accept: string) => {
     const input = fileInputRef.current;
-    if (!input) return;
+    if (!input || readOnly) return;
 
     input.accept = accept;
     input.value = "";
@@ -99,13 +129,21 @@ export default function PortflioUploadItem() {
     "relative aspect-[4/3] w-full overflow-hidden rounded-3xl";
 
   const clearPreview = () => {
-    setFile(null);
-    setVideoLink(null);
-    setWebLink(null);
+    if (readOnly) {
+      onRemove?.();
+      return;
+    }
+
+    onChange(createEmptyPortfolioUploadDraft());
     setErrors(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+  };
+
+  const handleAddTextBlock = () => {
+    if (!isPortfolioUploadDraftComplete(value)) return;
+    onComplete?.();
   };
 
   const renderPreviewActions = () => (
@@ -120,18 +158,20 @@ export default function PortflioUploadItem() {
           <p className="text-xs text-red-500 font-medium">{errors.size}</p>
         </div>
       )}
-      <IconButton
-        variant="secondary"
-        icon="mdi:close"
-        className="absolute top-4 right-4 z-10 p-1!"
-        onClick={clearPreview}
-      />
+      {!readOnly && (
+        <IconButton
+          variant="secondary"
+          icon="mdi:close"
+          className="absolute top-4 right-4 z-10 p-1!"
+          onClick={clearPreview}
+        />
+      )}
     </>
   );
 
   const renderPreview = () => {
-    if (videoLink) {
-      const embedUrl = toPortfolioVideoEmbedUrl(videoLink);
+    if (value.videoLink) {
+      const embedUrl = toPortfolioVideoEmbedUrl(value.videoLink);
       if (!embedUrl) return null;
 
       return (
@@ -150,13 +190,18 @@ export default function PortflioUploadItem() {
       );
     }
 
-    if (textOpen) {
+    if (value.textMode) {
       return (
-        <div className="bg-slate-100 rounded-3xl p-4 space-y-4">
+        <div className="space-y-4 rounded-3xl bg-slate-100 p-4">
           <TabBar
             tabs={textTaps}
             selectedTabIndex={selectedTextTabIndex}
-            onTab={(idx: number) => setSelectedTextTabIndex(idx)}
+            onTab={(idx: number) => {
+              if (readOnly) return;
+              updateDraft({
+                textFormat: idx === 1 ? "markdown" : "plain",
+              });
+            }}
           />
 
           <div className="px-6">
@@ -166,12 +211,18 @@ export default function PortflioUploadItem() {
                   type="text"
                   name="heading"
                   placeholder="Heading"
-                  className="w-full text-2xl outline-none border-none placeholder:text-slate-600"
+                  value={value.textHeading}
+                  readOnly={readOnly}
+                  onChange={(e) => updateDraft({ textHeading: e.target.value })}
+                  className="w-full border-none text-2xl outline-none placeholder:text-slate-600"
                 />
                 <textarea
                   name="content"
                   placeholder="Enter your text"
-                  className="w-full outline-none border-none placeholder:text-slate-600 resize-none min-h-[200px] max-h-[200px] no-scrollbar overflow-y-auto"
+                  value={value.textContent}
+                  readOnly={readOnly}
+                  onChange={(e) => updateDraft({ textContent: e.target.value })}
+                  className="no-scrollbar max-h-[200px] min-h-[200px] w-full resize-none overflow-y-auto border-none outline-none placeholder:text-slate-600"
                 />
               </div>
             ) : (
@@ -179,31 +230,47 @@ export default function PortflioUploadItem() {
                 <textarea
                   name="content"
                   placeholder="Enter your text (With Markdown, you can use special characters to format headings, code, quotes, and more)"
+                  value={value.textContent}
+                  readOnly={readOnly}
                   spellCheck={false}
-                  className="w-full min-h-[200px] max-h-[200px] resize-none overflow-y-auto border-none font-mono text-sm leading-6 outline-none placeholder:text-slate-500 no-scrollbar"
+                  onChange={(e) => updateDraft({ textContent: e.target.value })}
+                  className="no-scrollbar max-h-[200px] min-h-[200px] w-full resize-none overflow-y-auto border-none font-mono text-sm leading-6 outline-none placeholder:text-slate-500"
                 />
               </div>
             )}
           </div>
+
+          {!readOnly && (
+            <div className="flex justify-end px-6">
+              <Button
+                type="primary"
+                label="Add text block"
+                size="medium"
+                classname="rounded-full! px-5! py-2! text-sm! font-medium!"
+                disabled={!isPortfolioUploadDraftComplete(value)}
+                onClick={handleAddTextBlock}
+              />
+            </div>
+          )}
         </div>
       );
     }
 
-    if (webLink) {
+    if (value.webLink) {
       return (
         <div className="flex items-start justify-between rounded-lg bg-slate-100 p-4">
-          <div className="flex-1 text-sm space-y-4">
+          <div className="flex-1 space-y-4 text-sm">
             <Link
-              href={webLink}
+              href={value.webLink}
               target="_blank"
               rel="noopener noreferrer"
               className="block cursor-pointer underline"
             >
-              {webLink}
+              {value.webLink}
             </Link>
 
             <h4 className="mt-1 text-slate-600">
-              {getPortfolioWebLinkSiteName(webLink)}
+              {getPortfolioWebLinkSiteName(value.webLink)}
             </h4>
           </div>
           <ExternalLink className="size-5 text-slate-600" />
@@ -211,15 +278,15 @@ export default function PortflioUploadItem() {
       );
     }
 
-    if (!file || !previewUrl) return null;
+    if (!value.file || !previewUrl) return null;
 
-    if (file.type.startsWith("image/")) {
+    if (value.file.type.startsWith("image/")) {
       return (
         <div className="relative w-full">
           <div className={previewFrameClass}>
             <Image
               src={previewUrl}
-              alt={file.name}
+              alt={value.file.name}
               fill
               unoptimized
               className="object-cover"
@@ -230,7 +297,7 @@ export default function PortflioUploadItem() {
       );
     }
 
-    if (file.type.startsWith("video/")) {
+    if (value.file.type.startsWith("video/")) {
       return (
         <div className="relative w-full">
           <div className={previewFrameClass}>
@@ -245,29 +312,31 @@ export default function PortflioUploadItem() {
       );
     }
 
-    if (file.type.startsWith("audio/")) {
+    if (value.file.type.startsWith("audio/")) {
       return (
         <div className="space-y-2">
-          <h4 className="text-sm font-medium">{file.name}</h4>
+          <h4 className="text-sm font-medium">{value.file.name}</h4>
           <audio src={previewUrl} controls className="w-full" />
         </div>
       );
     }
 
-    if (file.type.startsWith("application/pdf") && previewUrl) {
+    if (value.file.type.startsWith("application/pdf") && previewUrl) {
       return (
-        <div className="max-w-4xl mx-auto w-full p-4">
-          <PortfolioPdfPreviewGate file={file} previewUrl={previewUrl} />
+        <div className="mx-auto w-full max-w-4xl p-4">
+          <PortfolioPdfPreviewGate file={value.file} previewUrl={previewUrl} />
         </div>
       );
     }
 
-    return <p className="p-6 text-sm text-slate-600">{file.name}</p>;
+    return <p className="p-6 text-sm text-slate-600">{value.file.name}</p>;
   };
 
+  const hasContent = hasPortfolioUploadDraftContent(value);
+
   return (
-    <div className="flex-1 flex items-center gap-4">
-      <div className="border-2 border-dashed border-blue-600 rounded-3xl w-full">
+    <div className="flex flex-1 items-center gap-4">
+      <div className="w-full rounded-3xl border-2 border-dashed border-blue-600">
         <input
           type="file"
           accept="image/*"
@@ -275,8 +344,8 @@ export default function PortflioUploadItem() {
           ref={fileInputRef}
           onChange={handleFileChange}
         />
-        {!file && !videoLink && !webLink && !textOpen ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-6">
+        {!hasContent ? (
+          <div className="flex flex-col items-center justify-center gap-6 py-20">
             <div className="flex items-center gap-8">
               <IconButton
                 variant="secondary"
@@ -296,8 +365,13 @@ export default function PortflioUploadItem() {
                 variant="secondary"
                 icon="uil:text"
                 className="text-slate-600!"
-                onClick={() => setTextOpen(true)}
-                onHover={() => handleHoverIconButtons("video")}
+                onClick={() =>
+                  onChange({
+                    ...createEmptyPortfolioUploadDraft(),
+                    textMode: true,
+                  })
+                }
+                onHover={() => handleHoverIconButtons("text")}
                 onLeave={() => setDescription("Add content")}
               />
               <IconButton
@@ -330,19 +404,23 @@ export default function PortflioUploadItem() {
         )}
       </div>
 
-      {(file || videoLink || webLink || textOpen) && (
+      {hasContent && (
         <div className="flex flex-col items-center gap-2">
           <IconButton
             variant="outline"
             icon="mdi:arrow-up"
             className="p-1!"
-            onClick={() => {}}
+            onClick={() => {
+              onMoveUp?.();
+            }}
           />
           <IconButton
             variant="outline"
             icon="mdi:arrow-down"
             className="p-1!"
-            onClick={() => {}}
+            onClick={() => {
+              onMoveDown?.();
+            }}
           />
           <IconButton
             variant="primary"
@@ -353,29 +431,38 @@ export default function PortflioUploadItem() {
         </div>
       )}
 
-      <PortflioVideoUploadDialog
-        open={videoUploadDialogOpen}
-        onClose={() => setVideoUploadDialogOpen(false)}
-        onAdd={(link: string) => {
-          setVideoLink(link);
-          setFile(null);
-          setVideoUploadDialogOpen(false);
-        }}
-        onUpload={() => {
-          setVideoUploadDialogOpen(false);
-          openFilePicker("video/*");
-        }}
-      />
-      <PortfolioWebLinkDialog
-        open={webLinkDialogOpen}
-        onClose={() => setWebLinkDialogOpen(false)}
-        onAdd={(link: string) => {
-          setFile(null);
-          setVideoLink(null);
-          setWebLink(link);
-          setWebLinkDialogOpen(false);
-        }}
-      />
+      {!readOnly && (
+        <>
+          <PortflioVideoUploadDialog
+            open={videoUploadDialogOpen}
+            onClose={() => setVideoUploadDialogOpen(false)}
+            onAdd={(link: string) => {
+              onChange({
+                ...createEmptyPortfolioUploadDraft(),
+                videoLink: link,
+              });
+              setVideoUploadDialogOpen(false);
+              onComplete?.();
+            }}
+            onUpload={() => {
+              setVideoUploadDialogOpen(false);
+              openFilePicker("video/*");
+            }}
+          />
+          <PortfolioWebLinkDialog
+            open={webLinkDialogOpen}
+            onClose={() => setWebLinkDialogOpen(false)}
+            onAdd={(link: string) => {
+              onChange({
+                ...createEmptyPortfolioUploadDraft(),
+                webLink: link,
+              });
+              setWebLinkDialogOpen(false);
+              onComplete?.();
+            }}
+          />
+        </>
+      )}
     </div>
   );
 }
