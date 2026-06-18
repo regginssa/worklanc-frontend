@@ -92,12 +92,12 @@ export default function JobPostLocation() {
       seo={{
         title: "Location - Worklanc",
         description: "Location - Worklanc",
-        url: "/nx/job-post/instant/location",
+        url: "/nx/job-post/location",
       }}
       step={4}
       nextLabel="Next: Budget"
       onBack={() => router.back()}
-      onNext={() => router.push("/nx/job-post/instant/budget")}
+      onNext={() => router.push("/nx/job-post/budget")}
       nextDisabled={false}
     >
       <div className="flex items-start gap-10">

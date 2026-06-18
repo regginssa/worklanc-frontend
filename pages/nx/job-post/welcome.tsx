@@ -14,7 +14,7 @@ export default function Welcome() {
       seo={{
         title: "Post a job - Worklanc",
         description: "Post a job - Worklanc",
-        url: "/nx/job-post/instant/welcome",
+        url: "/nx/job-post/welcome",
       }}
     >
       <div className="flex items-center justify-center">
@@ -52,7 +52,7 @@ export default function Welcome() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             className="py-2.5 px-5 text-sm font-medium text-blue-600 cursor-pointer"
-            onClick={() => router.push("/nx/job-post/instant/title")}
+            onClick={() => router.push("/nx/job-post/title")}
           >
             I'll do it without AI
           </motion.button>

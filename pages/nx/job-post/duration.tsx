@@ -81,12 +81,12 @@ export default function Duration() {
       seo={{
         title: "Job details - Worklanc",
         description: "Job details - Worklanc",
-        url: "/nx/job-post/instant/duration",
+        url: "/nx/job-post/duration",
       }}
       step={3}
       nextLabel="Next: Location"
       onBack={() => router.back()}
-      onNext={() => router.push("/nx/job-post/instant/location")}
+      onNext={() => router.push("/nx/job-post/location")}
       nextDisabled={!size || !duration || !level || !workFormat}
     >
       <div className="flex items-start gap-10">

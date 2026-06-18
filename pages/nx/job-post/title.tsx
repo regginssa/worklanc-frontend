@@ -12,12 +12,12 @@ export default function JobPostTitle() {
       seo={{
         title: "Headline - Worklanc",
         description: "Headline - Worklanc",
-        url: "/nx/job-post/instant/title",
+        url: "/nx/job-post/title",
       }}
       step={1}
       nextLabel="Next: Skills"
       onBack={() => router.back()}
-      onNext={() => router.push("/nx/job-post/instant/skills")}
+      onNext={() => router.push("/nx/job-post/skills")}
     >
       <div className="flex items-start gap-10">
         <div className="flex-1">

@@ -16,12 +16,12 @@ export default function Skills() {
       seo={{
         title: "Skills - Worklanc",
         description: "Skills - Worklanc",
-        url: "/nx/job-post/instant/skills",
+        url: "/nx/job-post/skills",
       }}
       step={2}
       nextLabel="Next: Scope"
       onBack={() => router.back()}
-      onNext={() => router.push("/nx/job-post/instant/duration")}
+      onNext={() => router.push("/nx/job-post/duration")}
     >
       <div className="flex items-start gap-10">
         <div className="flex-1">

@@ -29,7 +29,7 @@ export default function VerifyPhone() {
       dispatch(setUser(me.user));
     }
 
-    await complete({}, "/nx/job-post/instant/welcome", "send");
+    await complete({}, "/nx/job-post/welcome", "send");
   };
 
   return (

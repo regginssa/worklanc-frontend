@@ -127,7 +127,7 @@ export default function JobPostReview() {
       seo={{
         title: "Review - Worklanc",
         description: "Review - Worklanc",
-        url: "/nx/job-post/instant/review",
+        url: "/nx/job-post/review",
       }}
     >
       <div className="flex items-center justify-center">
@@ -362,76 +362,76 @@ export default function JobPostReview() {
                 className="overflow-hidden"
               >
                 <div className="space-y-6">
-            <div className="space-y-2">
-              <p className="text-sm font-medium">
-                Select or add up to 5 questions
-              </p>
-              <Button
-                type="outline"
-                label="Write your own question"
-                size="medium"
-                icon="mdi:plus"
-                classname="py-2! px-5! text-sm! font-medium! border! rounded-full!"
-              />
-            </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium">
+                      Select or add up to 5 questions
+                    </p>
+                    <Button
+                      type="outline"
+                      label="Write your own question"
+                      size="medium"
+                      icon="mdi:plus"
+                      classname="py-2! px-5! text-sm! font-medium! border! rounded-full!"
+                    />
+                  </div>
 
-            <div className="">
-              <div className="flex items-center justify-between gap-8">
-                <Textarea
-                  name="writeQuestion"
-                  subLabel="255 characters left"
-                  rows={1}
-                  value={writeQuestion || ""}
-                  onChange={(e) => setWriteQuestion(e.target.value)}
-                  labelClassName="text-sm font-medium"
-                  required
-                  classname="flex-1"
-                />
-                <IconButton
-                  icon="mdi:trash-can-outline"
-                  variant="outline"
-                  className="p-1!"
-                  onClick={() => {}}
-                />
-              </div>
-              <Button
-                type="primary"
-                label="Save question"
-                classname="py-1.5! px-5! text-sm! font-medium! border! rounded-full!"
-                disabled={!!writeQuestion}
-              />
-            </div>
-
-            {writtenQuestions.length > 0 && (
-              <div className="space-y-4">
-                <p className="text-sm font-medium">Your questions</p>
-                <ul className="space-y-4 text-sm font-light">
-                  {writtenQuestions.map((question, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center justify-between gap-8"
-                    >
-                      <p>{question}</p>
+                  <div className="">
+                    <div className="flex items-center justify-between gap-8">
+                      <Textarea
+                        name="writeQuestion"
+                        subLabel="255 characters left"
+                        rows={1}
+                        value={writeQuestion || ""}
+                        onChange={(e) => setWriteQuestion(e.target.value)}
+                        labelClassName="text-sm font-medium"
+                        required
+                        classname="flex-1"
+                      />
                       <IconButton
+                        icon="mdi:trash-can-outline"
                         variant="outline"
                         className="p-1!"
-                        icon="mdi:pencil-outline"
                         onClick={() => {}}
                       />
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+                    </div>
+                    <Button
+                      type="primary"
+                      label="Save question"
+                      classname="py-1.5! px-5! text-sm! font-medium! border! rounded-full!"
+                      disabled={!!writeQuestion}
+                    />
+                  </div>
 
-            <div className="space-y-4">
-              <p className="text-sm font-medium">Suggested</p>
-              <CheckBoxGroup
-                options={screeningQuestions}
-                value={[]}
-                onChange={() => {}}
-              />
-            </div>
+                  {writtenQuestions.length > 0 && (
+                    <div className="space-y-4">
+                      <p className="text-sm font-medium">Your questions</p>
+                      <ul className="space-y-4 text-sm font-light">
+                        {writtenQuestions.map((question, index) => (
+                          <li
+                            key={index}
+                            className="flex items-center justify-between gap-8"
+                          >
+                            <p>{question}</p>
+                            <IconButton
+                              variant="outline"
+                              className="p-1!"
+                              icon="mdi:pencil-outline"
+                              onClick={() => {}}
+                            />
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  <div className="space-y-4">
+                    <p className="text-sm font-medium">Suggested</p>
+                    <CheckBoxGroup
+                      options={screeningQuestions}
+                      value={[]}
+                      onChange={() => {}}
+                    />
+                  </div>
                 </div>
               </motion.div>
             )}
@@ -475,55 +475,55 @@ export default function JobPostReview() {
                 className="overflow-hidden"
               >
                 <div className="flex items-start">
-            <div className="flex-1 space-y-8">
-              <div className="space-y-4">
-                <p className="text-sm font-light">English level</p>
-                <RadioGroup
-                  options={englishLevelOptions}
-                  value={englishLevelOptions[0].value}
-                  onChange={() => {}}
-                />
-              </div>
+                  <div className="flex-1 space-y-8">
+                    <div className="space-y-4">
+                      <p className="text-sm font-light">English level</p>
+                      <RadioGroup
+                        options={englishLevelOptions}
+                        value={englishLevelOptions[0].value}
+                        onChange={() => {}}
+                      />
+                    </div>
 
-              <div className="space-y-4">
-                <p className="text-sm font-light">Hours per week</p>
-                <RadioGroup
-                  options={hoursPerWeekOptions}
-                  value={hoursPerWeekOptions[0].value}
-                  onChange={() => {}}
-                />
-              </div>
+                    <div className="space-y-4">
+                      <p className="text-sm font-light">Hours per week</p>
+                      <RadioGroup
+                        options={hoursPerWeekOptions}
+                        value={hoursPerWeekOptions[0].value}
+                        onChange={() => {}}
+                      />
+                    </div>
 
-              <Dropdown
-                label="Talent type"
-                labelClassName="text-sm! font-light! mb-2!"
-                name="talentType"
-                classname="w-1/3!"
-                options={talentTypeOptions}
-                value={talentTypeOptions[0].value}
-                onSelect={() => {}}
-              />
-            </div>
-            <div className="flex-1 space-y-8">
-              <div className="space-y-4">
-                <p className="text-sm font-light">Hire date</p>
-                <RadioGroup
-                  options={hireDateOptions}
-                  value={hireDateOptions[0].value}
-                  onChange={() => {}}
-                />
-              </div>
-              <div className="space-y-4">
-                <p className="text-sm font-light">
-                  Number of professionals needed
-                </p>
-                <RadioGroup
-                  options={numberOfProfessionalsNeedsOptions}
-                  value={numberOfProfessionalsNeedsOptions[0].value}
-                  onChange={() => {}}
-                />
-              </div>
-            </div>
+                    <Dropdown
+                      label="Talent type"
+                      labelClassName="text-sm! font-light! mb-2!"
+                      name="talentType"
+                      classname="w-1/3!"
+                      options={talentTypeOptions}
+                      value={talentTypeOptions[0].value}
+                      onSelect={() => {}}
+                    />
+                  </div>
+                  <div className="flex-1 space-y-8">
+                    <div className="space-y-4">
+                      <p className="text-sm font-light">Hire date</p>
+                      <RadioGroup
+                        options={hireDateOptions}
+                        value={hireDateOptions[0].value}
+                        onChange={() => {}}
+                      />
+                    </div>
+                    <div className="space-y-4">
+                      <p className="text-sm font-light">
+                        Number of professionals needed
+                      </p>
+                      <RadioGroup
+                        options={numberOfProfessionalsNeedsOptions}
+                        value={numberOfProfessionalsNeedsOptions[0].value}
+                        onChange={() => {}}
+                      />
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             )}
@@ -534,9 +534,7 @@ export default function JobPostReview() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             className="py-2 px-5 border border-slate-400 text-sm font-medium cursor-pointer rounded-full hover:bg-slate-50 transition-colors duration-200"
-            onClick={() =>
-              router.replace("/nx/job-post/instant/add-description")
-            }
+            onClick={() => router.replace("/nx/job-post/add-description")}
           >
             Back
           </motion.button>

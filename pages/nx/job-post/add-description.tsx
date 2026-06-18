@@ -18,11 +18,11 @@ export default function JobPostDescription() {
       seo={{
         title: "Add Description - Worklanc",
         description: "Add Description - Worklanc",
-        url: "/nx/job-post/instant/description",
+        url: "/nx/job-post/description",
       }}
       step={6}
       nextLabel="Review Job Post"
-      onNext={() => router.push("/nx/job-post/instant/review")}
+      onNext={() => router.push("/nx/job-post/review")}
     >
       <div className="flex items-start gap-10">
         <div className="flex-1 space-y-8">

@@ -22,11 +22,11 @@ export default function JobPostBudget() {
       seo={{
         title: "Budget - Worklanc",
         description: "Budget - Worklanc",
-        url: "nx/job-post/instant/budget",
+        url: "nx/job-post/budget",
       }}
       step={5}
       nextLabel="Next: Description"
-      onNext={() => router.push("/nx/job-post/instant/add-description")}
+      onNext={() => router.push("/nx/job-post/add-description")}
     >
       <div className="flex items-start gap-10">
         <div className="flex-1 space-y-8">
