@@ -1,11 +1,44 @@
 import { Input } from "@/components/atoms";
 import { JobPostLayout } from "@/components/layouts";
+import { useJobPost } from "@/hooks/useJobPost";
+import { validateTitle } from "@/utils/jobValidation";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function JobPostTitle() {
-  const [title, setTitle] = useState("");
   const router = useRouter();
+  const { uid, job, isLoading, saving, saveStep, goBack } = useJobPost();
+  const [title, setTitle] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    if (!uid) {
+      router.replace("/nx/job-post/welcome");
+    }
+  }, [router.isReady, uid, router]);
+
+  useEffect(() => {
+    if (job?.title) setTitle(job.title);
+  }, [job?.title]);
+
+  const handleNext = async () => {
+    const validationError = validateTitle(title);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+    setError(null);
+    await saveStep({ title: title.trim() }, "/nx/job-post/skills", "/nx/job-post/title");
+  };
+
+  const handleBack = async () => {
+    await goBack({ title: title.trim() }, "/nx/job-post/welcome", "/nx/job-post/title");
+  };
+
+  if (!uid || isLoading) {
+    return null;
+  }
 
   return (
     <JobPostLayout
@@ -15,9 +48,10 @@ export default function JobPostTitle() {
         url: "/nx/job-post/title",
       }}
       step={1}
-      nextLabel="Next: Skills"
-      onBack={() => router.back()}
-      onNext={() => router.push("/nx/job-post/skills")}
+      nextLabel={saving ? "Saving..." : "Next: Skills"}
+      onBack={handleBack}
+      onNext={handleNext}
+      nextDisabled={saving}
     >
       <div className="flex items-start gap-10">
         <div className="flex-1">
@@ -25,8 +59,8 @@ export default function JobPostTitle() {
             Let's start with a strong title.
           </h1>
           <p className="text-sm mt-8">
-            This helps your job post stand out to the right candidates. It’s the
-            first thing they’ll see, so make it count!
+            This helps your job post stand out to the right candidates. It's the
+            first thing they'll see, so make it count!
           </p>
         </div>
         <div className="flex-1">
@@ -37,11 +71,15 @@ export default function JobPostTitle() {
               label="Write a title for your job post"
               labelClassName="text-sm!"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => {
+                setTitle(e.target.value);
+                if (error) setError(null);
+              }}
+              error={error || undefined}
             />
             {title.trim().length > 0 && (
               <p className="text-xs text-slate-600">
-                We’ll match you with candidates that specialize in{" "}
+                We'll match you with candidates that specialize in{" "}
                 <strong>Full Stack Development</strong>
               </p>
             )}

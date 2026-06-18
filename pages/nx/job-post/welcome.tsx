@@ -4,10 +4,12 @@ import AIIcon from "@/public/assets/svgs/icons/other/ai.svg";
 import Image from "next/image";
 import { motion } from "motion/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useJobPost } from "@/hooks/useJobPost";
+import { useAppSelector } from "@/store/hooks";
 
 export default function Welcome() {
-  const router = useRouter();
+  const { saving, startNewJob } = useJobPost();
+  const { user } = useAppSelector((state) => state.user);
 
   return (
     <ClientLayout
@@ -35,7 +37,8 @@ export default function Welcome() {
         />
 
         <h1 className="text-5xl font-medium">
-          Welcome, John! Let's start with your first job post.
+          Welcome, {user?.firstName || "there"}! Let's start with your first job
+          post.
         </h1>
 
         <p className="text-sm">
@@ -48,13 +51,16 @@ export default function Welcome() {
             type="primary"
             label="Get started using AI"
             classname="py-2.5! px-5! rounded-full! text-sm! font-medium!"
+            disabled={saving}
           />
           <motion.button
+            type="button"
             whileTap={{ scale: 0.95 }}
-            className="py-2.5 px-5 text-sm font-medium text-blue-600 cursor-pointer"
-            onClick={() => router.push("/nx/job-post/title")}
+            className="py-2.5 px-5 text-sm font-medium text-blue-600 cursor-pointer disabled:opacity-50"
+            disabled={saving}
+            onClick={() => startNewJob()}
           >
-            I'll do it without AI
+            {saving ? "Starting..." : "I'll do it without AI"}
           </motion.button>
         </div>
 

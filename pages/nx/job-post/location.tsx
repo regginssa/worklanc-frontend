@@ -1,7 +1,9 @@
 import { JobPostLayout } from "@/components/layouts";
+import { useJobPost } from "@/hooks/useJobPost";
+import type { JobLocationType } from "@/types/job";
 import { useRouter } from "next/router";
 import { Icon } from "@iconify/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { SearchableGroupDropdown } from "@/components/atoms";
 import { State } from "country-state-city";
@@ -10,10 +12,27 @@ import { SearchableGroupOption } from "@/components/atoms/SearchableGroupDropdow
 import { formatTimezone } from "@/utils/date";
 
 export default function JobPostLocation() {
-  const [location, setLocation] = useState<"local" | "global">("local");
+  const router = useRouter();
+  const { uid, job, isLoading, saving, saveStep, goBack } = useJobPost();
+  const [location, setLocation] = useState<JobLocationType>("local");
   const [stateValues, setStateValues] = useState<string[]>([]);
   const [regionValues, setRegionValues] = useState<string[]>([]);
-  const router = useRouter();
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    if (!uid) router.replace("/nx/job-post/welcome");
+  }, [router.isReady, uid, router]);
+
+  useEffect(() => {
+    if (!job) return;
+    if (job.locationType) setLocation(job.locationType);
+    if (job.locationType === "local" && job.locationPreferences?.length) {
+      setStateValues(job.locationPreferences);
+    }
+    if (job.locationType === "global" && job.locationPreferences?.length) {
+      setRegionValues(job.locationPreferences);
+    }
+  }, [job]);
 
   const states = State.getStatesOfCountry("US");
   const timezones = Timezones.byCountry.US;
@@ -28,11 +47,8 @@ export default function JobPostLocation() {
         return true;
       });
 
-    let options: any[] = [
-      {
-        title: "Time zones",
-        items: timezoneItems,
-      },
+    return [
+      { title: "Time zones", items: timezoneItems },
       {
         title: "States",
         items: states.map((state) => ({
@@ -41,7 +57,6 @@ export default function JobPostLocation() {
         })),
       },
     ];
-    return options;
   };
 
   const makeRegionOptions = (): SearchableGroupOption[] => {
@@ -52,11 +67,8 @@ export default function JobPostLocation() {
       { label: "Europe", value: "europe" },
       { label: "Africa", value: "africa" },
     ];
-    const options: SearchableGroupOption[] = [
-      {
-        title: "Regions",
-        items: regions,
-      },
+    return [
+      { title: "Regions", items: regions },
       {
         title: "Countries",
         items: countries.all.map((country) => ({
@@ -65,27 +77,40 @@ export default function JobPostLocation() {
         })),
       },
     ];
-    return options;
   };
 
-  const getLabel = (
-    options: SearchableGroupOption[],
-    value: string
-  ): string => {
-    let label = "";
-    options.forEach((option) => {
-      option.items.forEach((item) => {
-        if (item.value === value) {
-          label = item.label;
-        }
-      });
-    });
-
-    return label;
+  const getLabel = (options: SearchableGroupOption[], value: string): string => {
+    for (const option of options) {
+      for (const item of option.items) {
+        if (item.value === value) return item.label;
+      }
+    }
+    return value;
   };
 
   const stateOptions = makeStateOptions();
   const regionOptions = makeRegionOptions();
+
+  const locationPreferences =
+    location === "local" ? stateValues : regionValues;
+
+  const handleNext = async () => {
+    await saveStep(
+      { locationType: location, locationPreferences },
+      "/nx/job-post/budget",
+      "/nx/job-post/location",
+    );
+  };
+
+  const handleBack = async () => {
+    await goBack(
+      { locationType: location, locationPreferences },
+      "/nx/job-post/duration",
+      "/nx/job-post/location",
+    );
+  };
+
+  if (!uid || isLoading) return null;
 
   return (
     <JobPostLayout
@@ -95,10 +120,10 @@ export default function JobPostLocation() {
         url: "/nx/job-post/location",
       }}
       step={4}
-      nextLabel="Next: Budget"
-      onBack={() => router.back()}
-      onNext={() => router.push("/nx/job-post/budget")}
-      nextDisabled={false}
+      nextLabel={saving ? "Saving..." : "Next: Budget"}
+      onBack={handleBack}
+      onNext={handleNext}
+      nextDisabled={saving}
     >
       <div className="flex items-start gap-10">
         <div className="flex-1 space-y-8">
@@ -114,6 +139,7 @@ export default function JobPostLocation() {
         <div className="flex-1 space-y-8">
           <div className="grid grid-cols-2 gap-8">
             <motion.button
+              type="button"
               whileTap={{ scale: 0.95 }}
               className={`p-4 border rounded-2xl space-y-2 cursor-pointer transition-colors duration-200 ${
                 location === "local" ? "border-black" : "border-slate-300"
@@ -125,20 +151,18 @@ export default function JobPostLocation() {
             >
               <div className="flex items-center justify-between">
                 <Icon icon="mdi:map-marker-outline" className="size-6" />
-
                 <div
                   className={`w-5 h-5 overflow-hidden flex items-center border ${
                     location === "local" ? "border-black" : "border-slate-300"
-                  } justify-center transition-all duration-200 group-hover:bg-slate-100 rounded-full`}
+                  } justify-center rounded-full`}
                 >
                   <div
                     className={`w-2.5 h-2.5 bg-zinc-800 rounded-full transition-all duration-200 ${
                       location === "local" ? "scale-100" : "scale-0"
                     }`}
-                  ></div>
+                  />
                 </div>
               </div>
-
               <div className="space-y-4 text-left">
                 <h3 className="text-xl font-medium">Local</h3>
                 <p className="text-sm text-slate-600">
@@ -148,6 +172,7 @@ export default function JobPostLocation() {
             </motion.button>
 
             <motion.button
+              type="button"
               whileTap={{ scale: 0.95 }}
               className={`p-4 border ${
                 location === "global" ? "border-black" : "border-slate-300"
@@ -159,20 +184,18 @@ export default function JobPostLocation() {
             >
               <div className="flex items-center justify-between">
                 <Icon icon="mdi:globe" className="size-6" />
-
                 <div
                   className={`w-5 h-5 overflow-hidden flex items-center border ${
                     location === "global" ? "border-black" : "border-slate-300"
-                  } justify-center transition-all duration-200 group-hover:bg-slate-100 rounded-full`}
+                  } justify-center rounded-full`}
                 >
                   <div
                     className={`w-2.5 h-2.5 bg-zinc-800 rounded-full transition-all duration-200 ${
                       location === "global" ? "scale-100" : "scale-0"
                     }`}
-                  ></div>
+                  />
                 </div>
               </div>
-
               <div className="space-y-4 text-left">
                 <h3 className="text-xl font-medium">Worldwide</h3>
                 <p className="text-sm text-slate-600">
@@ -193,16 +216,15 @@ export default function JobPostLocation() {
                 values={stateValues}
                 onChange={setStateValues}
               />
-
               <p className="mt-2 text-xs text-slate-600">
                 These location preferences will be displayed to freelancers and
                 agencies, but anyone can submit proposals.
               </p>
-
               <div className="flex flex-wrap items-center gap-2 mt-8">
                 {stateValues.map((value) => (
                   <motion.button
                     key={value}
+                    type="button"
                     whileTap={{ scale: 0.95 }}
                     className="cursor-pointer border border-slate-400 rounded-full py-1.5 px-2 text-xs font-medium flex items-center gap-2"
                   >
@@ -229,16 +251,15 @@ export default function JobPostLocation() {
                 values={regionValues}
                 onChange={setRegionValues}
               />
-
               <p className="mt-2 text-xs text-slate-600">
                 These location preferences will be displayed to all candidates,
                 but anyone can submit proposals.
               </p>
-
               <div className="flex flex-wrap items-center gap-2 mt-8">
                 {regionValues.map((value) => (
                   <motion.button
                     key={value}
+                    type="button"
                     whileTap={{ scale: 0.95 }}
                     className="cursor-pointer border border-slate-400 rounded-full py-1.5 px-2 text-xs font-medium flex items-center gap-2"
                   >

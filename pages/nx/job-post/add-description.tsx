@@ -1,17 +1,58 @@
 import { Textarea } from "@/components/atoms";
 import { JobPostLayout } from "@/components/layouts";
+import { useJobPost } from "@/hooks/useJobPost";
+import {
+  DESCRIPTION_MAX,
+  validateDescription,
+} from "@/utils/jobValidation";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Icon } from "@iconify/react";
 import { getFileIcon, formatFileSize } from "@/utils/file";
 
 export default function JobPostDescription() {
-  const [description, setDescription] = useState("");
-  const [files, setFile] = useState<File[]>([]);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const { uid, job, isLoading, saving, saveStep, goBack } = useJobPost();
+  const [description, setDescription] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    if (!uid) router.replace("/nx/job-post/welcome");
+  }, [router.isReady, uid, router]);
+
+  useEffect(() => {
+    if (job?.description) setDescription(job.description);
+  }, [job?.description]);
+
+  const charsLeft = DESCRIPTION_MAX - description.length;
+
+  const handleNext = async () => {
+    const validationError = validateDescription(description);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+    await saveStep(
+      { description: description.trim() },
+      "/nx/job-post/review",
+      "/nx/job-post/add-description",
+    );
+  };
+
+  const handleBack = async () => {
+    await goBack(
+      { description: description.trim() },
+      "/nx/job-post/budget",
+      "/nx/job-post/add-description",
+    );
+  };
+
+  if (!uid || isLoading) return null;
 
   return (
     <JobPostLayout
@@ -21,8 +62,10 @@ export default function JobPostDescription() {
         url: "/nx/job-post/description",
       }}
       step={6}
-      nextLabel="Review Job Post"
-      onNext={() => router.push("/nx/job-post/review")}
+      nextLabel={saving ? "Saving..." : "Review Job Post"}
+      onBack={handleBack}
+      onNext={handleNext}
+      nextDisabled={saving}
     >
       <div className="flex items-start gap-10">
         <div className="flex-1 space-y-8">
@@ -44,10 +87,14 @@ export default function JobPostDescription() {
             label="Describe what you need"
             placeholder="Already have a description? Paste it here!"
             labelClassName="text-sm! font-light! mb-2"
-            subLabel="50,000 characters left"
+            subLabel={`${charsLeft.toLocaleString()} characters left`}
             rows={10}
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => {
+              setDescription(e.target.value);
+              if (error) setError(null);
+            }}
+            error={error || undefined}
           />
 
           <input
@@ -55,12 +102,12 @@ export default function JobPostDescription() {
             className="hidden"
             ref={fileInputRef}
             multiple
-            onChange={(e) => setFile(Array.from(e.target.files || []))}
+            onChange={(e) => setFiles(Array.from(e.target.files || []))}
           />
 
           <div className="space-y-6 text-sm">
             <div className="space-y-2">
-              <p className="">Need help?</p>
+              <p>Need help?</p>
               <Link href="#" className="underline block">
                 See examples of effective descriptions
               </Link>
@@ -68,6 +115,7 @@ export default function JobPostDescription() {
 
             <div>
               <motion.button
+                type="button"
                 whileTap={{ scale: 0.95 }}
                 className="py-2 px-5 rounded-full border border-slate-300 text-sm hover:bg-slate-100 cursor-pointer font-medium flex items-center gap-2"
                 onClick={() => fileInputRef.current?.click()}
@@ -80,50 +128,36 @@ export default function JobPostDescription() {
             </div>
 
             {files.length > 0 && (
-              <>
-                <ul className="space-y-2">
-                  {files.map((file, index) => (
-                    <li
-                      key={index}
-                      className="bg-slate-50 p-2 flex items-center justify-between rounded-lg"
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center justify-center size-12 rounded-md bg-slate-200">
-                          <Icon
-                            icon={getFileIcon(file)}
-                            className="w-6 h-6 text-slate-600"
-                          />
-                        </div>
-                        <div className="text-sm font-light">
-                          <h4>{file.name}</h4>
-                          <p className="text-slate-600">
-                            {formatFileSize(file.size)}
-                          </p>
-                        </div>
+              <ul className="space-y-2">
+                {files.map((file, index) => (
+                  <li
+                    key={index}
+                    className="bg-slate-50 p-2 flex items-center justify-between rounded-lg"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-center size-12 rounded-md bg-slate-200">
+                        <Icon
+                          icon={getFileIcon(file)}
+                          className="w-6 h-6 text-slate-600"
+                        />
                       </div>
-
-                      <Icon
-                        icon="mdi:trash-can-outline"
-                        className="w-5 h-5 cursor-pointer"
-                        onClick={() =>
-                          setFile(files.filter((_, i) => i !== index))
-                        }
-                      />
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="rounded-lg bg-yellow-50 flex items-start gap-2 p-2">
-                  <Icon
-                    icon="mdi:information"
-                    className="w-5 h-5 text-yellow-500"
-                  />
-                  <p className="text-sm font-medium">
-                    These files will be scanned and any active objects will be
-                    removed
-                  </p>
-                </div>
-              </>
+                      <div className="text-sm font-light">
+                        <h4>{file.name}</h4>
+                        <p className="text-slate-600">
+                          {formatFileSize(file.size)}
+                        </p>
+                      </div>
+                    </div>
+                    <Icon
+                      icon="mdi:trash-can-outline"
+                      className="w-5 h-5 cursor-pointer"
+                      onClick={() =>
+                        setFiles(files.filter((_, i) => i !== index))
+                      }
+                    />
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
         </div>

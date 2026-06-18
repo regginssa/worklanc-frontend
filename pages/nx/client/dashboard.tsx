@@ -28,12 +28,15 @@ import {
   HireStepCard,
   PhoneVerificationDialog,
 } from "@/components/molecules";
-import { useState } from "react";
-import type { Value } from "react-phone-number-input";
+import { useQueryClient } from "@tanstack/react-query";
+import { useClientJobs, useJobPost } from "@/hooks/useJobPost";
+import JobsAPI from "@/lib/api/jobs";
+import type { Job } from "@/types/job";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setUser } from "@/store/slices/userSlice";
 import { RootState } from "@/store/store";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 const resources = [
   {
@@ -53,36 +56,25 @@ const resources = [
   },
 ];
 
-const jobs = [
-  {
-    title: "SaaS Platform Development",
-    status: "draft",
-  },
-  {
-    title: "SaaS Platform Development",
-    status: "open",
-  },
-  {
-    title: "SaaS Platform Development",
-    status: "pending",
-  },
-];
-
 export default function Dashboard() {
   const consultations = Array.from({ length: 4 });
   const [isListView, setIsListView] = useState(false);
   const [openPhoneVerificationDialog, setOpenPhoneVerificationDialog] =
     useState(false);
+  const [pendingJobUid, setPendingJobUid] = useState<string | null>(null);
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.user);
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const { resumePath } = useJobPost();
+  const { data: jobsData } = useClientJobs();
+  const clientJobs: Job[] = jobsData?.jobs ?? [];
 
-  // Each job fills 1/3 of the view. "Post a job" fills the remaining slots of
-  // the current row of 3 (2/3 when one slot is taken, otherwise 1/3 and it
-  // wraps to the next view).
-  const postAJobBasis = jobs.length % 3 === 1 ? "lg:basis-2/3" : "lg:basis-1/3";
+  const postAJobBasis =
+    clientJobs.length % 3 === 1 ? "lg:basis-2/3" : "lg:basis-1/3";
 
-  const handleVerifyAndPublish = () => {
+  const handleVerifyAndPublish = (jobUid: string) => {
+    setPendingJobUid(jobUid);
     setOpenPhoneVerificationDialog(true);
   };
 
@@ -190,12 +182,13 @@ export default function Dashboard() {
             className="w-full"
           >
             <CarouselContent className="flex items-stretch">
-              {jobs.map((job, index) => (
-                <CarouselItem key={index} className="basis-1/2 lg:basis-1/3">
+              {clientJobs.map((job) => (
+                <CarouselItem key={job.uid} className="basis-1/2 lg:basis-1/3">
                   <DraftJobCard
-                    title={job.title}
-                    status={job.status as any}
-                    onVerifyAndPublish={handleVerifyAndPublish}
+                    title={job.title || "Untitled job post"}
+                    status={job.status}
+                    onFillInDraft={() => router.push(resumePath(job))}
+                    onVerifyAndPublish={() => handleVerifyAndPublish(job.uid)}
                   />
                 </CarouselItem>
               ))}
@@ -207,6 +200,7 @@ export default function Dashboard() {
                 <motion.div
                   whileTap={{ scale: 0.98 }}
                   className="border border-slate-300 rounded-3xl p-6 space-y-4 flex flex-col items-center justify-center h-full cursor-pointer transition-colors duration-200 hover:bg-slate-100"
+                  onClick={() => router.push("/nx/job-post/welcome")}
                 >
                   <div className="flex items-center justify-center gap-2">
                     <Icon icon="mdi:plus" className="size-6" />
@@ -220,8 +214,11 @@ export default function Dashboard() {
           </Carousel>
         ) : (
           <ul className="flex space-y-4">
-            {jobs.map((_, index) => (
-              <JobListItem key={index} />
+            {clientJobs.map((job) => (
+              <JobListItem
+                key={job.uid}
+                title={job.title || "Untitled job post"}
+              />
             ))}
           </ul>
         )}
@@ -311,9 +308,14 @@ export default function Dashboard() {
       <PhoneVerificationDialog
         open={openPhoneVerificationDialog}
         onClose={() => setOpenPhoneVerificationDialog(false)}
-        onSuccess={(verifiedUser) => {
+        onSuccess={async (verifiedUser) => {
           dispatch(setUser(verifiedUser));
           setOpenPhoneVerificationDialog(false);
+          if (pendingJobUid) {
+            await JobsAPI.activate(pendingJobUid);
+            setPendingJobUid(null);
+            queryClient.invalidateQueries({ queryKey: ["client-jobs"] });
+          }
         }}
       />
     </ClientLayout>

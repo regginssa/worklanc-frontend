@@ -1,15 +1,52 @@
 import { AutoCompleteSelector } from "@/components/atoms";
 import { JobPostLayout } from "@/components/layouts";
+import { useJobPost } from "@/hooks/useJobPost";
 import { MOCK_SKILLS, MockSkill } from "@/static/data/mock-skills";
+import { validateSkills } from "@/utils/jobValidation";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 
 export default function Skills() {
+  const router = useRouter();
+  const { uid, job, isLoading, saving, saveStep, goBack } = useJobPost();
   const [search, setSearch] = useState("");
   const [skills, setSkills] = useState<MockSkill[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    if (!uid) router.replace("/nx/job-post/welcome");
+  }, [router.isReady, uid, router]);
+
+  useEffect(() => {
+    if (job?.skills?.length) setSkills(job.skills);
+  }, [job?.skills]);
+
+  const addSkill = (skill: MockSkill) => {
+    if (skills.some((s) => s.value === skill.value)) return;
+    if (skills.length >= 10) {
+      setError("You can add at most 10 skills");
+      return;
+    }
+    setSkills((prev) => [...prev, skill]);
+    setError(null);
+  };
+
+  const handleNext = async () => {
+    const validationError = validateSkills(skills);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+    await saveStep({ skills }, "/nx/job-post/duration", "/nx/job-post/skills");
+  };
+
+  const handleBack = async () => {
+    await goBack({ skills }, "/nx/job-post/title", "/nx/job-post/skills");
+  };
+
+  if (!uid || isLoading) return null;
 
   return (
     <JobPostLayout
@@ -19,9 +56,10 @@ export default function Skills() {
         url: "/nx/job-post/skills",
       }}
       step={2}
-      nextLabel="Next: Scope"
-      onBack={() => router.back()}
-      onNext={() => router.push("/nx/job-post/duration")}
+      nextLabel={saving ? "Saving..." : "Next: Scope"}
+      onBack={handleBack}
+      onNext={handleNext}
+      nextDisabled={saving}
     >
       <div className="flex items-start gap-10">
         <div className="flex-1">
@@ -40,7 +78,7 @@ export default function Skills() {
               value={search}
               selectedValues={skills}
               onChange={setSearch}
-              onSelect={(skill) => setSkills((prev) => [...prev, skill])}
+              onSelect={addSkill}
               onRemove={(skill) =>
                 setSkills((prev) => prev.filter((s) => s.value !== skill.value))
               }
@@ -66,8 +104,9 @@ export default function Skills() {
               {MOCK_SKILLS.slice(0, 10).map((skill) => (
                 <button
                   key={skill.value}
+                  type="button"
                   className="text-sm border border-slate-300 cursor-pointer rounded-full px-3 py-1.5 flex items-center gap-2"
-                  onClick={() => setSkills((prev) => [...prev, skill])}
+                  onClick={() => addSkill(skill)}
                 >
                   <Icon icon="mdi:plus" className="w-5 h-5 text-slate-600" />
                   {skill.label}
