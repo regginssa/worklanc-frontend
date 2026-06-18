@@ -308,7 +308,6 @@ export default function Dashboard() {
       <PhoneVerificationDialog
         open={openPhoneVerificationDialog}
         onClose={() => setOpenPhoneVerificationDialog(false)}
-        defaultPhone={(user?.phone as Value) ?? undefined}
         onSuccess={(verifiedUser) => {
           dispatch(setUser(verifiedUser));
           setOpenPhoneVerificationDialog(false);

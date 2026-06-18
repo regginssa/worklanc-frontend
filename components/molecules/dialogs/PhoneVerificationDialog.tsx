@@ -17,7 +17,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { Country, Value } from "react-phone-number-input";
 
-const OTP_LENGTH = 6;
+const OTP_LENGTH = 5;
 const RESEND_COOLDOWN_SECONDS = 60;
 
 type Step = "phone" | "otp";
@@ -26,18 +26,16 @@ interface PhoneVerificationDialogProps {
   open: boolean;
   onClose: () => void;
   onSuccess?: (user: User) => void;
-  defaultPhone?: Value;
 }
 
 export default function PhoneVerificationDialog({
   open,
   onClose,
   onSuccess,
-  defaultPhone,
 }: PhoneVerificationDialogProps) {
   const [step, setStep] = useState<Step>("phone");
   const [country, setCountry] = useState<Country>("US");
-  const [phone, setPhone] = useState<Value | undefined>(defaultPhone);
+  const [phone, setPhone] = useState<Value | undefined>(undefined);
   const [sentPhone, setSentPhone] = useState("");
   const [code, setCode] = useState("");
   const [phoneError, setPhoneError] = useState<string>();
@@ -51,7 +49,7 @@ export default function PhoneVerificationDialog({
   useEffect(() => {
     if (!open) {
       setStep("phone");
-      setPhone(defaultPhone);
+      setPhone(undefined);
       setSentPhone("");
       setCode("");
       setPhoneError(undefined);
@@ -62,11 +60,7 @@ export default function PhoneVerificationDialog({
       setResendCooldown(0);
       return;
     }
-
-    if (defaultPhone) {
-      setPhone(defaultPhone);
-    }
-  }, [open, defaultPhone]);
+  }, [open]);
 
   useEffect(() => {
     if (resendCooldown <= 0) return;
@@ -101,7 +95,9 @@ export default function PhoneVerificationDialog({
   const sendVerificationCode = async (phoneNumber: string) => {
     const res = await PhoneVerificationAPI.send(phoneNumber);
     if (res?.status !== "pending") {
-      setPhoneError(res?.message || "Unable to send verification code right now");
+      setPhoneError(
+        res?.message || "Unable to send verification code right now"
+      );
       return false;
     }
 
@@ -137,7 +133,9 @@ export default function PhoneVerificationDialog({
       if (res?.status === "pending") {
         setResendCooldown(RESEND_COOLDOWN_SECONDS);
       } else {
-        setCodeError(res?.message || "Unable to send verification code right now");
+        setCodeError(
+          res?.message || "Unable to send verification code right now"
+        );
       }
     } finally {
       setResending(false);
@@ -182,97 +180,99 @@ export default function PhoneVerificationDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="flex min-w-xl flex-col">
         <div ref={portalContainerRef} className="contents">
-        <DialogHeader className="shrink-0 p-4">
-          <DialogTitle className="text-3xl">
-            {step === "phone" ? "Verify your phone number" : "Enter your code"}
-          </DialogTitle>
-          <DialogDescription>
-            {step === "phone"
-              ? "We'll text you a one-time code to confirm this number. Standard messaging rates may apply."
-              : `We sent a ${OTP_LENGTH}-digit code to ${formattedSentPhone}.`}
-          </DialogDescription>
-        </DialogHeader>
+          <DialogHeader className="shrink-0 p-4">
+            <DialogTitle className="text-3xl">
+              {step === "phone"
+                ? "Verify your phone number"
+                : "Enter your code"}
+            </DialogTitle>
+            <DialogDescription>
+              {step === "phone"
+                ? "We'll text you a one-time code to confirm this number. Standard messaging rates may apply."
+                : `We sent a ${OTP_LENGTH}-digit code to ${formattedSentPhone}.`}
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="px-4 pb-4 no-scrollbar max-h-[60vh] overflow-y-auto">
-          {step === "phone" ? (
-            <div className="space-y-3">
-              <PhoneInput
-                label="Your phone number"
-                placeholder="Enter your mobile number"
-                country={country}
-                required
-                value={phone}
-                error={phoneError}
-                portalContainer={portalContainerRef}
-                onCountryChange={(country) => setCountry(country)}
-                onChange={(value) => {
-                  setPhone(value);
-                  if (phoneError) setPhoneError(undefined);
-                }}
-              />
-              <p className="text-sm text-slate-600">
-                Use a number you can receive SMS on. We only use it for
-                verification and account security — never for marketing.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              <div className="flex items-center justify-center gap-2 text-sm text-slate-600">
-                <span>Didn't get the code?</span>
-                <button
-                  type="button"
-                  className="underline cursor-pointer text-slate-900"
-                  onClick={handleChangePhoneNumber}
-                >
-                  Change phone number
-                </button>
+          <div className="px-4 pb-4 no-scrollbar max-h-[60vh] overflow-y-auto">
+            {step === "phone" ? (
+              <div className="space-y-3">
+                <PhoneInput
+                  label="Your phone number"
+                  placeholder="Enter your mobile number"
+                  country={country}
+                  required
+                  value={phone}
+                  error={phoneError}
+                  portalContainer={portalContainerRef}
+                  onCountryChange={(country) => setCountry(country)}
+                  onChange={(value) => {
+                    setPhone(value);
+                    if (phoneError) setPhoneError(undefined);
+                  }}
+                />
+                <p className="text-sm text-slate-600">
+                  Use a number you can receive SMS on. We only use it for
+                  verification and account security — never for marketing.
+                </p>
               </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="flex items-center justify-center gap-2 text-sm text-slate-600">
+                  <span>Didn't get the code?</span>
+                  <button
+                    type="button"
+                    className="underline cursor-pointer text-slate-900"
+                    onClick={handleChangePhoneNumber}
+                  >
+                    Change phone number
+                  </button>
+                </div>
 
-              <InputOTP
-                length={OTP_LENGTH}
-                value={code}
-                error={codeError}
-                onChange={(value) => {
-                  setCode(value);
-                  if (codeError) setCodeError(undefined);
-                }}
-              />
+                <InputOTP
+                  length={OTP_LENGTH}
+                  value={code}
+                  error={codeError}
+                  onChange={(value) => {
+                    setCode(value);
+                    if (codeError) setCodeError(undefined);
+                  }}
+                />
 
-              <div className="flex justify-center">
-                <button
-                  type="button"
-                  disabled={resendCooldown > 0 || resending}
-                  onClick={handleResendCode}
-                  className="text-sm font-medium text-blue-600 disabled:text-slate-400 disabled:cursor-not-allowed cursor-pointer hover:underline"
-                >
-                  {resending
-                    ? "Sending..."
-                    : resendCooldown > 0
-                    ? `Resend code in ${resendCooldown}s`
-                    : "Resend code"}
-                </button>
+                <div className="flex justify-center">
+                  <button
+                    type="button"
+                    disabled={resendCooldown > 0 || resending}
+                    onClick={handleResendCode}
+                    className="text-sm font-medium text-blue-600 disabled:text-slate-400 disabled:cursor-not-allowed cursor-pointer hover:underline"
+                  >
+                    {resending
+                      ? "Sending..."
+                      : resendCooldown > 0
+                      ? `Resend code in ${resendCooldown}s`
+                      : "Resend code"}
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
 
-        <DialogFooter>
-          <DialogClose asChild>
-            <button
-              type="button"
-              className="py-2.5 px-5 cursor-pointer text-sm font-medium"
-            >
-              Cancel
-            </button>
-          </DialogClose>
-          <Button
-            type="primary"
-            label={step === "phone" ? "Send code" : "Verify"}
-            classname="py-2.5! px-5! rounded-full! text-sm! font-medium!"
-            loading={step === "phone" ? sending : verifying}
-            onClick={step === "phone" ? handleSendCode : handleVerifyCode}
-          />
-        </DialogFooter>
+          <DialogFooter>
+            <DialogClose asChild>
+              <button
+                type="button"
+                className="py-2.5 px-5 cursor-pointer text-sm font-medium"
+              >
+                Cancel
+              </button>
+            </DialogClose>
+            <Button
+              type="primary"
+              label={step === "phone" ? "Send code" : "Verify"}
+              classname="py-2.5! px-5! rounded-full! text-sm! font-medium!"
+              loading={step === "phone" ? sending : verifying}
+              onClick={step === "phone" ? handleSendCode : handleVerifyCode}
+            />
+          </DialogFooter>
         </div>
       </DialogContent>
     </Dialog>

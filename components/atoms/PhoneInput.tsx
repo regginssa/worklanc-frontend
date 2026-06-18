@@ -63,13 +63,12 @@ export default function PhoneInput({
         onChange={(value: Value) => onChange(value)}
       />
       {!!error && (
-        <div className="flex items-center gap-2">
+        <div className="flex items-start gap-2">
           <Icon
             icon="mdi:information-outline"
-            width={16}
-            className="text-red-500"
+            className="text-red-500 size-4"
           />
-          <p className="text-red-600 text-sm">{error}</p>
+          <p className="text-red-600 text-sm flex-1">{error}</p>
         </div>
       )}
     </div>
