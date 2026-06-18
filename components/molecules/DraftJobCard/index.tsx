@@ -1,28 +1,73 @@
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/atoms";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { JobStatus } from "@/types/job";
 
-const actionItems = ["Edit draft", "Remove draft"] as const;
+const draftActionItems = ["Edit draft", "Remove draft"] as const;
+const pendingActionItems = ["Edit draft", "Remove draft"] as const;
+const openActionItems = [
+  "View proposals",
+  "View job posting",
+  "Invite freelancers",
+  "Edit posting",
+  "Reuse posting",
+  "Remove posting",
+] as const;
 
 interface DraftJobCardProps {
-  title?: string;
-  statusLabel?: string;
-  description?: string;
-  actionLabel?: string;
-  onEditDraft?: () => void;
-  onRemoveDraft?: () => void;
+  title: string;
+  status: JobStatus;
+  onFillInDraft?: () => void;
+  onVerifyAndPublish?: () => void;
+  onGetShortlist?: () => void;
 }
 
 export default function DraftJobCard({
   title = "Fintech SaaS Platform",
-  statusLabel = "Draft job post",
-  description = "Add details to your draft",
-  actionLabel = "Fill in draft",
-  onEditDraft,
-  onRemoveDraft,
+  status = "draft",
+  onFillInDraft,
+  onVerifyAndPublish,
+  onGetShortlist,
 }: DraftJobCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const statusLabel = useMemo(() => {
+    switch (status) {
+      case "draft":
+        return "Draft job post";
+      case "pending":
+        return "Pending job post";
+      case "open":
+        return "Open job post";
+      case "completed":
+        return "Completed job post";
+      case "cancelled":
+        return "Cancelled job post";
+    }
+  }, [status]);
+
+  const description = useMemo(() => {
+    switch (status) {
+      case "draft":
+        return "Add details to your draft";
+      case "pending":
+        return "Verify and publish your job";
+      case "open":
+        return "Hire faster with CHRLE using AI-powered recruiting";
+    }
+  }, [status]);
+
+  const actionItems = useMemo(() => {
+    switch (status) {
+      case "draft":
+        return draftActionItems;
+      case "pending":
+        return pendingActionItems;
+      case "open":
+        return openActionItems;
+    }
+  }, [status, draftActionItems, pendingActionItems, openActionItems]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -41,10 +86,8 @@ export default function DraftJobCard({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [menuOpen]);
 
-  const handleAction = (label: (typeof actionItems)[number]) => {
+  const handleAction = (label: any) => {
     setMenuOpen(false);
-    if (label === "Edit draft") onEditDraft?.();
-    if (label === "Remove draft") onRemoveDraft?.();
   };
 
   return (
@@ -72,13 +115,13 @@ export default function DraftJobCard({
                 <motion.ul
                   role="menu"
                   data-draft-actions-menu
-                  className="absolute top-full right-0 mt-1 z-20 min-w-36 overflow-hidden rounded-lg border border-slate-300 bg-white text-sm font-medium shadow-lg"
+                  className="absolute top-full right-0 mt-1 z-20 min-w-48 overflow-hidden rounded-lg border border-slate-300 bg-white text-sm font-medium shadow-lg"
                   initial={{ opacity: 0, y: -8, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -8, scale: 0.95 }}
                   transition={{ duration: 0.15, ease: "easeOut" }}
                 >
-                  {actionItems.map((label) => (
+                  {actionItems?.map((label) => (
                     <li key={label} role="none">
                       <button
                         type="button"
@@ -105,12 +148,35 @@ export default function DraftJobCard({
         <p className="text-xl font-medium">{description}</p>
       </div>
 
-      <Button
-        type="outline"
-        label={actionLabel}
-        size="medium"
-        classname="py-2.5! font-medium! text-sm! rounded-full! w-full! mt-20"
-      />
+      {status === "draft" && (
+        <Button
+          type="outline"
+          label="Fill in draft"
+          size="medium"
+          classname="py-2.5! font-medium! text-sm! rounded-full! w-full! mt-20"
+          onClick={onFillInDraft}
+        />
+      )}
+
+      {status === "pending" && (
+        <Button
+          type="primary"
+          label="Verify and publish your job"
+          size="medium"
+          classname="py-2.5! font-medium! text-sm! rounded-full! w-full! mt-20"
+          onClick={onVerifyAndPublish}
+        />
+      )}
+
+      {status === "open" && (
+        <Button
+          type="outline"
+          label="Get a shortlist"
+          size="medium"
+          classname="py-2.5! font-medium! text-sm! rounded-full! w-full! mt-20"
+          onClick={onGetShortlist}
+        />
+      )}
     </div>
   );
 }

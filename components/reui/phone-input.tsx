@@ -6,6 +6,7 @@ import {
   useContext,
   useMemo,
   useState,
+  type RefObject,
 } from "react"
 import * as BasePhoneInput from "react-phone-number-input"
 import flags from "react-phone-number-input/flags"
@@ -33,10 +34,12 @@ const PhoneInputContext = createContext<{
   variant: PhoneInputSize
   popupClassName?: string
   scrollAreaClassName?: string
+  portalContainer?: RefObject<HTMLElement | null> | HTMLElement | null
 }>({
   variant: "default",
   popupClassName: undefined,
   scrollAreaClassName: undefined,
+  portalContainer: undefined,
 })
 
 type PhoneInputProps = Omit<
@@ -51,6 +54,7 @@ type PhoneInputProps = Omit<
     variant?: PhoneInputSize
     popupClassName?: string
     scrollAreaClassName?: string
+    portalContainer?: RefObject<HTMLElement | null> | HTMLElement | null
   }
 
 function PhoneInput({
@@ -58,6 +62,7 @@ function PhoneInput({
   variant,
   popupClassName,
   scrollAreaClassName,
+  portalContainer,
   onChange,
   value,
   ...props
@@ -65,7 +70,12 @@ function PhoneInput({
   const phoneInputSize = variant || "default"
   return (
     <PhoneInputContext.Provider
-      value={{ variant: phoneInputSize, popupClassName, scrollAreaClassName }}
+      value={{
+        variant: phoneInputSize,
+        popupClassName,
+        scrollAreaClassName,
+        portalContainer,
+      }}
     >
       <BasePhoneInput.default
         className={cn(
@@ -119,7 +129,7 @@ function CountrySelect({
   options: countryList,
   onChange,
 }: CountrySelectProps) {
-  const { variant, popupClassName } = useContext(PhoneInputContext)
+  const { variant, popupClassName, portalContainer } = useContext(PhoneInputContext)
   const [searchValue, setSearchValue] = useState("")
 
   const filteredCountries = useMemo(() => {
@@ -161,6 +171,7 @@ function CountrySelect({
         }
       />
       <ComboboxContent
+        container={portalContainer}
         className={cn(
           "w-xs *:data-[slot=input-group]:bg-transparent",
           popupClassName

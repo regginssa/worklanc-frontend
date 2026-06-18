@@ -1,5 +1,6 @@
 import { PhoneInput as PhoneInputComponent } from "@/components/reui/phone-input";
 import { Icon } from "@iconify/react";
+import type { RefObject } from "react";
 import { Value, type Country } from "react-phone-number-input";
 
 interface PhoneInputProps {
@@ -12,8 +13,9 @@ interface PhoneInputProps {
   error?: string;
   labelClassName?: string;
   classname?: string;
-  icon?: string;
   disabled?: boolean;
+  popupClassName?: string;
+  portalContainer?: RefObject<HTMLElement | null>;
   onChange: (value: Value) => void;
   onCountryChange?: (country: Country) => void;
 }
@@ -27,10 +29,11 @@ export default function PhoneInput({
   country,
   disabled,
   error,
-  icon,
   labelClassName,
   required,
   value,
+  popupClassName,
+  portalContainer,
   onCountryChange,
 }: PhoneInputProps) {
   return (
@@ -44,9 +47,10 @@ export default function PhoneInput({
       <PhoneInputComponent
         variant="default"
         placeholder={placeholder || "Enter phone number"}
-        defaultCountry={defaultCountry || country || "US"}
-        country={country}
+        defaultCountry={country || "US"}
         onCountryChange={onCountryChange}
+        popupClassName={popupClassName}
+        portalContainer={portalContainer}
         className={`w-full! h-10! flex items-center gap-2 rounded-lg ${
           error
             ? "border-2 border-red-500"

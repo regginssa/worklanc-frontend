@@ -26,9 +26,12 @@ import {
   ConsultationBanner,
   ResourceCard,
   HireStepCard,
+  PhoneVerificationDialog,
 } from "@/components/molecules";
 import { useState } from "react";
-import { useAppSelector } from "@/store/hooks";
+import type { Value } from "react-phone-number-input";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { setUser } from "@/store/slices/userSlice";
 import { RootState } from "@/store/store";
 
 const resources = [
@@ -49,16 +52,37 @@ const resources = [
   },
 ];
 
+const jobs = [
+  {
+    title: "SaaS Platform Development",
+    status: "draft",
+  },
+  {
+    title: "SaaS Platform Development",
+    status: "open",
+  },
+  {
+    title: "SaaS Platform Development",
+    status: "pending",
+  },
+];
+
 export default function Dashboard() {
-  const jobs = Array.from({ length: 1 });
   const consultations = Array.from({ length: 4 });
   const [isListView, setIsListView] = useState(false);
+  const [openPhoneVerificationDialog, setOpenPhoneVerificationDialog] =
+    useState(false);
+  const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.user);
 
   // Each job fills 1/3 of the view. "Post a job" fills the remaining slots of
   // the current row of 3 (2/3 when one slot is taken, otherwise 1/3 and it
   // wraps to the next view).
   const postAJobBasis = jobs.length % 3 === 1 ? "lg:basis-2/3" : "lg:basis-1/3";
+
+  const handleVerifyAndPublish = () => {
+    setOpenPhoneVerificationDialog(true);
+  };
 
   return (
     <ClientLayout
@@ -163,9 +187,13 @@ export default function Dashboard() {
             className="w-full"
           >
             <CarouselContent className="flex items-stretch">
-              {jobs.map((_, index) => (
+              {jobs.map((job, index) => (
                 <CarouselItem key={index} className="basis-1/2 lg:basis-1/3">
-                  <DraftJobCard />
+                  <DraftJobCard
+                    title={job.title}
+                    status={job.status as any}
+                    onVerifyAndPublish={handleVerifyAndPublish}
+                  />
                 </CarouselItem>
               ))}
 
@@ -276,6 +304,16 @@ export default function Dashboard() {
           ))}
         </div>
       </div>
+
+      <PhoneVerificationDialog
+        open={openPhoneVerificationDialog}
+        onClose={() => setOpenPhoneVerificationDialog(false)}
+        defaultPhone={(user?.phone as Value) ?? undefined}
+        onSuccess={(verifiedUser) => {
+          dispatch(setUser(verifiedUser));
+          setOpenPhoneVerificationDialog(false);
+        }}
+      />
     </ClientLayout>
   );
 }

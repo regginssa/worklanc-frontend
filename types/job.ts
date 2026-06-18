@@ -1,3 +1,10 @@
+export type JobStatus =
+  | "draft"
+  | "pending"
+  | "open"
+  | "completed"
+  | "cancelled";
+
 interface Job {
   id: number;
   clientId: number;

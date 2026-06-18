@@ -36,6 +36,7 @@ export {
 } from "./dialogs/OtherExperienceDialog";
 export { default as SecurityQuestionDialog } from "./dialogs/SecurityQuestionDialog";
 export { default as PortflioVideoUploadDialog } from "./dialogs/PortflioVideoUploadDialog";
+export { default as PhoneVerificationDialog } from "./dialogs/PhoneVerificationDialog";
 export { default as PortfolioWebLinkDialog } from "./dialogs/PortfolioWebLinkDialog";
 export { default as ViewToggle } from "./ViewToggle";
 export { default as DraftJobCard } from "./DraftJobCard";
