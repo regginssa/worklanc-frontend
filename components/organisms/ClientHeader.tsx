@@ -238,8 +238,14 @@ export default function ClientHeader() {
                         size={40}
                       />
                       <div className="flex flex-col items-start">
-                        <h3 className="text-sm font-medium">Jhon Smthi</h3>
-                        <p className="text-xs text-slate-600">Basic</p>
+                        <h3 className="text-sm font-medium">
+                          {user?.firstName} {user?.lastName}
+                        </h3>
+                        <p className="text-xs text-slate-600">
+                          {user?.accounts[0]?.membershipTier === "basic"
+                            ? "Basic"
+                            : "Business Plus"}
+                        </p>
                       </div>
                     </div>
 
