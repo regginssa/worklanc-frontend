@@ -20,7 +20,7 @@ export default function UserAvatar({
   if (!src) {
     return (
       <Icon
-        icon="material-symbols-light:account-circle-outline"
+        icon="solar:user-circle-linear"
         width={size}
         height={size}
         className={className}

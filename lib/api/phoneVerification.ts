@@ -1,6 +1,10 @@
 import { request } from "./client";
 import type { User } from "@/types/user";
 
+type ApiErrorResponse = {
+  message?: string;
+};
+
 type SendPhoneVerificationResponse = {
   status: "pending";
   phone: string;
@@ -15,20 +19,28 @@ type VerifyPhoneVerificationResponse = {
 const PhoneVerificationAPI = {
   send: async (
     phone: string,
-  ): Promise<SendPhoneVerificationResponse | null> =>
-    await request("/phone-verification/send", {
-      method: "POST",
-      body: JSON.stringify({ phone }),
-    }),
+  ): Promise<(SendPhoneVerificationResponse & ApiErrorResponse) | null> =>
+    await request(
+      "/phone-verification/send",
+      {
+        method: "POST",
+        body: JSON.stringify({ phone }),
+      },
+      { silent: true },
+    ),
 
   verify: async (
     phone: string,
     code: string,
-  ): Promise<VerifyPhoneVerificationResponse | null> =>
-    await request("/phone-verification/verify", {
-      method: "POST",
-      body: JSON.stringify({ phone, code }),
-    }),
+  ): Promise<(VerifyPhoneVerificationResponse & ApiErrorResponse) | null> =>
+    await request(
+      "/phone-verification/verify",
+      {
+        method: "POST",
+        body: JSON.stringify({ phone, code }),
+      },
+      { silent: true },
+    ),
 };
 
 export default PhoneVerificationAPI;

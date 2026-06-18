@@ -100,12 +100,16 @@ export default function PhoneVerificationDialog({
 
   const sendVerificationCode = async (phoneNumber: string) => {
     const res = await PhoneVerificationAPI.send(phoneNumber);
-    if (res?.status !== "pending") return false;
+    if (res?.status !== "pending") {
+      setPhoneError(res?.message || "Unable to send verification code right now");
+      return false;
+    }
 
     setSentPhone(phoneNumber);
     setStep("otp");
     setCode("");
     setCodeError(undefined);
+    setPhoneError(undefined);
     setResendCooldown(RESEND_COOLDOWN_SECONDS);
     return true;
   };
@@ -132,6 +136,8 @@ export default function PhoneVerificationDialog({
       const res = await PhoneVerificationAPI.send(sentPhone);
       if (res?.status === "pending") {
         setResendCooldown(RESEND_COOLDOWN_SECONDS);
+      } else {
+        setCodeError(res?.message || "Unable to send verification code right now");
       }
     } finally {
       setResending(false);
@@ -149,7 +155,9 @@ export default function PhoneVerificationDialog({
       if (res?.status === "approved" && res.user) {
         onSuccess?.(res.user);
         onClose();
+        return;
       }
+      setCodeError(res?.message || "Verification code is invalid");
     } finally {
       setVerifying(false);
     }

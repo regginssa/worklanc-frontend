@@ -203,10 +203,10 @@ export default function ClientHeader() {
         <HeaderSearch />
         <div className="flex items-center gap-6">
           <Link href="#" className="">
-            <LucideCircleQuestionMark className="w-6 h-6" />
+            <Icon icon="solar:question-circle-outline" className="size-6" />
           </Link>
           <Link href="#" className="">
-            <LucideBell className="w-6 h-6" />
+            <Icon icon="solar:bell-linear" className="size-6" />
           </Link>
         </div>
 
@@ -216,7 +216,7 @@ export default function ClientHeader() {
             className="cursor-pointer"
             onClick={() => setOpen((prev) => !prev)}
           >
-            <UserAvatar avatarUrl={user?.avatarUrl} alt={fullName} size={32} />
+            <UserAvatar avatarUrl={user?.avatarUrl} alt={fullName} size={24} />
 
             <AnimatePresence>
               {open && (

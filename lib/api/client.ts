@@ -6,6 +6,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 export async function request<T>(
   endpoint: string,
   options: RequestInit = {},
+  config?: { silent?: boolean },
 ): Promise<any> {
   const token = getAuthToken();
 
@@ -36,9 +37,11 @@ export async function request<T>(
   const data = await res.json().catch(() => null);
 
   if (!res.ok) {
-    toast.error(data?.message || data?.msg || "API Error", {
-      position: "top-center",
-    });
+    if (!config?.silent) {
+      toast.error(data?.message || data?.msg || "API Error", {
+        position: "top-center",
+      });
+    }
     // throw new Error(data?.message || data?.msg || "API Error");
   }
 
