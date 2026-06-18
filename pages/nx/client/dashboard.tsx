@@ -28,6 +28,8 @@ import {
   HireStepCard,
 } from "@/components/molecules";
 import { useState } from "react";
+import { useAppSelector } from "@/store/hooks";
+import { RootState } from "@/store/store";
 
 const resources = [
   {
@@ -51,6 +53,7 @@ export default function Dashboard() {
   const jobs = Array.from({ length: 1 });
   const consultations = Array.from({ length: 4 });
   const [isListView, setIsListView] = useState(false);
+  const { user } = useAppSelector((state: RootState) => state.user);
 
   // Each job fills 1/3 of the view. "Post a job" fills the remaining slots of
   // the current row of 3 (2/3 when one slot is taken, otherwise 1/3 and it
@@ -91,7 +94,9 @@ export default function Dashboard() {
         </div>
 
         <div className="flex items-center justify-between gap-8">
-          <h1 className="text-2xl font-medium">Welcome back, John</h1>
+          <h1 className="text-2xl font-medium">
+            Welcome back, {user?.firstName}
+          </h1>
           <Button
             type="primary"
             label="Post a job"
@@ -107,19 +112,29 @@ export default function Dashboard() {
           <HireStepCard
             href="/nx/signup/please-verify"
             label="Required to hire"
-            title="Verify your email"
+            title={
+              user?.emailVerified
+                ? "Email address verified"
+                : "Verify your email"
+            }
             description="Confirm it's you and establish trust with freelancers"
             icon={MailCheckIcon}
             iconAlt="Mail check"
+            completed={user?.emailVerified || false}
           />
 
           <HireStepCard
             href="/nx/signup/please-verify"
-            label="Required to hire"
-            title="Verify your phone"
+            label="Required to publish a job"
+            title={
+              user?.phoneVerified
+                ? "Phone number verified"
+                : "Verify your phone"
+            }
             description="Confirm it's you, to be able to publish your first job post"
             icon={PhoneIcon}
             iconAlt="Phone"
+            completed={user?.phoneVerified || false}
           />
 
           <HireStepCard
@@ -129,6 +144,7 @@ export default function Dashboard() {
             description="This can increase your hiring speed up to 3x. There's no cost until you hire"
             icon={DollarSheldIcon}
             iconAlt="Dollar sheld"
+            completed={false}
           />
         </div>
       </div>
