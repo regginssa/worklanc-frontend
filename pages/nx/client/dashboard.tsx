@@ -33,6 +33,7 @@ import type { Value } from "react-phone-number-input";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setUser } from "@/store/slices/userSlice";
 import { RootState } from "@/store/store";
+import { useRouter } from "next/router";
 
 const resources = [
   {
@@ -74,6 +75,7 @@ export default function Dashboard() {
     useState(false);
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state: RootState) => state.user);
+  const router = useRouter();
 
   // Each job fills 1/3 of the view. "Post a job" fills the remaining slots of
   // the current row of 3 (2/3 when one slot is taken, otherwise 1/3 and it
@@ -126,6 +128,7 @@ export default function Dashboard() {
             label="Post a job"
             icon="mdi:plus"
             classname="py-2.5! px-5! font-medium! text-sm! rounded-full!"
+            onClick={() => router.push("/nx/job-post/welcome")}
           />
         </div>
       </div>
