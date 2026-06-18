@@ -21,15 +21,15 @@ const SignupLayout: React.FC<SignupLayoutProps> = ({
   hiddenToggle,
 }) => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col overflow-y-auto">
       <SEO
         title="Sign up to Worklanc"
         description="Sign up to Worklanc to find work you love or hire talent to help you grow your business."
         url="/nx/signup"
       />
-      <Header variant="intro" />
-      {!hiddenToggle && userType && toggleUserType && (
-        <div className="w-[80%] mx-auto -mt-12 mb-2 flex items-center justify-end gap-4 text-sm">
+      {/* <Header variant="intro" /> */}
+      {userType && toggleUserType && !hiddenToggle && (
+        <div className="w-[80%] mx-auto mt-12 flex items-center justify-end gap-4 text-sm">
           <span>
             {userType === "client"
               ? "Looking for work?"

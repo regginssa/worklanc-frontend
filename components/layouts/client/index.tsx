@@ -7,23 +7,33 @@ interface ClientLayoutProps {
   seo: TSEO;
   children: React.ReactNode;
   headerVariant?: HeaderVariant;
+  hiddenHeader?: boolean;
+  hiddenFooter?: boolean;
 }
 
 export default function ClientLayout({
   seo,
   children,
   headerVariant = "client",
+  hiddenHeader = false,
+  hiddenFooter = false,
 }: ClientLayoutProps) {
   return (
     <div className="min-h-screen flex flex-col">
-      <Header variant={headerVariant} />
+      {!hiddenHeader && <Header variant={headerVariant} />}
       <SEO {...seo} />
-      <main className="w-full max-w-7xl mx-auto space-y-10 flex-1">
+      <main
+        className={`w-full ${
+          hiddenHeader ? "" : "max-w-7xl"
+        } mx-auto space-y-10 flex-1`}
+      >
         {children}
       </main>
-      <div className="w-full">
-        <AuthorizedFooter />
-      </div>
+      {!hiddenFooter && (
+        <div className="w-full">
+          <AuthorizedFooter />
+        </div>
+      )}
     </div>
   );
 }

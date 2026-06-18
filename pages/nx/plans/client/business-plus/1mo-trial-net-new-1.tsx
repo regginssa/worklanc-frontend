@@ -13,12 +13,24 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useState } from "react";
-import { useRouter } from "next/router";
+import { useClientOnboarding } from "@/hooks/useClientOnboarding";
+
+const VERIFY_PHONE_PATH = "/nx/client-onboarding/verify-phone";
 
 export default function OneMonthTrialNetNew1() {
   const [open, setOpen] = useState(false);
   const [checked, setChecked] = useState(false);
-  const router = useRouter();
+  const { saveStep, goBack, isLoading } = useClientOnboarding();
+
+  const handleContinueBasic = async () => {
+    await saveStep({ membershipTier: "basic" }, VERIFY_PHONE_PATH, "basic");
+  };
+
+  const handleStartTrial = async () => {
+    if (!checked) return;
+    setOpen(false);
+    await saveStep({ membershipTier: "plus" }, VERIFY_PHONE_PATH, "trial");
+  };
 
   return (
     <ClientLayout
@@ -28,7 +40,7 @@ export default function OneMonthTrialNetNew1() {
         url: "/nx/plans/client/business-plus/1mo-trial-net-new-1",
       }}
     >
-      <div className="flex items-stretch gap-0">
+      <div className="flex items-stretch gap-0 flex-1 h-full">
         <div className="w-3/5 min-h-[32rem] flex flex-col shadow-xl bg-white rounded-3xl overflow-hidden">
           <main className="flex-1 mt-8 w-[80%] mx-auto">
             <div className="flex-1 space-y-10">
@@ -78,12 +90,23 @@ export default function OneMonthTrialNetNew1() {
                 </li>
               </ul>
 
-              <div className="flex items-center">
+              <div className="flex items-center gap-4">
+                <Button
+                  type="outline"
+                  label="Back"
+                  size="medium"
+                  classname="rounded-full! px-4! py-2.5! text-sm! font-medium!"
+                  loading={isLoading("back")}
+                  onClick={() => goBack("/nx/client-onboarding/company-size", "back")}
+                />
+
                 <motion.button
                   whileTap={{ scale: 0.95 }}
-                  className="text-blue-600 font-medium py-2.5 text-sm px-4 cursor-pointer"
+                  className="text-blue-600 font-medium py-2.5 text-sm px-4 cursor-pointer disabled:opacity-50"
+                  disabled={isLoading("basic")}
+                  onClick={handleContinueBasic}
                 >
-                  Continue with Basic
+                  {isLoading("basic") ? "Loading…" : "Continue with Basic"}
                 </motion.button>
 
                 <Button
@@ -173,7 +196,8 @@ export default function OneMonthTrialNetNew1() {
               label="Start Business Plus trial"
               classname="py-2.5! px-5! font-medium! text-sm! rounded-full!"
               disabled={!checked}
-              onClick={() => router.push("/nx/job-post/instant/welcome")}
+              loading={isLoading("trial")}
+              onClick={handleStartTrial}
             />
           </DialogFooter>
         </DialogContent>

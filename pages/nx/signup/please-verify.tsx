@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useAppSelector } from "@/store/hooks";
+import { getOnboardingDestination } from "@/utils/onboardingRedirect";
 import { getVerifiedUserDestination } from "@/utils/user";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -42,9 +43,8 @@ const PleaseVerify = () => {
     return null;
   }
 
-  const talent = user.accounts.find((account) => account.type === "talent");
   const onboardingPath =
-    talent?.onboardingStep ?? "/nx/create-profile";
+    getOnboardingDestination(user) ?? "/nx/client-onboarding/company-size";
 
   return (
     <OnboardingLayout
@@ -75,7 +75,7 @@ const PleaseVerify = () => {
         <div className="flex items-center justify-center">
           <Button
             type="primary"
-            label="Send again"
+            label="Continue"
             classname="font-semibold! rounded-full! text-sm!"
             onClick={() => router.push(onboardingPath)}
           />

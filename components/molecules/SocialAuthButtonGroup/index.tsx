@@ -9,6 +9,7 @@ import { signInWithProvider } from "@/lib/oauth/providers";
 import AuthAPI, { setAuthToken } from "@/lib/api/auth";
 import { useAppDispatch } from "@/store/hooks";
 import { setUser } from "@/store/slices/userSlice";
+import { getPostLoginRedirect } from "@/utils/getPostLoginRedirect";
 
 // `countryCode` may arrive as a full country name (sign-up form) or an alpha-2
 // code. Normalize to alpha-2 so it fits users.country_code.
@@ -58,7 +59,7 @@ const SocialAuthButtonGroup = ({
 
       setAuthToken(data.token);
       dispatch(setUser(data.user));
-      router.push(data.redirectTo || "/dashboard");
+      router.push(getPostLoginRedirect(data));
     } catch (error: any) {
       // A user closing the popup is not an error worth surfacing.
       const message = String(error?.message || "");

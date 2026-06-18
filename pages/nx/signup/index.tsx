@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/router";
 import { useAppDispatch } from "@/store/hooks";
 import { setUser } from "@/store/slices/userSlice";
+import { getPostLoginRedirect } from "@/utils/getPostLoginRedirect";
 
 type TUserType = "client" | "talent";
 
@@ -116,7 +117,12 @@ const SignUp = () => {
     setAuthToken(data.token);
     dispatch(setUser(data.user));
     toast.success(`Welcome ${formData.firstName}`, { position: "top-center" });
-    router.push("/nx/signup/please-verify");
+
+    if (data.user?.emailVerified) {
+      router.push(getPostLoginRedirect(data));
+    } else {
+      router.push("/nx/signup/please-verify");
+    }
     setLoading(false);
   };
 

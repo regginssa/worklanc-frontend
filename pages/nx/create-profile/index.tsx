@@ -11,7 +11,9 @@ import {
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { useAppSelector } from "@/store/hooks";
+import { getOnboardingDestinationForAccount } from "@/utils/onboardingRedirect";
 
 const TOP_RATED_PLUS = require("@/public/assets/svgs/icons/badges/top_rated_plus.svg");
 
@@ -21,7 +23,19 @@ export default function CreateProfile() {
 
   // Resume where the freelancer left off, or start at the first step.
   const talent = user?.accounts.find((account) => account.type === "talent");
-  console.log(talent);
+  const client = user?.accounts.find((account) => account.type === "client");
+
+  useEffect(() => {
+    if (!user || talent) return;
+
+    if (client && !client.onboardingCompleted) {
+      router.replace(
+        getOnboardingDestinationForAccount(client) ||
+          "/nx/client-onboarding/company-size",
+      );
+    }
+  }, [user, talent, client, router]);
+
   const resumePath =
     talent &&
     !talent.onboardingCompleted &&

@@ -6,6 +6,13 @@ import type {
 
 export type AccountType = "talent" | "client";
 export type AuthProvider = "email" | "google" | "apple";
+export type ClientCompanySize =
+  | "just_me"
+  | "2_9"
+  | "10_99"
+  | "100_499"
+  | "500_4999"
+  | "5000_plus";
 
 /** Subscription tier on an account (`accounts.membership_tier`). */
 export type MembershipTier = "basic" | "plus";
@@ -16,6 +23,9 @@ export interface Account {
   uid: PublicUid;
   type: AccountType;
   membershipTier: MembershipTier;
+  companyName: string;
+  companyWebsite: string;
+  companySize: ClientCompanySize | null;
   onboardingCompleted: boolean;
   /** Next onboarding route to resume at; null once onboarding is complete. */
   onboardingStep: string | null;

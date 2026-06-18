@@ -1,24 +1,19 @@
 import type { AuthResponse } from "@/types/user";
-
-const pickActiveAccount = (accounts: AuthResponse["user"]["accounts"] = []) =>
-  accounts.find((account) => !account.onboardingCompleted) ?? accounts[0];
+import { getOnboardingDestination } from "@/utils/onboardingRedirect";
 
 export function getPostLoginRedirect(data: AuthResponse): string {
   const redirectTo = data.redirectTo || "";
 
-  if (redirectTo.startsWith("/nx/create-profile")) {
+  if (
+    redirectTo.startsWith("/nx/create-profile") ||
+    redirectTo.startsWith("/nx/client-onboarding") ||
+    redirectTo.startsWith("/nx/plans/client/business-plus")
+  ) {
     return redirectTo;
   }
 
-  const activeAccount = pickActiveAccount(data.user?.accounts);
+  const destination = getOnboardingDestination(data.user);
+  if (destination) return destination;
 
-  if (activeAccount?.type === "talent") {
-    return "/nx/find-work";
-  }
-
-  if (activeAccount?.type === "client") {
-    return "/nx/client/dashboard";
-  }
-
-  return "/nx/client/dashboard";
+  return redirectTo || "/nx/client/dashboard";
 }
