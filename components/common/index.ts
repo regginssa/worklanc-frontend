@@ -12,3 +12,4 @@ export { default as CollapsableText } from "./CollapsableText";
 export { default as RecentlyViewedTalentCard } from "./RecentlyViewedTalentCard";
 export type { RecentlyViewedTalentCardItem } from "./RecentlyViewedTalentCard";
 export { default as PortflioUploadItem } from "./PortflioUploadItem";
+export { default as JobListItem } from "./JobListItem";

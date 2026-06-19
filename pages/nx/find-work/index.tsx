@@ -12,6 +12,7 @@ import { useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
 import { useQuery } from "@tanstack/react-query";
 import TalentAPI from "@/lib/api/talent";
+import { JobListItemGroup } from "@/components/molecules";
 
 const tabs: TTabItem[] = [
   { label: "Best matches", value: "best_matches" },
@@ -81,6 +82,7 @@ function CollapsibleSection({
 export default function FindWork() {
   const [openAssesmentAlert, setOpenAssesmentAlert] = useState(true);
   const [search, setSearch] = useState("");
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const { user } = useAppSelector((state: RootState) => state.user);
 
   const { data: talentProfileData } = useQuery({
@@ -209,12 +211,12 @@ export default function FindWork() {
 
           <h1 className="text-xl font-medium">Jobs you might like</h1>
 
-          <div className="space-y-2 pb-4">
+          <div className="space-y-2 pb-4 border-b border-slate-300">
             <TabBar
-              selectedTabIndex={0}
+              selectedTabIndex={selectedTabIndex}
               className="text-base! font-semibold!"
               tabs={tabs}
-              onTab={() => {}}
+              onTab={setSelectedTabIndex}
             />
 
             <p className="text-sm text-slate-600 mt-4 px-4 font-medium">
@@ -224,6 +226,7 @@ export default function FindWork() {
           </div>
 
           {/* Jobs */}
+          <JobListItemGroup />
         </div>
 
         <div className="flex-1 space-y-6">
