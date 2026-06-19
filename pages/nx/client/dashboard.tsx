@@ -58,7 +58,7 @@ const resources = [
 ];
 
 export default function Dashboard() {
-  const consultations = Array.from({ length: 4 });
+  const [openUpgradeAlert, setOpenUpgradeAlert] = useState(true);
   const [isListView, setIsListView] = useState(false);
   const [openPhoneVerificationDialog, setOpenPhoneVerificationDialog] =
     useState(false);
@@ -70,6 +70,7 @@ export default function Dashboard() {
   const { resumePath } = useJobPost();
   const { data: jobsData } = useClientJobs();
   const clientJobs: Job[] = jobsData?.jobs ?? [];
+  const consultations = Array.from({ length: 4 });
 
   const postAJobBasis =
     clientJobs.length % 3 === 1 ? "lg:basis-2/3" : "lg:basis-1/3";
@@ -87,44 +88,49 @@ export default function Dashboard() {
         url: "/nx/client/dashboard",
       }}
     >
-      <div className="space-y-6">
-        <div className="flex items-center justify-between gap-8 freelancer-plus-alert p-4 rounded-md text-white">
-          <div className="flex items-center gap-2">
-            <Icon
-              icon="material-symbols-light:diamond-outline"
-              className="size-6"
-            />
-            <p className="text-sm font-light">
-              Make hiring easier from day one. Try Business Plus for 30 days on
-              us.
-            </p>
+      {openUpgradeAlert && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between gap-8 freelancer-plus-alert p-4 rounded-md text-white">
+            <div className="flex items-center gap-2">
+              <Icon
+                icon="material-symbols-light:diamond-outline"
+                className="size-6"
+              />
+              <p className="text-sm font-light">
+                Make hiring easier from day one. Try Business Plus for 30 days
+                on us.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                className="underline text-sm cursor-pointer"
+              >
+                Upgrade now
+              </motion.button>
+              <button
+                className="cursor-pointer"
+                onClick={() => setOpenUpgradeAlert(false)}
+              >
+                <Icon icon="mdi:close" className="size-6" />
+              </button>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              className="underline text-sm cursor-pointer"
-            >
-              Upgrade now
-            </motion.button>
-            <button>
-              <Icon icon="mdi:close" className="size-6" />
-            </button>
-          </div>
-        </div>
 
-        <div className="flex items-center justify-between gap-8">
-          <h1 className="text-2xl font-medium">
-            Welcome back, {user?.firstName}
-          </h1>
-          <Button
-            type="primary"
-            label="Post a job"
-            icon="mdi:plus"
-            classname="py-2.5! px-5! font-medium! text-sm! rounded-full!"
-            onClick={() => router.push("/nx/job-post/welcome")}
-          />
+          <div className="flex items-center justify-between gap-8">
+            <h1 className="text-2xl font-medium">
+              Welcome back, {user?.firstName}
+            </h1>
+            <Button
+              type="primary"
+              label="Post a job"
+              icon="mdi:plus"
+              classname="py-2.5! px-5! font-medium! text-sm! rounded-full!"
+              onClick={() => router.push("/nx/job-post/welcome")}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="space-y-6">
         <h2 className="text-3xl font-medium">Last steps before you can hire</h2>
@@ -249,6 +255,9 @@ export default function Dashboard() {
               <JobListItem
                 key={job.uid}
                 title={job.title || "Untitled job post"}
+                status={job.status}
+                onFillInDraft={() => router.push(resumePath(job))}
+                onVerifyAndPublish={() => handleVerifyAndPublish(job.uid)}
               />
             ))}
           </ul>

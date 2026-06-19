@@ -4,7 +4,99 @@ import type {
   JobDuration,
   JobExperienceLevel,
   JobProjectSize,
+  JobStatus,
 } from "@/types/job";
+
+export interface JobCardProps {
+  title: string;
+  status: JobStatus;
+  onFillInDraft?: () => void;
+  onVerifyAndPublish?: () => void;
+  onGetShortlist?: () => void;
+}
+
+const DRAFT_ACTION_ITEMS = ["Edit draft", "Remove draft"] as const;
+const PENDING_ACTION_ITEMS = ["Edit draft", "Remove draft"] as const;
+const OPEN_ACTION_ITEMS = [
+  "View proposals",
+  "View job posting",
+  "Invite freelancers",
+  "Edit posting",
+  "Reuse posting",
+  "Remove posting",
+] as const;
+
+export const getJobStatusLabel = (status: JobStatus): string => {
+  switch (status) {
+    case "draft":
+      return "Draft job post";
+    case "pending":
+      return "Pending job post";
+    case "open":
+      return "Open job post";
+    case "completed":
+      return "Completed job post";
+    case "cancelled":
+      return "Cancelled job post";
+  }
+};
+
+export const getJobStatusDescription = (status: JobStatus): string | undefined => {
+  switch (status) {
+    case "draft":
+      return "Add details to your draft";
+    case "pending":
+      return "Verify and publish your job";
+    case "open":
+      return "Hire faster with CHRLE using AI-powered recruiting";
+    default:
+      return undefined;
+  }
+};
+
+export const getJobActionItems = (status: JobStatus) => {
+  switch (status) {
+    case "draft":
+      return DRAFT_ACTION_ITEMS;
+    case "pending":
+      return PENDING_ACTION_ITEMS;
+    case "open":
+      return OPEN_ACTION_ITEMS;
+    default:
+      return undefined;
+  }
+};
+
+export const getJobPrimaryAction = (
+  status: JobStatus,
+  handlers: Pick<
+    JobCardProps,
+    "onFillInDraft" | "onVerifyAndPublish" | "onGetShortlist"
+  >,
+) => {
+  switch (status) {
+    case "draft":
+      return {
+        label: "Fill in draft",
+        type: "outline" as const,
+        onClick: handlers.onFillInDraft,
+      };
+    case "pending":
+      return {
+        label: "Verify and publish your job",
+        type: "primary" as const,
+        onClick: handlers.onVerifyAndPublish,
+      };
+    case "open":
+      return {
+        label: "Get a shortlist",
+        type: "outline" as const,
+        onClick: handlers.onGetShortlist,
+      };
+    default:
+      return null;
+  }
+};
 
 const PROJECT_SIZE_LABELS: Record<JobProjectSize, string> = {
   large: "Large",
