@@ -37,6 +37,7 @@ import { setUser } from "@/store/slices/userSlice";
 import { RootState } from "@/store/store";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import EmptyJobPostIcon from "@/public/assets/svgs/icons/other/bag_open.svg";
 
 const resources = [
   {
@@ -173,6 +174,36 @@ export default function Dashboard() {
           <h2 className="text-3xl font-medium">Overview</h2>
           <ViewToggle isListView={isListView} onChange={setIsListView} />
         </div>
+
+        {clientJobs.length === 0 && (
+          <div className="w-full flex flex-col items-center justify-center gap-8 py-10 bg-slate-50 border border-slate-300 rounded-3xl">
+            <Image
+              src={EmptyJobPostIcon}
+              alt="Empty job post"
+              className="w-[145px] h-[130px]"
+            />
+            <p className="text-lg font-medium">
+              No job posts or contracts in progress right now
+            </p>
+            <div className="flex items-center justify-center gap-4">
+              <Button
+                type="outline"
+                label="Find a talent"
+                size="medium"
+                icon="mdi:search"
+                classname="py-2.5! px-5! font-medium! text-sm! rounded-full! border!"
+                onClick={() => router.push("/nx/search/talent")}
+              />
+              <Button
+                type="primary"
+                label="Post a job"
+                icon="mdi:plus"
+                classname="py-2.5! px-5! font-medium! text-sm! rounded-full!"
+                onClick={() => router.push("/nx/job-post/welcome")}
+              />
+            </div>
+          </div>
+        )}
 
         {!isListView ? (
           <Carousel
