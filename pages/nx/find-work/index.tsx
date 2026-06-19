@@ -3,12 +3,15 @@ import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "motion/react";
 import BannerBoostedIcon from "@/public/assets/svgs/icons/other/banner_boosted.svg";
 import Image from "next/image";
-import { Button, Input } from "@/components/atoms";
+import { Button, Input, UserAvatar } from "@/components/atoms";
 import { useState, type ReactNode } from "react";
 import TabBar, { TTabItem } from "@/components/atoms/TabBar";
-import UserPic from "@/public/assets/webps/avatars/man2.webp";
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
+import { useAppSelector } from "@/store/hooks";
+import { RootState } from "@/store/store";
+import { useQuery } from "@tanstack/react-query";
+import TalentAPI from "@/lib/api/talent";
 
 const tabs: TTabItem[] = [
   { label: "Best matches", value: "best_matches" },
@@ -76,7 +79,19 @@ function CollapsibleSection({
 }
 
 export default function FindWork() {
+  const [openAssesmentAlert, setOpenAssesmentAlert] = useState(true);
   const [search, setSearch] = useState("");
+  const { user } = useAppSelector((state: RootState) => state.user);
+
+  const { data: talentProfileData } = useQuery({
+    queryKey: ["talent-profile"],
+    queryFn: TalentAPI.getProfile,
+    enabled: Boolean(user),
+  });
+
+  const profile = talentProfileData?.profile ?? null;
+  const profileTitle = profile?.title?.trim() || "Add your professional title";
+  const profileHref = profile?.uid ? `/freelancers/${profile.uid}` : "#";
 
   const promoteItems = [
     { title: "Availability badge", value: "Off" },
@@ -119,23 +134,28 @@ export default function FindWork() {
         url: "/nx/find-work",
       }}
     >
-      <div className="flex items-center justify-between bg-blue-50 rounded-lg p-4 -mt-8">
-        <div className="flex items-center gap-2">
-          <Icon icon="lets-icons:lamp" className="w-6 h-6 text-blue-600" />
-          <p className="text-sm font-medium">
-            To do:{" "}
-            <Link href="#" className="cursor-pointer underline">
-              Take the working style assessment
-            </Link>
-            . Clients trust and hire freelancers who highlight their working
-            style on their profile.
-          </p>
-        </div>
+      {openAssesmentAlert && (
+        <div className="flex items-center justify-between bg-blue-50 rounded-lg p-4 -mt-8">
+          <div className="flex items-center gap-2">
+            <Icon icon="lets-icons:lamp" className="w-6 h-6 text-blue-600" />
+            <p className="text-sm font-medium">
+              To do:{" "}
+              <Link href="#" className="cursor-pointer underline">
+                Take the working style assessment
+              </Link>
+              . Clients trust and hire freelancers who highlight their working
+              style on their profile.
+            </p>
+          </div>
 
-        <button className="cursor-pointer">
-          <Icon icon="mdi:close" className="w-5 h-5" />
-        </button>
-      </div>
+          <button
+            className="cursor-pointer"
+            onClick={() => setOpenAssesmentAlert(false)}
+          >
+            <Icon icon="mdi:close" className="w-5 h-5" />
+          </button>
+        </div>
+      )}
 
       <div className="flex items-start gap-8 -mt-2">
         <div className="w-3/4 space-y-6">
@@ -209,23 +229,25 @@ export default function FindWork() {
         <div className="flex-1 space-y-6">
           <div className="p-6 rounded-3xl bg-slate-50 space-y-6">
             <div className="flex items-center gap-4">
-              <Image
-                src={UserPic}
-                alt="User"
-                className="w-16 h-16 rounded-full object-contain"
+              <UserAvatar
+                avatarUrl={user?.avatarUrl ?? ""}
+                alt={user?.firstName ?? "User"}
+                size={64}
+                className="rounded-full object-contain"
               />
 
               <div>
                 <Link
-                  href="#"
+                  href={profileHref}
                   className="cursor-pointer underline text-xl font-medium"
                 >
-                  <h3>Marco N.</h3>
+                  <h3>
+                    {user?.firstName ?? "User"}{" "}
+                    {user?.lastName?.slice(0, 1) ?? ""}.
+                  </h3>
                 </Link>
 
-                <p className="text-sm mt-2 line-clamp-1">
-                  Accounting & Consulting
-                </p>
+                <p className="text-sm mt-2 line-clamp-2">{profileTitle}</p>
               </div>
             </div>
 
