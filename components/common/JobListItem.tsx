@@ -3,9 +3,12 @@ import { SkillsGroup } from "../molecules";
 import { Icon } from "@iconify/react";
 import { formatEarnedAmount } from "@/utils/math";
 
-export default function JobListItem() {
+export default function JobListItem({ onClock }: { onClock: () => void }) {
   return (
-    <li className="space-y-4 border-b border-slate-300 cursor-pointer hover:bg-slate-100 p-4 transition-colors duration-200 group">
+    <li
+      className="space-y-4 border-b border-slate-300 cursor-pointer hover:bg-slate-100 p-4 transition-colors duration-200 group"
+      onClick={onClock}
+    >
       <div className="flex items-center gap-2 text-xs">
         <span>Posted yesterday</span>
         <span>•</span>

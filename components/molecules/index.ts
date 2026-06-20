@@ -82,3 +82,4 @@ export {
   type VideoIntroFormErrors,
 } from "./dialogs/VideoIntroductionDialog";
 export { default as JobListItemGroup } from "./JobListItemGroup";
+export { default as JobPreviewDrawer } from "./drawers/JobPreviewDrawer";
