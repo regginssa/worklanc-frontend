@@ -241,7 +241,7 @@ const CatLayout: React.FC<CatLayoutProps> = ({
                 <div>
                   <div className="flex items-center gap-2">
                     <Icon
-                      icon="solar:star-bold"
+                      icon="mynaui:star-solid"
                       className="w-8 h-8 text-yellow-500"
                       aria-hidden="true"
                     />
@@ -294,7 +294,7 @@ const CatLayout: React.FC<CatLayoutProps> = ({
                             {/* Average Rating */}
                             <div className="w-full flex items-center gap-2 mt-6">
                               <Icon
-                                icon="solar:star-bold"
+                                icon="mynaui:star-solid"
                                 className="text-yellow-500 w-5 h-5"
                                 aria-hidden="true"
                               />

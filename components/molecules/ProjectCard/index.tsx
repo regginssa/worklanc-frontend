@@ -367,7 +367,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 </span>
                 <div className="flex items-center">
                   <Icon
-                    icon="solar:star-bold"
+                    icon="mynaui:star-solid"
                     className="w-5 h-5 text-yellow-500 fill-current mr-1"
                   />
                   <span className="text-sm font-medium text-gray-900 mr-1">

@@ -31,9 +31,9 @@ const Rater: React.FC<RaterProps> = ({ rate, maxStars = 5 }) => {
         const partialOpacity = clampedRate - Math.floor(clampedRate);
         stars.push(
           <div key={i} className="relative">
-            <Icon icon="solar:star-bold" className="text-gray-300 w-6 h-6" />
+            <Icon icon="mynaui:star-solid" className="text-gray-300 w-6 h-6" />
             <Icon
-              icon="solar:star-bold"
+              icon="mynaui:star-solid"
               className="text-yellow-500 w-6 h-6 absolute top-0 left-0"
               style={{
                 clipPath: `inset(0 ${100 - partialOpacity * 100}% 0 0)`,
@@ -45,7 +45,7 @@ const Rater: React.FC<RaterProps> = ({ rate, maxStars = 5 }) => {
         stars.push(
           <Icon
             key={i}
-            icon="solar:star-bold"
+            icon="mynaui:star-solid"
             className={`w-6 h-6 ${
               isFilled ? "text-yellow-500" : "text-gray-300"
             }`}

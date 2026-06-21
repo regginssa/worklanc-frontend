@@ -55,7 +55,7 @@ export default function JobListItem({ onClock }: { onClock: () => void }) {
         </li>
 
         <li className="flex items-center gap-2">
-          <Icon icon="solar:star-bold" className="size-5 text-[#ff5900]" />
+          <Icon icon="mynaui:star-solid" className="size-5 text-[#ff5900]" />
           <span>4.8</span>
         </li>
 

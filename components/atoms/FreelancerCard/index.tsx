@@ -43,7 +43,7 @@ const FreelancerCard: React.FC<IFreelancerCard> = ({ type, freelancer }) => {
 
       {/* Ranking & Completed Jobs */}
       <div className="mt-2 flex items-center gap-2">
-        <Icon icon="solar:star-bold" className="text-yellow-500 w-5 h-5" />
+        <Icon icon="mynaui:star-solid" className="text-yellow-500 w-5 h-5" />
         <span className="text-gray-600">{freelancer.ranking}/5</span>
         <span className="text-gray-600">({freelancer.jobs} jobs)</span>
       </div>

@@ -83,3 +83,4 @@ export {
 } from "./dialogs/VideoIntroductionDialog";
 export { default as JobListItemGroup } from "./JobListItemGroup";
 export { default as JobPreviewDrawer } from "./drawers/JobPreviewDrawer";
+export { default as JobInProgressItemGroup } from "./JobInProgressItemGroup";

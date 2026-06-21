@@ -1,3 +1,5 @@
+"use client";
+
 import { Drawer, DrawerContent, DrawerHeader } from "@/components/ui/drawer";
 import {
   ArrowLeftIcon,
@@ -14,6 +16,114 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button, Input } from "@/components/atoms";
+import JobInProgressItemGroup from "../JobInProgressItemGroup";
+import {
+  ClientReviewListItemType,
+  JobInProgressItemType,
+} from "@/components/common";
+import ClientReviewListItemGroup from "../ClientReviewListItemGroup";
+import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+
+const mockJobInProgressItems: JobInProgressItemType[] = [
+  {
+    title: "Lead Scraper Required ASAP",
+    link: "#",
+    talentType: "individual",
+    talentFirstName: "Jovic",
+    talentLastName: "Cimon",
+    fromDate: new Date("2026-06-21"),
+    budgetType: "fixed",
+  },
+  {
+    title: "Lead Scraper Required ASAP",
+    link: "#",
+    talentType: "individual",
+    talentFirstName: "Jovic",
+    talentLastName: "Cimon",
+    fromDate: new Date("2026-06-21"),
+    budgetType: "fixed",
+  },
+  {
+    title: "Lead Scraper Required ASAP",
+    link: "#",
+    talentType: "individual",
+    talentFirstName: "Jovic",
+    talentLastName: "Cimon",
+    fromDate: new Date("2026-06-21"),
+    budgetType: "fixed",
+  },
+  {
+    title: "Lead Scraper Required ASAP",
+    link: "#",
+    talentType: "individual",
+    talentFirstName: "Jovic",
+    talentLastName: "Cimon",
+    fromDate: new Date("2026-06-21"),
+    budgetType: "fixed",
+  },
+];
+
+const mockClientReviewItems: ClientReviewListItemType[] = [
+  {
+    title: "Lead Scraper Required ASAP",
+    link: "#",
+    talentType: "individual",
+    talentFirstName: "Jovic",
+    talentLastName: "Cimon",
+    hourlyRate: 50,
+    fromDate: new Date("2026-06-21"),
+    budgetType: "hourly",
+    talentReview: {
+      rating: 4.8,
+      review: "The client was very professional and efficient.",
+    },
+    clientReview: {
+      rating: 4.8,
+      review: "The freelancer was professional and efficient.",
+    },
+    hours: 2,
+    billedAmount: 100,
+  },
+  {
+    title: "Lead Scraper Required ASAP",
+    link: "#",
+    talentType: "individual",
+    talentFirstName: "Jovic",
+    talentLastName: "Cimon",
+    fromDate: new Date("2026-06-21"),
+    budgetType: "fixed",
+    talentReview: {
+      rating: 4.8,
+      review: "The client was professional and efficient.",
+    },
+    clientReview: {
+      rating: 4.8,
+      review:
+        "Jovic Cimon was professional and efficient. I highly recommend them for any project.",
+    },
+  },
+  {
+    title: "Lead Scraper Required ASAP",
+    link: "#",
+    talentType: "individual",
+    talentFirstName: "Jovic",
+    talentLastName: "Cimon",
+    hourlyRate: 48,
+    fromDate: new Date("2026-06-21"),
+    budgetType: "hourly",
+    talentReview: {
+      rating: 4.8,
+      review: "The client was professional and efficient.",
+    },
+    clientReview: {
+      rating: 4.8,
+      review: "The freelancer was professional and efficient.",
+    },
+    hours: 4,
+    billedAmount: 192,
+  },
+];
 
 export default function JobPreviewDrawer({
   open,
@@ -22,6 +132,8 @@ export default function JobPreviewDrawer({
   open: boolean;
   onClose: () => void;
 }) {
+  const [jobsInProgressOpen, setJobsInProgressOpen] = useState(true);
+
   return (
     <Drawer open={open} onOpenChange={onClose} direction="right">
       <DrawerContent size="lg">
@@ -312,7 +424,7 @@ export default function JobPreviewDrawer({
                         {Array.from({ length: 5 }).map((_, index) => (
                           <Icon
                             key={index}
-                            icon="solar:star-bold"
+                            icon="mynaui:star-solid"
                             className="text-[#ff5900] size-4"
                           />
                         ))}
@@ -379,10 +491,39 @@ export default function JobPreviewDrawer({
                   Client's recent history (16)
                 </h3>
 
-                <button className="cursor-pointer w-full flex items-center justify-between text-sm">
+                <button
+                  type="button"
+                  onClick={() => setJobsInProgressOpen((prev) => !prev)}
+                  className="cursor-pointer w-full flex items-center justify-between text-sm"
+                  aria-expanded={jobsInProgressOpen}
+                >
                   <span className="underline">Jobs in progress</span>
-                  <ChevronDown className="size-6 transition-transform duration-200" />
+                  <motion.span
+                    animate={{ rotate: jobsInProgressOpen ? 180 : 0 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                  >
+                    <ChevronDown className="size-6" />
+                  </motion.span>
                 </button>
+
+                <AnimatePresence initial={false}>
+                  {jobsInProgressOpen && (
+                    <motion.div
+                      key="jobs-in-progress"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <JobInProgressItemGroup items={mockJobInProgressItems} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              <div className="p-8">
+                <ClientReviewListItemGroup items={mockClientReviewItems} />
               </div>
             </div>
           </div>

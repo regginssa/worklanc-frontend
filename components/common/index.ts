@@ -13,3 +13,7 @@ export { default as RecentlyViewedTalentCard } from "./RecentlyViewedTalentCard"
 export type { RecentlyViewedTalentCardItem } from "./RecentlyViewedTalentCard";
 export { default as PortflioUploadItem } from "./PortflioUploadItem";
 export { default as JobListItem } from "./JobListItem";
+export { default as JobInProgressItem } from "./JobInProgressItem";
+export type { JobInProgressItemType } from "./JobInProgressItem";
+export { default as ClientReviewListItem } from "./ClientReviewListItem";
+export type { ClientReviewListItemType } from "./ClientReviewListItem";

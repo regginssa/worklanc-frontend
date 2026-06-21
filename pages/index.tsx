@@ -120,7 +120,7 @@ export default function Home() {
     {
       title: "4.9/5",
       description: "Clients rate professionals on Charle Unicorn AI",
-      icon: "solar:star-bold",
+      icon: "mynaui:star-solid",
     },
     {
       title: "Award winner",
@@ -558,7 +558,7 @@ export default function Home() {
                   <div className="flex items-center gap-8 mt-4">
                     <div className="flex items-center gap-1">
                       <Icon
-                        icon="solar:star-bold"
+                        icon="mynaui:star-solid"
                         className="text-blue-500 w-5 h-5"
                         aria-hidden="true"
                       />

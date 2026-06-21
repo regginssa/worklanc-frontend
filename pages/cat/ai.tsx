@@ -341,7 +341,7 @@ const AIServices = () => {
             <div>
               <div className="flex items-center gap-2">
                 <Icon
-                  icon="solar:star-bold"
+                  icon="mynaui:star-solid"
                   className="w-8 h-8 text-yellow-500"
                   aria-hidden="true"
                 />

@@ -293,27 +293,27 @@ const TalentMarketplace = () => {
                       aria-label="4.9 out of 5 stars rating"
                     >
                       <Icon
-                        icon="solar:star-bold"
+                        icon="mynaui:star-solid"
                         className="w-5 h-5 text-yellow-500"
                         aria-hidden="true"
                       />
                       <Icon
-                        icon="solar:star-bold"
+                        icon="mynaui:star-solid"
                         className="w-5 h-5 text-yellow-500"
                         aria-hidden="true"
                       />
                       <Icon
-                        icon="solar:star-bold"
+                        icon="mynaui:star-solid"
                         className="w-5 h-5 text-yellow-500"
                         aria-hidden="true"
                       />
                       <Icon
-                        icon="solar:star-bold"
+                        icon="mynaui:star-solid"
                         className="w-5 h-5 text-yellow-500"
                         aria-hidden="true"
                       />
                       <Icon
-                        icon="solar:star-bold"
+                        icon="mynaui:star-solid"
                         className="w-5 h-5 text-yellow-500"
                         aria-hidden="true"
                       />
