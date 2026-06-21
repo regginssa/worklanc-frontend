@@ -3,6 +3,7 @@ import { CircleQuestionMark } from "lucide-react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button, Input } from "@/components/atoms";
 import { JobInProgressItemGroup, SkillsGroup } from "@/components/molecules";
 import {
@@ -52,18 +53,154 @@ const mapClientReviews = (
     toDate: item.toDate ? new Date(item.toDate) : undefined,
   }));
 
-export default function JobBrowseDetailPanels({
-  job,
+function SkeletonBar({ className }: { className?: string }) {
+  return (
+    <span
+      className={`inline-block rounded bg-slate-200 animate-pulse ${
+        className ?? ""
+      }`}
+    />
+  );
+}
+
+function JobBrowseDetailPanelsSkeleton({
   variant = "drawer",
 }: {
-  job: BrowseJobDetail;
   variant?: "drawer" | "page";
 }) {
+  const mainColumnClass = variant === "page" ? "w-3/4" : "w-2/3";
+
+  return (
+    <div className="flex items-start">
+      <div className={`${mainColumnClass} border-r border-slate-300`}>
+        <div className="p-8 border-b border-slate-300 space-y-8">
+          <SkeletonBar className="h-6 w-2/3" />
+
+          <div className="flex items-center gap-8">
+            <SkeletonBar className="h-4 w-32" />
+            <SkeletonBar className="h-4 w-28" />
+          </div>
+        </div>
+
+        <div className="p-8 border-b border-slate-300 space-y-3">
+          <SkeletonBar className="h-4 w-20" />
+          <SkeletonBar className="h-4 w-full" />
+          <SkeletonBar className="h-4 w-full" />
+          <SkeletonBar className="h-4 w-5/6" />
+          <SkeletonBar className="h-4 w-2/3" />
+        </div>
+
+        <div className="p-8 border-b border-slate-300 grid grid-cols-3 gap-8">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="space-y-2">
+              <SkeletonBar className="h-4 w-28" />
+              <SkeletonBar className="h-3 w-20" />
+            </div>
+          ))}
+        </div>
+
+        <div className="p-8 border-b border-slate-300">
+          <SkeletonBar className="h-4 w-48" />
+        </div>
+
+        <div className="p-8 border-b border-slate-300 space-y-6">
+          <SkeletonBar className="h-6 w-56" />
+          <div className="space-y-4">
+            <SkeletonBar className="h-4 w-32" />
+            <ul className="flex flex-wrap gap-2">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <li key={index}>
+                  <SkeletonBar className="h-6 w-20 rounded-md" />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="p-8 space-y-8">
+          <div className="grid grid-cols-2 gap-8">
+            <div className="space-y-2">
+              <SkeletonBar className="h-6 w-52" />
+              <SkeletonBar className="h-4 w-40" />
+            </div>
+            <div className="space-y-2">
+              <SkeletonBar className="h-6 w-44" />
+              {Array.from({ length: 4 }).map((_, index) => (
+                <SkeletonBar key={index} className="h-4 w-36" />
+              ))}
+            </div>
+          </div>
+          <SkeletonBar className="h-6 w-80" />
+        </div>
+      </div>
+
+      <div className="flex-1">
+        <div className="p-8 space-y-8">
+          <SkeletonBar className="h-20 w-full rounded-lg" />
+
+          <div className="space-y-4">
+            <SkeletonBar className="h-10 w-full rounded-full" />
+            <SkeletonBar className="h-10 w-full rounded-full" />
+            <SkeletonBar className="h-5 w-36" />
+          </div>
+
+          <div className="space-y-2">
+            <SkeletonBar className="h-4 w-64" />
+            <SkeletonBar className="h-4 w-40" />
+          </div>
+
+          <div className="space-y-4">
+            <SkeletonBar className="h-6 w-40" />
+            <SkeletonBar className="h-4 w-44" />
+            <SkeletonBar className="h-4 w-36" />
+            <SkeletonBar className="h-4 w-52" />
+            <SkeletonBar className="h-4 w-48" />
+            <SkeletonBar className="h-4 w-40" />
+            <SkeletonBar className="h-4 w-56" />
+            <SkeletonBar className="h-10 w-full rounded-lg" />
+            <SkeletonBar className="h-4 w-20" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+type JobBrowseDetailPanelsProps =
+  | {
+      loading: true;
+      job?: never;
+      variant?: "drawer" | "page";
+    }
+  | {
+      loading?: false;
+      job: BrowseJobDetail;
+      variant?: "drawer" | "page";
+    };
+
+export default function JobBrowseDetailPanels(
+  props: JobBrowseDetailPanelsProps
+) {
+  if (props.loading) {
+    return <JobBrowseDetailPanelsSkeleton variant={props.variant} />;
+  }
+
+  const { job, variant = "drawer" } = props;
   const [jobsInProgressOpen, setJobsInProgressOpen] = useState(true);
   const skills = getJobSkills(job);
   const clientLocalTime = formatClientLocalTime(job.client);
   const historyCount = job.jobsInProgress.length + job.clientReviews.length;
   const mainColumnClass = variant === "page" ? "w-3/4" : "w-2/3";
+  const jobLink = getJobAbsoluteUrl(job.uid);
+
+  const handleCopyJobLink = async () => {
+    try {
+      await navigator.clipboard.writeText(jobLink);
+      toast.success("Copied", { position: "top-center" });
+    } catch {
+      toast.error("Could not copy link", { position: "top-center" });
+    }
+  };
 
   return (
     <>
@@ -131,7 +268,7 @@ export default function JobBrowseDetailPanels({
                   {formatHourlyRateDetail(job)}
                 </h3>
                 <p className="text-xs text-slate-800">
-                  {job.budgetType === "hourly" ? "Hourly" : "Fixed price"}
+                  {job.budgetType === "hourly" ? "Hourly" : "Fixed-Price"}
                 </p>
               </div>
             </div>
@@ -173,7 +310,7 @@ export default function JobBrowseDetailPanels({
 
               <div className="space-y-2">
                 <h3 className="text-xl font-medium">Activity on this job</h3>
-                <ul className="space-y-2">
+                <ul className="space-y-2 text-sm">
                   <li className="flex items-center gap-1">
                     <span>Proposals:</span>
                     <Tooltip>
@@ -335,10 +472,14 @@ export default function JobBrowseDetailPanels({
               </ul>
 
               <ul className="space-y-1 text-sm text-slate-600">
-                <li className="font-medium">
-                  {formatClientLocationLine(job.client)}
+                <li className="space-y-1">
+                  <p className="font-medium">
+                    {formatClientLocationLine(job.client)}
+                  </p>
+                  <p>
+                    {job.client.city ? job.client.city : ""} {clientLocalTime}
+                  </p>
                 </li>
-                {clientLocalTime && <li>{clientLocalTime}</li>}
               </ul>
 
               <ul className="space-y-1 text-sm text-slate-600">
@@ -382,10 +523,14 @@ export default function JobBrowseDetailPanels({
                   label="Job link"
                   labelClassName="font-medium mb-2! block!"
                   disabled
-                  value={getJobAbsoluteUrl(job.uid)}
+                  value={jobLink}
                   onChange={() => {}}
                 />
-                <button className="text-sm text-blue-600 font-medium cursor-pointer hover:underline">
+                <button
+                  type="button"
+                  className="text-sm text-blue-600 font-medium cursor-pointer hover:underline"
+                  onClick={handleCopyJobLink}
+                >
                   Copy link
                 </button>
               </div>

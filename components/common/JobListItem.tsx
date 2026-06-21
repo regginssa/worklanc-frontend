@@ -12,15 +12,14 @@ import {
   getJobFeedStatusLabel,
   getJobSkills,
 } from "@/utils/jobBrowseDisplay";
+import { countries } from "country-data-list";
 
-function SkeletonBar({
-  className,
-}: {
-  className?: string;
-}) {
+function SkeletonBar({ className }: { className?: string }) {
   return (
     <span
-      className={`inline-block rounded bg-slate-200 animate-pulse ${className ?? ""}`}
+      className={`inline-block rounded bg-slate-200 animate-pulse ${
+        className ?? ""
+      }`}
     />
   );
 }
@@ -85,7 +84,10 @@ function JobListItemSkeleton() {
         </li>
 
         <li className="flex items-center gap-2">
-          <Icon icon="mdi:map-marker-outline" className="size-5 text-slate-300" />
+          <Icon
+            icon="mdi:map-marker-outline"
+            className="size-5 text-slate-300"
+          />
           <SkeletonBar className="h-4 w-32" />
         </li>
       </ul>
@@ -111,31 +113,23 @@ export default function JobListItem(props: JobListItemProps) {
   }
 
   const { job, onClock } = props;
-  const locationRestriction = formatLocationRestriction(job);
 
   return (
-    <li
-      className="space-y-4 border-b border-slate-300 cursor-pointer hover:bg-slate-100 p-4 transition-colors duration-200 group"
-      onClick={onClock}
-    >
+    <li className="space-y-4 border-b border-slate-300 cursor-pointer hover:bg-slate-100 p-4 transition-colors duration-200 group">
       <div className="flex items-center gap-2 text-xs">
         <span>{formatPostedAgo(job.publishedAt)}</span>
         <span>•</span>
         <span>Proposals: {formatProposalCount(job.proposalCount)}</span>
       </div>
 
-      <h3 className="text-xl cursor-pointer hover:text-blue-600 hover:underline group-hover:text-blue-600">
+      <h3
+        className="text-xl cursor-pointer hover:text-blue-600 hover:underline group-hover:text-blue-600"
+        onClick={onClock}
+      >
         {job.title}
       </h3>
 
       <p className="text-xs text-slate-600">{formatListBudgetLine(job)}</p>
-
-      {locationRestriction && (
-        <div className="flex items-center gap-2 text-slate-600 text-sm">
-          <Icon icon="mdi:map-marker-outline" className="size-5" />
-          <span>{locationRestriction}</span>
-        </div>
-      )}
 
       {job.description && (
         <CollapsableText
@@ -173,14 +167,12 @@ export default function JobListItem(props: JobListItemProps) {
           </li>
         )}
 
-        {job.client.totalSpent > 0 && (
-          <li className="flex items-center gap-1">
-            <span className="font-medium">
-              ${formatEarnedAmount(job.client.totalSpent)}
-            </span>
-            <span>spent</span>
-          </li>
-        )}
+        <li className="flex items-center gap-1">
+          <span className="font-medium">
+            ${formatEarnedAmount(job.client.totalSpent)}
+          </span>
+          <span>spent</span>
+        </li>
 
         <li className="flex items-center gap-2">
           <Icon icon="mdi:map-marker-outline" className="size-5" />

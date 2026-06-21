@@ -101,7 +101,7 @@ export default function AuthorizedHeader() {
     findWorkNavs: [
       {
         items: [
-          { label: "Find work", href: "#" },
+          { label: "Find work", href: "/nx/find-work" },
           { label: "Saved jobs", href: "#" },
           { label: "Proposals and offers", href: "#" },
         ],

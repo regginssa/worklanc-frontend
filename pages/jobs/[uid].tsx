@@ -26,9 +26,7 @@ export default function JobPage() {
         description={job?.description?.slice(0, 160) || "View job posting"}
       />
       <main className="w-full max-w-7xl mx-auto flex-1">
-        {isLoading && (
-          <p className="p-8 text-sm text-slate-600">Loading job...</p>
-        )}
+        {isLoading && <JobBrowseDetailPanels loading variant="page" />}
         {!isLoading && error && (
           <p className="p-8 text-sm text-slate-600">Job not found.</p>
         )}

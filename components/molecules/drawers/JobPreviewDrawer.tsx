@@ -51,9 +51,7 @@ export default function JobPreviewDrawer({
         </DrawerHeader>
 
         <div className="no-scrollbar overflow-y-auto">
-          {isLoading && (
-            <p className="p-8 text-sm text-slate-600">Loading job...</p>
-          )}
+          {isLoading && <JobBrowseDetailPanels loading />}
           {!isLoading && job && <JobBrowseDetailPanels job={job} />}
         </div>
       </DrawerContent>

@@ -1,20 +1,16 @@
-import type { BrowseJobBase, BrowseJobClient, BrowseJobListItem } from "@/types/job-browse";
-
-const COUNTRY_NAMES: Record<string, string> = {
-  US: "United States",
-  GB: "United Kingdom",
-  CA: "Canada",
-  AU: "Australia",
-  DE: "Germany",
-  FR: "France",
-  IT: "Italy",
-  ES: "Spain",
-};
+import type {
+  BrowseJobBase,
+  BrowseJobClient,
+  BrowseJobListItem,
+} from "@/types/job-browse";
+import { countries, timezones as Timezones } from "country-data-list";
+import { City, Country, State } from "country-state-city";
 
 export const getJobPublicUrl = (uid: string) => `/jobs/${uid}`;
 
 export const getJobAbsoluteUrl = (uid: string) => {
-  const base = process.env.NEXT_PUBLIC_FRONTEND_URL || "https://www.worklanc.com";
+  const base =
+    process.env.NEXT_PUBLIC_FRONTEND_URL || "https://www.worklanc.com";
   return `${base.replace(/\/$/, "")}/jobs/${uid}`;
 };
 
@@ -25,7 +21,8 @@ export const formatPostedAgo = (publishedAt: string | null) => {
   const diffMs = Date.now() - date.getTime();
   const minutes = Math.floor(diffMs / 60000);
   if (minutes < 1) return "Posted just now";
-  if (minutes < 60) return `Posted ${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+  if (minutes < 60)
+    return `Posted ${minutes} minute${minutes === 1 ? "" : "s"} ago`;
 
   const hours = Math.floor(minutes / 60);
   if (hours < 24) return `Posted ${hours} hour${hours === 1 ? "" : "s"} ago`;
@@ -54,9 +51,7 @@ export const formatListBudgetLine = (job: BrowseJobBase) => {
 
   if (job.budgetType === "hourly") {
     if (job.budgetMin != null && job.budgetMax != null) {
-      parts.push(
-        `Hourly: $${job.budgetMin}-$${job.budgetMax}`,
-      );
+      parts.push(`Hourly: $${job.budgetMin}-$${job.budgetMax}`);
     } else {
       parts.push("Hourly");
     }
@@ -81,13 +76,14 @@ export const formatLocationRestriction = (job: BrowseJobBase) => {
     return "Only freelancers located in the U.S. may apply.";
   }
 
-  return `Only freelancers located in ${job.locationPreferences.join(", ")} may apply.`;
+  return `Only freelancers located in ${job.locationPreferences.join(
+    ", "
+  )} may apply.`;
 };
 
 export const formatJobLocationLabel = (job: BrowseJobBase) => {
   if (job.locationType === "global") {
-    if (!job.locationPreferences.length) return "Worldwide";
-    return `Worldwide (${job.locationPreferences.length} preferences)`;
+    return `Worldwide`;
   }
   if (!job.locationPreferences.length) return "U.S. only";
   return job.locationPreferences.join(", ");
@@ -97,12 +93,22 @@ export const formatPreferredLocationQualifications = (job: BrowseJobBase) => {
   if (!job.locationPreferences.length) {
     return job.locationType === "global" ? "Worldwide" : "U.S. only";
   }
-  return job.locationPreferences.join(", ");
+  return job.locationPreferences
+    .map(
+      (location) => `${location.slice(0, 1).toUpperCase()}${location.slice(1)}`
+    )
+    .join(", ");
 };
 
 export const formatHourlyRateDetail = (job: BrowseJobBase) => {
-  if (job.budgetType === "hourly" && job.budgetMin != null && job.budgetMax != null) {
-    return `$${Number(job.budgetMin).toFixed(2)} - $${Number(job.budgetMax).toFixed(2)}`;
+  if (
+    job.budgetType === "hourly" &&
+    job.budgetMin != null &&
+    job.budgetMax != null
+  ) {
+    return `$${Number(job.budgetMin).toFixed(2)} - $${Number(
+      job.budgetMax
+    ).toFixed(2)}`;
   }
   if (job.budgetType === "fixed" && job.budgetFixed != null) {
     return `$${Number(job.budgetFixed).toFixed(2)}`;
@@ -130,26 +136,163 @@ export const formatExperienceSubtitle = (level: string | null) => {
 };
 
 export const formatClientLocationLine = (client: BrowseJobClient) => {
-  if (client.locationLabel) return client.locationLabel;
   if (client.countryCode) {
-    return COUNTRY_NAMES[client.countryCode] || client.countryCode;
+    return (
+      countries.all.find(
+        (country) =>
+          country.alpha2.toLowerCase() === client.countryCode?.toLowerCase()
+      )?.name || client.countryCode
+    );
   }
   return "Location not specified";
 };
 
+const normalizeLocationValue = (value: string) =>
+  value.trim().toLowerCase().replace(/\./g, "");
+
+const resolveStateIsoCode = (
+  countryCode: string,
+  state: string | null
+): string | null => {
+  if (!state) return null;
+
+  const normalizedState = normalizeLocationValue(state);
+  const stateMatch = State.getStatesOfCountry(countryCode).find(
+    (entry) =>
+      entry.isoCode.toLowerCase() === normalizedState ||
+      normalizeLocationValue(entry.name) === normalizedState
+  );
+
+  return stateMatch?.isoCode ?? null;
+};
+
+const findCityEntry = (
+  countryCode: string,
+  stateIsoCode: string | null,
+  city: string | null
+) => {
+  if (!city) return null;
+
+  const normalizedCity = normalizeLocationValue(city);
+  const cities =
+    (stateIsoCode
+      ? City.getCitiesOfState(countryCode, stateIsoCode)
+      : City.getCitiesOfCountry(countryCode)) ?? [];
+
+  return (
+    cities.find((entry) => normalizeLocationValue(entry.name) === normalizedCity) ??
+    cities.find((entry) =>
+      normalizeLocationValue(entry.name).includes(normalizedCity)
+    ) ??
+    cities.find((entry) =>
+      normalizedCity.includes(normalizeLocationValue(entry.name))
+    )
+  );
+};
+
+const resolveClientCoordinates = (client: BrowseJobClient) => {
+  const countryCode = client.countryCode?.toUpperCase();
+  if (!countryCode) return null;
+
+  const stateIsoCode = resolveStateIsoCode(countryCode, client.state);
+  const cityEntry = findCityEntry(countryCode, stateIsoCode, client.city);
+
+  if (cityEntry) {
+    return {
+      latitude: Number(cityEntry.latitude),
+      longitude: Number(cityEntry.longitude),
+    };
+  }
+
+  if (stateIsoCode) {
+    const stateEntry = State.getStateByCodeAndCountry(stateIsoCode, countryCode);
+    if (stateEntry) {
+      return {
+        latitude: Number(stateEntry.latitude),
+        longitude: Number(stateEntry.longitude),
+      };
+    }
+  }
+
+  const countryEntry = Country.getCountryByCode(countryCode);
+  if (!countryEntry) return null;
+
+  return {
+    latitude: Number(countryEntry.latitude),
+    longitude: Number(countryEntry.longitude),
+  };
+};
+
+const getTimezoneOffsetMinutes = (timezone: string, date = new Date()) => {
+  const offsetLabel =
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: timezone,
+      timeZoneName: "longOffset",
+    })
+      .formatToParts(date)
+      .find((part) => part.type === "timeZoneName")?.value ?? "GMT";
+
+  const match = offsetLabel.match(/GMT([+-])(\d{1,2})(?::(\d{2}))?/);
+  if (!match) return 0;
+
+  const sign = match[1] === "-" ? -1 : 1;
+  const hours = Number(match[2]);
+  const minutes = Number(match[3] ?? 0);
+
+  return sign * (hours * 60 + minutes);
+};
+
+const getCountryTimezones = (countryCode: string) => {
+  const countryEntry = Country.getCountryByCode(countryCode);
+  const countryTimezones =
+    countryEntry?.timezones?.map((entry) => entry.zoneName).filter(Boolean) ?? [];
+
+  if (countryTimezones.length > 0) {
+    return countryTimezones;
+  }
+
+  return Timezones.getTimezonesByCountry(countryCode) ?? [];
+};
+
+export const resolveClientTimezone = (client: BrowseJobClient) => {
+  const countryCode = client.countryCode?.toUpperCase();
+  if (!countryCode) return null;
+
+  const candidateTimezones = getCountryTimezones(countryCode);
+  if (candidateTimezones.length === 0) return null;
+  if (candidateTimezones.length === 1) return candidateTimezones[0];
+
+  const coordinates = resolveClientCoordinates(client);
+  if (!coordinates) return candidateTimezones[0];
+
+  const expectedOffsetMinutes = (coordinates.longitude / 15) * 60;
+
+  return candidateTimezones.reduce((bestTimezone: string, timezone: string) => {
+    const bestDiff = Math.abs(
+      getTimezoneOffsetMinutes(bestTimezone) - expectedOffsetMinutes
+    );
+    const nextDiff = Math.abs(
+      getTimezoneOffsetMinutes(timezone) - expectedOffsetMinutes
+    );
+
+    return nextDiff < bestDiff ? timezone : bestTimezone;
+  });
+};
+
 export const formatClientLocalTime = (client: BrowseJobClient) => {
-  if (!client.timezone) return null;
+  const timezone = resolveClientTimezone(client);
+  if (!timezone) return null;
 
   try {
-    const time = new Intl.DateTimeFormat("en-US", {
-      timeZone: client.timezone,
-      hour: "numeric",
+    return new Intl.DateTimeFormat("en-US", {
+      timeZone: timezone,
+      hour: "2-digit",
       minute: "2-digit",
       hour12: true,
-    }).format(new Date());
-
-    const city = client.city || client.timezone.split("/").pop()?.replace(/_/g, " ");
-    return city ? `${city} ${time}` : time;
+    })
+      .format(new Date())
+      .replace(/\s/g, "")
+      .toUpperCase();
   } catch {
     return null;
   }
@@ -165,7 +308,9 @@ export const formatMemberSince = (memberSince: string) => {
 };
 
 export const formatClientHireStats = (client: BrowseJobClient) =>
-  `${client.hireRate}% hire rate, ${client.openJobs} open job${client.openJobs === 1 ? "" : "s"}`;
+  `${client.hireRate}% hire rate, ${client.openJobs} open job${
+    client.openJobs === 1 ? "" : "s"
+  }`;
 
 export const formatClientSpendStats = (client: BrowseJobClient) => {
   if (client.totalSpent > 0) {
@@ -175,9 +320,11 @@ export const formatClientSpendStats = (client: BrowseJobClient) => {
 };
 
 export const formatClientHiresStats = (client: BrowseJobClient) =>
-  `${client.hires} hire${client.hires === 1 ? "" : "s"}, ${client.activeHires} active`;
+  `${client.hires} hire${client.hires === 1 ? "" : "s"}, ${
+    client.activeHires
+  } active`;
 
 export const getJobSkills = (job: BrowseJobListItem) =>
   job.skills.map((skill) => skill.label);
 
-export const getJobFeedStatusLabel = () => "Open";
+export const getJobFeedStatusLabel = () => "Reviewing Proposals";
