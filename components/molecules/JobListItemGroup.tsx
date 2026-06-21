@@ -27,7 +27,13 @@ export default function JobListItemGroup() {
   };
 
   if (isLoading) {
-    return <p className="text-sm text-slate-600 px-4 py-8">Loading jobs...</p>;
+    return (
+      <ul>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <JobListItem key={index} loading />
+        ))}
+      </ul>
+    );
   }
 
   if (jobs.length === 0) {

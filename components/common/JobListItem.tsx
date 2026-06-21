@@ -13,13 +13,104 @@ import {
   getJobSkills,
 } from "@/utils/jobBrowseDisplay";
 
-export default function JobListItem({
-  job,
-  onClock,
+function SkeletonBar({
+  className,
 }: {
-  job: BrowseJobListItem;
-  onClock: () => void;
+  className?: string;
 }) {
+  return (
+    <span
+      className={`inline-block rounded bg-slate-200 animate-pulse ${className ?? ""}`}
+    />
+  );
+}
+
+function JobListItemSkeleton() {
+  return (
+    <li className="space-y-4 border-b border-slate-300 p-4">
+      <div className="flex items-center gap-2 text-xs">
+        <SkeletonBar className="h-3 w-20" />
+        <span>•</span>
+        <SkeletonBar className="h-3 w-28" />
+      </div>
+
+      <SkeletonBar className="h-6 w-3/4" />
+
+      <SkeletonBar className="h-3 w-40" />
+
+      <div className="flex items-center gap-2">
+        <Icon icon="mdi:map-marker-outline" className="size-5 text-slate-300" />
+        <SkeletonBar className="h-4 w-48" />
+      </div>
+
+      <div className="space-y-2">
+        <SkeletonBar className="h-4 w-full" />
+        <SkeletonBar className="h-4 w-full" />
+        <SkeletonBar className="h-4 w-2/3" />
+      </div>
+
+      <ul className="flex items-center flex-wrap gap-2">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <li key={index}>
+            <SkeletonBar className="h-6 w-20 rounded-md" />
+          </li>
+        ))}
+      </ul>
+
+      <ul className="flex items-center gap-10 text-sm">
+        <li className="flex items-center gap-2">
+          <Icon
+            icon="mdi:timer-check-outline"
+            className="size-5 text-slate-300"
+          />
+          <SkeletonBar className="h-4 w-24" />
+        </li>
+
+        <li className="flex items-center gap-2">
+          <Icon
+            icon="solar:verified-check-bold"
+            className="size-5 text-slate-300"
+          />
+          <SkeletonBar className="h-4 w-28" />
+        </li>
+
+        <li className="flex items-center gap-2">
+          <Icon icon="mynaui:star-solid" className="size-5 text-slate-300" />
+          <SkeletonBar className="h-4 w-8" />
+        </li>
+
+        <li className="flex items-center gap-1">
+          <SkeletonBar className="h-4 w-12" />
+          <SkeletonBar className="h-4 w-10" />
+        </li>
+
+        <li className="flex items-center gap-2">
+          <Icon icon="mdi:map-marker-outline" className="size-5 text-slate-300" />
+          <SkeletonBar className="h-4 w-32" />
+        </li>
+      </ul>
+    </li>
+  );
+}
+
+type JobListItemProps =
+  | {
+      loading: true;
+      job?: never;
+      onClock?: () => void;
+    }
+  | {
+      loading?: false;
+      job: BrowseJobListItem;
+      onClock: () => void;
+    };
+
+export default function JobListItem(props: JobListItemProps) {
+  if (props.loading) {
+    return <JobListItemSkeleton />;
+  }
+
+  const { job, onClock } = props;
   const locationRestriction = formatLocationRestriction(job);
 
   return (

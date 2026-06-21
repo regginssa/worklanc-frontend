@@ -4,11 +4,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { Button, Input } from "@/components/atoms";
-import {
-  ClientReviewListItemGroup,
-  JobInProgressItemGroup,
-  SkillsGroup,
-} from "@/components/molecules";
+import { JobInProgressItemGroup, SkillsGroup } from "@/components/molecules";
 import {
   Tooltip,
   TooltipContent,
@@ -36,9 +32,10 @@ import type {
   ClientReviewListItemType,
   JobInProgressItemType,
 } from "@/components/common";
+import ClientReviewListItemGroup from "./ClientReviewListItemGroup";
 
 const mapJobsInProgress = (
-  items: BrowseJobDetail["jobsInProgress"],
+  items: BrowseJobDetail["jobsInProgress"]
 ): JobInProgressItemType[] =>
   items.map((item) => ({
     ...item,
@@ -47,7 +44,7 @@ const mapJobsInProgress = (
   }));
 
 const mapClientReviews = (
-  items: BrowseJobDetail["clientReviews"],
+  items: BrowseJobDetail["clientReviews"]
 ): ClientReviewListItemType[] =>
   items.map((item) => ({
     ...item,
@@ -65,8 +62,7 @@ export default function JobBrowseDetailPanels({
   const [jobsInProgressOpen, setJobsInProgressOpen] = useState(true);
   const skills = getJobSkills(job);
   const clientLocalTime = formatClientLocalTime(job.client);
-  const historyCount =
-    job.jobsInProgress.length + job.clientReviews.length;
+  const historyCount = job.jobsInProgress.length + job.clientReviews.length;
   const mainColumnClass = variant === "page" ? "w-3/4" : "w-2/3";
 
   return (
@@ -166,7 +162,9 @@ export default function JobBrowseDetailPanels({
           <div className="p-8 space-y-8">
             <div className="grid grid-cols-2 gap-8">
               <div>
-                <h3 className="text-xl font-medium">Preferred qualifications</h3>
+                <h3 className="text-xl font-medium">
+                  Preferred qualifications
+                </h3>
                 <p className="text-sm mt-2">
                   <strong className="font-medium">Location:</strong>{" "}
                   {formatPreferredLocationQualifications(job)}
