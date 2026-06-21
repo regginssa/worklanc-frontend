@@ -427,9 +427,7 @@ export default function FreelancerProfilePage() {
           location={locationText}
           localTime={localTime ? `${localTime} local time` : undefined}
           identityVerified={freelancer.idVerified}
-          verifyIdentityHref={
-            canEdit ? "/freelancers/settings/identity-verification" : undefined
-          }
+          verifyIdentityHref={canEdit ? "/ab/identity-verification" : undefined}
           jobSuccessScore={0}
           badge="NONE"
           {...ownerActions}

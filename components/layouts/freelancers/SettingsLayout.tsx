@@ -30,7 +30,7 @@ export default function FreelancerSettingsLayout({
     },
     {
       label: "Identity Verification",
-      href: "/freelancers/settings/identity-verification",
+      href: "/ab/identity-verification",
     },
     {
       label: "Notification Settings",

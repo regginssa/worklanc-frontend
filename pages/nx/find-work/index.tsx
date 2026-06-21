@@ -278,7 +278,11 @@ export default function FindWork() {
               work with an IDV Badge.
             </p>
 
-            <Link href="#" className="cursor-pointer text-sm underline block">
+            <Link
+              href="/ab/identity-verification"
+              target="_blank"
+              className="cursor-pointer text-sm underline block hover:text-blue-600"
+            >
               Get an IDV Badge
             </Link>
           </div>

@@ -40,7 +40,7 @@ export default function IdentityVerification() {
       seo={{
         title: "Identity Verification - Worklanc",
         description: "Identity Verification - Worklanc",
-        url: "/freelancers/settings/identity-verification",
+        url: "/ab/identity-verification",
       }}
     >
       <h2 className="text-3xl font-medium">Identity Verification</h2>
