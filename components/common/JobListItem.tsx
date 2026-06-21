@@ -2,40 +2,59 @@ import CollapsableText from "./CollapsableText";
 import { SkillsGroup } from "../molecules";
 import { Icon } from "@iconify/react";
 import { formatEarnedAmount } from "@/utils/math";
+import type { BrowseJobListItem } from "@/types/job-browse";
+import {
+  formatClientLocationLine,
+  formatListBudgetLine,
+  formatLocationRestriction,
+  formatPostedAgo,
+  formatProposalCount,
+  getJobFeedStatusLabel,
+  getJobSkills,
+} from "@/utils/jobBrowseDisplay";
 
-export default function JobListItem({ onClock }: { onClock: () => void }) {
+export default function JobListItem({
+  job,
+  onClock,
+}: {
+  job: BrowseJobListItem;
+  onClock: () => void;
+}) {
+  const locationRestriction = formatLocationRestriction(job);
+
   return (
     <li
       className="space-y-4 border-b border-slate-300 cursor-pointer hover:bg-slate-100 p-4 transition-colors duration-200 group"
       onClick={onClock}
     >
       <div className="flex items-center gap-2 text-xs">
-        <span>Posted yesterday</span>
+        <span>{formatPostedAgo(job.publishedAt)}</span>
         <span>•</span>
-        <span>Proposals: 50+</span>
+        <span>Proposals: {formatProposalCount(job.proposalCount)}</span>
       </div>
 
       <h3 className="text-xl cursor-pointer hover:text-blue-600 hover:underline group-hover:text-blue-600">
-        📷 No Skills Required – Take a Product Photo & Get Paid $20
+        {job.title}
       </h3>
 
-      <p className="text-xs text-slate-600">
-        Hourly: <strong className="font-medium">$15-$70</strong> - Entry level -
-        Est. Time: Less than 1 month, 30+ hrs/week
-      </p>
+      <p className="text-xs text-slate-600">{formatListBudgetLine(job)}</p>
 
-      <div className="flex items-center gap-2 text-slate-600 text-sm">
-        <Icon icon="mdi:map-marker-outline" className="size-5" />
-        <span>Only freelancers located in the United Kingdom may apply.</span>
-      </div>
+      {locationRestriction && (
+        <div className="flex items-center gap-2 text-slate-600 text-sm">
+          <Icon icon="mdi:map-marker-outline" className="size-5" />
+          <span>{locationRestriction}</span>
+        </div>
+      )}
 
-      <CollapsableText
-        text="Summary We’re hiring beginners for simple remote to data entry work involving typing updates, checking short text for small errors, and oo lil processing keeping digital information organized. This is a beginner-friendly, short-term opportunity ideal for individuals based in USA, Italy, France, Germany, Eastern Europe, Australia, Malaysia, Mexico and East Asia who are looking to work from home with flexible hours. You’ll have"
-        maxLength={400}
-        textClassName="text-black"
-      />
+      {job.description && (
+        <CollapsableText
+          text={job.description}
+          maxLength={400}
+          textClassName="text-black"
+        />
+      )}
 
-      <SkillsGroup skills={["Data Entry", "Typing", "Processing"]} />
+      <SkillsGroup skills={getJobSkills(job)} />
 
       <ul className="flex items-center gap-10 text-sm text-slate-600">
         <li className="flex items-center gap-2">
@@ -43,30 +62,38 @@ export default function JobListItem({ onClock }: { onClock: () => void }) {
             icon="mdi:timer-check-outline"
             className="size-5 text-blue-600"
           />
-          <span>Reviewing Proposals</span>
+          <span>{getJobFeedStatusLabel()}</span>
         </li>
 
-        <li className="flex items-center gap-2">
-          <Icon
-            icon="solar:verified-check-bold"
-            className="size-5 text-blue-600"
-          />
-          <span>Payment verified</span>
-        </li>
+        {job.client.paymentVerified && (
+          <li className="flex items-center gap-2">
+            <Icon
+              icon="solar:verified-check-bold"
+              className="size-5 text-blue-600"
+            />
+            <span>Payment verified</span>
+          </li>
+        )}
 
-        <li className="flex items-center gap-2">
-          <Icon icon="mynaui:star-solid" className="size-5 text-[#ff5900]" />
-          <span>4.8</span>
-        </li>
+        {job.client.ratingAverage != null && (
+          <li className="flex items-center gap-2">
+            <Icon icon="mynaui:star-solid" className="size-5 text-[#ff5900]" />
+            <span>{job.client.ratingAverage}</span>
+          </li>
+        )}
 
-        <li className="flex items-center gap-1">
-          <span className="font-medium">${formatEarnedAmount(20000)}</span>
-          <span>spent</span>
-        </li>
+        {job.client.totalSpent > 0 && (
+          <li className="flex items-center gap-1">
+            <span className="font-medium">
+              ${formatEarnedAmount(job.client.totalSpent)}
+            </span>
+            <span>spent</span>
+          </li>
+        )}
 
         <li className="flex items-center gap-2">
           <Icon icon="mdi:map-marker-outline" className="size-5" />
-          <span>United Kingdom</span>
+          <span>{formatClientLocationLine(job.client)}</span>
         </li>
       </ul>
     </li>

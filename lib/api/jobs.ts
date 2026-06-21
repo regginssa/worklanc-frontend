@@ -1,7 +1,14 @@
 import { request } from "./client";
 import type { Job, JobPatch } from "@/types/job";
+import type { BrowseJobDetail, BrowseJobListItem } from "@/types/job-browse";
 
 const JobsAPI = {
+  browse: async (): Promise<{ jobs: BrowseJobListItem[] } | null> =>
+    request("/jobs/browse", { method: "GET" }),
+
+  browseOne: async (uid: string): Promise<{ job: BrowseJobDetail } | null> =>
+    request(`/jobs/browse/${uid}`, { method: "GET" }),
+
   create: async () => request("/jobs", { method: "POST" }),
 
   list: async (): Promise<{ jobs: Job[] } | null> =>
