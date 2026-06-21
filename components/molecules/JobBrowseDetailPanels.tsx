@@ -302,10 +302,12 @@ export default function JobBrowseDetailPanels(
                 <h3 className="text-xl font-medium">
                   Preferred qualifications
                 </h3>
-                <p className="text-sm mt-2">
-                  <strong className="font-medium">Location:</strong>{" "}
-                  {formatPreferredLocationQualifications(job)}
-                </p>
+                <ul className="space-y-2 text-sm mt-2">
+                  <li className="flex items-start gap-1">
+                    <span className="font-medium">Location:</span>
+                    <span>{formatPreferredLocationQualifications(job)}</span>
+                  </li>
+                </ul>
               </div>
 
               <div className="space-y-2">
@@ -326,6 +328,25 @@ export default function JobBrowseDetailPanels(
                       </TooltipContent>
                     </Tooltip>
                     <span>{formatProposalCount(job.proposalCount)}</span>
+                  </li>
+                  <li className="flex items-center gap-1">
+                    <span>Last viewed by client:</span>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <CircleQuestionMark className="size-4 text-blue-600 cursor-pointer" />
+                      </TooltipTrigger>
+                      <TooltipContent side="top">
+                        <p className="text-sm p-2">
+                          This is when the client last reviewed or interacted
+                          with the applicants for this job.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <span>{formatProposalCount(job.proposalCount)}</span>
+                  </li>
+                  <li className="flex items-center gap-1">
+                    <span>Hires:</span>
+                    <span>{job.interviewingCount}</span>
                   </li>
                   <li className="flex items-center gap-1">
                     <span>Interviewing:</span>

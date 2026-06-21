@@ -60,6 +60,7 @@ export type BrowseJobBase = {
   invitesSent: number;
   unansweredInvites: number;
   requiredConnects: number;
+  isRead: boolean;
   client: BrowseJobClient;
 };
 

@@ -9,6 +9,11 @@ const JobsAPI = {
   browseOne: async (uid: string): Promise<{ job: BrowseJobDetail } | null> =>
     request(`/jobs/browse/${uid}`, { method: "GET" }),
 
+  markBrowseRead: async (
+    uid: string,
+  ): Promise<{ success: boolean; isRead: boolean } | null> =>
+    request(`/jobs/browse/${uid}/read`, { method: "POST" }, { silent: true }),
+
   create: async () => request("/jobs", { method: "POST" }),
 
   list: async (): Promise<{ jobs: Job[] } | null> =>

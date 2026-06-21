@@ -6,13 +6,11 @@ import type { BrowseJobListItem } from "@/types/job-browse";
 import {
   formatClientLocationLine,
   formatListBudgetLine,
-  formatLocationRestriction,
   formatPostedAgo,
   formatProposalCount,
   getJobFeedStatusLabel,
   getJobSkills,
 } from "@/utils/jobBrowseDisplay";
-import { countries } from "country-data-list";
 
 function SkeletonBar({ className }: { className?: string }) {
   return (
@@ -105,6 +103,7 @@ type JobListItemProps =
       loading?: false;
       job: BrowseJobListItem;
       onClock: () => void;
+      onMarkRead?: () => void;
     };
 
 export default function JobListItem(props: JobListItemProps) {
@@ -112,10 +111,14 @@ export default function JobListItem(props: JobListItemProps) {
     return <JobListItemSkeleton />;
   }
 
-  const { job, onClock } = props;
+  const { job, onClock, onMarkRead } = props;
 
   return (
-    <li className="space-y-4 border-b border-slate-300 cursor-pointer hover:bg-slate-100 p-4 transition-colors duration-200 group">
+    <li
+      className={`space-y-4 border-b border-slate-300 cursor-pointer p-4 transition-colors duration-200 group ${
+        job.isRead ? "bg-slate-100 hover:bg-slate-100" : "hover:bg-slate-100"
+      }`}
+    >
       <div className="flex items-center gap-2 text-xs">
         <span>{formatPostedAgo(job.publishedAt)}</span>
         <span>•</span>
@@ -136,6 +139,7 @@ export default function JobListItem(props: JobListItemProps) {
           text={job.description}
           maxLength={400}
           textClassName="text-black"
+          onViewMore={onMarkRead}
         />
       )}
 

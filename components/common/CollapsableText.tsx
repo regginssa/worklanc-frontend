@@ -9,11 +9,13 @@ export default function CollapsableText({
   maxLength = 200,
   className,
   textClassName,
+  onViewMore,
 }: {
   text: string;
   maxLength?: number;
   className?: string;
   textClassName?: string;
+  onViewMore?: () => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   const contentRef = useRef<HTMLParagraphElement>(null);
@@ -57,7 +59,12 @@ export default function CollapsableText({
             "mt-1 cursor-pointer text-sm text-black underline",
             textClassName
           )}
-          onClick={() => setExpanded((prev) => !prev)}
+          onClick={() => {
+            setExpanded((prev) => {
+              if (!prev) onViewMore?.();
+              return !prev;
+            });
+          }}
         >
           {expanded ? "View less" : "View more"}
         </motion.button>

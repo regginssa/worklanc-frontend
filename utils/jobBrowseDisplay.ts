@@ -5,6 +5,53 @@ import type {
 } from "@/types/job-browse";
 import { countries, timezones as Timezones } from "country-data-list";
 import { City, Country, State } from "country-state-city";
+import { formatTimezone } from "@/utils/date";
+
+const REGION_LABELS: Record<string, string> = {
+  oceania: "Oceania",
+  americas: "Americas",
+  asia: "Asia",
+  europe: "Europe",
+  africa: "Africa",
+};
+
+/** Non-ISO codes that may appear in stored preferences. */
+const COUNTRY_CODE_ALIASES: Record<string, string> = {
+  uk: "GB",
+};
+
+const isTimezonePreference = (value: string) => value.includes("/");
+
+const isCountryCode = (value: string) => /^[A-Za-z]{2}$/.test(value);
+
+/** Resolve a stored location preference to a human-readable label. */
+export const resolveLocationPreferenceLabel = (value: string): string => {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+
+  const normalized = trimmed.toLowerCase();
+
+  const regionLabel = REGION_LABELS[normalized];
+  if (regionLabel) return regionLabel;
+
+  if (isCountryCode(trimmed)) {
+    const alpha2 = (
+      COUNTRY_CODE_ALIASES[normalized] ?? trimmed.toUpperCase()
+    ).toUpperCase();
+    const country = countries.all.find((entry) => entry.alpha2 === alpha2);
+    if (country?.name) return country.name;
+  }
+
+  if (isTimezonePreference(trimmed)) {
+    return formatTimezone(trimmed);
+  }
+
+  // US state names and other plain-text labels are stored as-is.
+  return trimmed;
+};
+
+export const formatLocationPreferences = (preferences: string[]) =>
+  preferences.map(resolveLocationPreferenceLabel).filter(Boolean).join(", ");
 
 export const getJobPublicUrl = (uid: string) => `/jobs/${uid}`;
 
@@ -76,8 +123,8 @@ export const formatLocationRestriction = (job: BrowseJobBase) => {
     return "Only freelancers located in the U.S. may apply.";
   }
 
-  return `Only freelancers located in ${job.locationPreferences.join(
-    ", "
+  return `Only freelancers located in ${formatLocationPreferences(
+    job.locationPreferences,
   )} may apply.`;
 };
 
@@ -86,18 +133,15 @@ export const formatJobLocationLabel = (job: BrowseJobBase) => {
     return `Worldwide`;
   }
   if (!job.locationPreferences.length) return "U.S. only";
-  return job.locationPreferences.join(", ");
+  return formatLocationPreferences(job.locationPreferences);
 };
 
 export const formatPreferredLocationQualifications = (job: BrowseJobBase) => {
   if (!job.locationPreferences.length) {
     return job.locationType === "global" ? "Worldwide" : "U.S. only";
   }
-  return job.locationPreferences
-    .map(
-      (location) => `${location.slice(0, 1).toUpperCase()}${location.slice(1)}`
-    )
-    .join(", ");
+
+  return formatLocationPreferences(job.locationPreferences);
 };
 
 export const formatHourlyRateDetail = (job: BrowseJobBase) => {
@@ -180,7 +224,9 @@ const findCityEntry = (
       : City.getCitiesOfCountry(countryCode)) ?? [];
 
   return (
-    cities.find((entry) => normalizeLocationValue(entry.name) === normalizedCity) ??
+    cities.find(
+      (entry) => normalizeLocationValue(entry.name) === normalizedCity
+    ) ??
     cities.find((entry) =>
       normalizeLocationValue(entry.name).includes(normalizedCity)
     ) ??
@@ -205,7 +251,10 @@ const resolveClientCoordinates = (client: BrowseJobClient) => {
   }
 
   if (stateIsoCode) {
-    const stateEntry = State.getStateByCodeAndCountry(stateIsoCode, countryCode);
+    const stateEntry = State.getStateByCodeAndCountry(
+      stateIsoCode,
+      countryCode
+    );
     if (stateEntry) {
       return {
         latitude: Number(stateEntry.latitude),
@@ -245,7 +294,8 @@ const getTimezoneOffsetMinutes = (timezone: string, date = new Date()) => {
 const getCountryTimezones = (countryCode: string) => {
   const countryEntry = Country.getCountryByCode(countryCode);
   const countryTimezones =
-    countryEntry?.timezones?.map((entry) => entry.zoneName).filter(Boolean) ?? [];
+    countryEntry?.timezones?.map((entry) => entry.zoneName).filter(Boolean) ??
+    [];
 
   if (countryTimezones.length > 0) {
     return countryTimezones;
