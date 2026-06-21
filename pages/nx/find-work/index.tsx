@@ -12,7 +12,7 @@ import { useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
 import { useQuery } from "@tanstack/react-query";
 import TalentAPI from "@/lib/api/talent";
-import { JobListItemGroup } from "@/components/molecules";
+import { JobFiltersDialog, JobListItemGroup } from "@/components/molecules";
 
 const tabs: TTabItem[] = [
   { label: "Best matches", value: "best_matches" },
@@ -83,6 +83,7 @@ export default function FindWork() {
   const [openAssesmentAlert, setOpenAssesmentAlert] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+  const [openFiltersDialog, setOpenFiltersDialog] = useState(false);
   const { user } = useAppSelector((state: RootState) => state.user);
 
   const { data: talentProfileData } = useQuery({
@@ -205,7 +206,8 @@ export default function FindWork() {
               label="Filters"
               size="medium"
               icon="mdi:mixer-settings"
-              classname="h-10! px-10! text-sm! font-medium! rounded-full!"
+              classname="h-10! px-6! text-sm! font-medium! rounded-full!"
+              onClick={() => setOpenFiltersDialog(true)}
             />
           </div>
 
@@ -354,6 +356,11 @@ export default function FindWork() {
           </div>
         </div>
       </div>
+
+      <JobFiltersDialog
+        open={openFiltersDialog}
+        onClose={() => setOpenFiltersDialog(false)}
+      />
     </FreelancerLayout>
   );
 }

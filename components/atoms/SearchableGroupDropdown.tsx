@@ -95,6 +95,7 @@ export default function SearchableGroupDropdown({
               ? "border border-slate-400 bg-slate-100 cursor-not-allowed"
               : "border border-slate-400 hover:border-2 hover:border-black focus-within:border-2 focus-within:border-black"
           } group transition-all duration-200`}
+          disabled={disabled}
           onClick={() => setOpen(!open)}
         >
           {icon && (
