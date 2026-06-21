@@ -146,7 +146,7 @@ export default function JobPreviewDrawer({
               <ArrowLeftIcon className="size-6" />
             </button>
             <Link
-              href="#"
+              href="/jobs/1234567890"
               target="_blank"
               className="flex items-center gap-2 text-blue-600 cursor-pointer hover:underline text-sm font-medium"
             >
@@ -383,23 +383,25 @@ export default function JobPreviewDrawer({
                 </div>
 
                 <div className="space-y-2 text-sm text-slate-800">
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-end gap-10">
                     <span>Required Connects to submit a proposal:</span>
-                    <span className="text-slate-900 font-medium">20</span>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <CircleQuestionMark className="size-4 text-blue-600 cursor-pointer" />
-                      </TooltipTrigger>
-                      <TooltipContent side="top">
-                        <p className="text-sm p-2">
-                          This is the number of Connects required to submit a
-                          proposal for this job.{" "}
-                          <Link href="#" className="underline cursor-pointer">
-                            Learn more
-                          </Link>
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
+                    <div className="flex items-center gap-1">
+                      <span className="text-slate-900 font-medium">20</span>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <CircleQuestionMark className="size-4 text-blue-600 cursor-pointer" />
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                          <p className="text-sm p-2">
+                            This is the number of Connects required to submit a
+                            proposal for this job.{" "}
+                            <Link href="#" className="underline cursor-pointer">
+                              Learn more
+                            </Link>
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
                   </div>
                   <div className="flex items-center gap-1">
                     <span>Available Connects:</span>
