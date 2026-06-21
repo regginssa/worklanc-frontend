@@ -206,7 +206,7 @@ export default function FindWork() {
               label="Filters"
               size="medium"
               icon="mdi:mixer-settings"
-              classname="h-10! px-6! text-sm! font-medium! rounded-full!"
+              classname="h-10! px-6! border! text-sm! font-medium! rounded-full!"
               onClick={() => setOpenFiltersDialog(true)}
             />
           </div>
