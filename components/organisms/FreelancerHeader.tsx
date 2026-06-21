@@ -103,7 +103,7 @@ export default function AuthorizedHeader() {
         items: [
           { label: "Find work", href: "/nx/find-work" },
           { label: "Saved jobs", href: "#" },
-          { label: "Proposals and offers", href: "#" },
+          { label: "Proposals and offers", href: "/nx/proposals" },
         ],
       },
       {
