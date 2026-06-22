@@ -125,10 +125,10 @@ export default function JobPostReview() {
   const [umaRecruiterEnabled, setUmaRecruiterEnabled] = useState(false);
   const [englishLevel, setEnglishLevel] =
     useState<JobEnglishLevel>("any_level");
-  const [hoursPerWeek, setHoursPerWeek] =
-    useState<JobHoursPerWeek>("more_than_30_hrs_week");
-  const [talentType, setTalentType] =
-    useState<JobTalentType>("no_preference");
+  const [hoursPerWeek, setHoursPerWeek] = useState<JobHoursPerWeek>(
+    "more_than_30_hrs_week"
+  );
+  const [talentType, setTalentType] = useState<JobTalentType>("no_preference");
   const [hireDate, setHireDate] = useState<JobHireDate>("one_to_three_days");
   const [professionalsNeeded, setProfessionalsNeeded] =
     useState<JobProfessionalsNeeded>("one_person");
@@ -144,7 +144,8 @@ export default function JobPostReview() {
     if (job.screeningQuestions?.length) {
       setWrittenQuestions(job.screeningQuestions);
     }
-    if (job.umaRecruiterEnabled) setUmaRecruiterEnabled(job.umaRecruiterEnabled);
+    if (job.umaRecruiterEnabled)
+      setUmaRecruiterEnabled(job.umaRecruiterEnabled);
     if (job.englishLevel) setEnglishLevel(job.englishLevel);
     if (job.hoursPerWeek) setHoursPerWeek(job.hoursPerWeek);
     if (job.talentType) setTalentType(job.talentType);
@@ -189,7 +190,7 @@ export default function JobPostReview() {
     await goBack(
       reviewPatch(),
       "/nx/job-post/add-description",
-      "/nx/job-post/review",
+      "/nx/job-post/review"
     );
   };
 
@@ -234,13 +235,13 @@ export default function JobPostReview() {
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <h3 className="text-sm uppercase">Uma Recruiter Basic</h3>
+                <h3 className="text-sm uppercase">Charlie Recruiter Basic</h3>
                 <div className="py-0.5 px-3 rounded-sm bg-zinc-900">
                   <span className="text-white text-xs">Beta</span>
                 </div>
               </div>
               <h2 className="text-xl font-medium">
-                Hire faster with Uma using AI-powered recruiting
+                Hire faster with Charlie using AI-powered recruiting
               </h2>
             </div>
           </div>
@@ -272,7 +273,9 @@ export default function JobPostReview() {
             variant="outline"
             icon="mdi:pencil-outline"
             className="p-1!"
-            onClick={() => router.push(editPath("/nx/job-post/add-description"))}
+            onClick={() =>
+              router.push(editPath("/nx/job-post/add-description"))
+            }
           />
         </div>
 
@@ -315,9 +318,7 @@ export default function JobPostReview() {
           <div className="flex items-center justify-between gap-8">
             <div className="space-y-2">
               <h3 className="text-xl font-medium">Location preferences</h3>
-              <p className="text-sm font-light">
-                {formatLocationSummary(job)}
-              </p>
+              <p className="text-sm font-light">{formatLocationSummary(job)}</p>
             </div>
             <IconButton
               variant="outline"
@@ -401,7 +402,10 @@ export default function JobPostReview() {
                   }
                   onClick={() => {
                     if (!writeQuestion.trim()) return;
-                    setWrittenQuestions((prev) => [...prev, writeQuestion.trim()]);
+                    setWrittenQuestions((prev) => [
+                      ...prev,
+                      writeQuestion.trim(),
+                    ]);
                     setWriteQuestion("");
                   }}
                 />

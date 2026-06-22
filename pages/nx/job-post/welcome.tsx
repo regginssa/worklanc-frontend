@@ -66,7 +66,7 @@ export default function Welcome() {
 
         <div>
           <p className="text-sm text-slate-600">
-            Beta feature powered by Uma, Upwork's Mindful AI.
+            Beta feature powered by CHRLE, Worklanc's Charlie Unicorn AI.
           </p>
           <Link
             href="#"

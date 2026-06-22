@@ -29,7 +29,7 @@ export default function DraftJobCard({
         onVerifyAndPublish,
         onGetShortlist,
       }),
-    [status, onFillInDraft, onVerifyAndPublish, onGetShortlist],
+    [status, onFillInDraft, onVerifyAndPublish, onGetShortlist]
   );
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function DraftJobCard({
             <div className="size-12 rounded-full bg-slate-300 flex items-center justify-center">
               <Icon icon="fe:list-task" className="text-white size-6" />
             </div>
-            <h4 className="font-medium">{title}</h4>
+            <h4 className="font-medium flex-1">{title}</h4>
           </div>
           {actionItems && (
             <div className="relative shrink-0" data-draft-actions-trigger>

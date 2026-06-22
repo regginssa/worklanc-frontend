@@ -250,7 +250,7 @@ export default function Dashboard() {
             <CarouselNext />
           </Carousel>
         ) : (
-          <ul className="flex space-y-4">
+          <ul className="flex flex-col gap-4">
             {clientJobs.map((job) => (
               <JobListItem
                 key={job.uid}
