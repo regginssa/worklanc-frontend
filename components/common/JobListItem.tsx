@@ -27,7 +27,6 @@ function JobListItemSkeleton() {
     <li className="space-y-4 border-b border-slate-300 p-4">
       <div className="flex items-center gap-2 text-xs">
         <SkeletonBar className="h-3 w-20" />
-        <span>•</span>
         <SkeletonBar className="h-3 w-28" />
       </div>
 
