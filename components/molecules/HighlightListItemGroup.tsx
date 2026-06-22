@@ -1,6 +1,7 @@
 "use client";
 
-import { cn } from "@/lib/utils";import { HightlightListItem, HightlightListItemType } from "../common";
+import { cn } from "@/lib/utils";
+import { HightlightListItem, HightlightListItemType } from "../common";
 import { Reorder } from "motion/react";
 
 export default function HighlightListItemGroup({
@@ -15,16 +16,14 @@ export default function HighlightListItemGroup({
   onReorder: (items: HightlightListItemType[]) => void;
   isGrid?: boolean;
   onView?: (id: number) => void;
-}) {  return (
+}) {
+  return (
     <Reorder.Group
       axis="y"
       as="ul"
       values={items}
       onReorder={onReorder}
-      className={cn(
-        "flex flex-col gap-4",
-        isGrid ? "grid grid-cols-2 gap-4" : ""
-      )}
+      className={cn(isGrid ? "grid grid-cols-2 gap-4" : "flex flex-col gap-4")}
     >
       {items.map((item) => (
         <HightlightListItem
@@ -34,7 +33,8 @@ export default function HighlightListItemGroup({
           isGrid={isGrid}
           onDelete={onDelete}
           onView={onView}
-        />      ))}
+        />
+      ))}
     </Reorder.Group>
   );
 }
