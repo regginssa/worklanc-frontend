@@ -111,7 +111,7 @@ export default function AuthorizedHeader() {
         items: [
           { label: "Your services", href: "#" },
           { label: "Promote with ads", href: "#" },
-          { label: "Direct contracts", href: "#" },
+          { label: "Direct contracts", href: "/ab/flservices/contracts" },
         ],
       },
     ],
