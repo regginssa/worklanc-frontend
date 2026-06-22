@@ -195,7 +195,7 @@ export default function ContractsPage() {
               className="w-[145px] h-[130px]"
             />
             <h2 className="text-3xl font-medium">How project funds work</h2>
-            <p className="font-medium text-center">
+            <p className="text-base font-medium text-center">
               When your client funds a Direct Contract, the money is paid into a
               secure holding place until the project is completed.
               <br />
