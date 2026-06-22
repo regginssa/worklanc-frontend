@@ -17,3 +17,5 @@ export { default as JobInProgressItem } from "./JobInProgressItem";
 export type { JobInProgressItemType } from "./JobInProgressItem";
 export { default as ClientReviewListItem } from "./ClientReviewListItem";
 export type { ClientReviewListItemType } from "./ClientReviewListItem";
+export { default as InviteProposalListItem } from "./InviteProposalListItem";
+export type { InviteProposalListItemType } from "./InviteProposalListItem";
