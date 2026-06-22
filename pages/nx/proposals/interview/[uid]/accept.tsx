@@ -4,7 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { Icon } from "@iconify/react";
 import { Calendar, CircleQuestionMark } from "lucide-react";
-import { SkillsGroup } from "@/components/molecules";
+import {
+  AddProfileHighlightsDialog,
+  SkillsGroup,
+} from "@/components/molecules";
 import DollarShield from "@/public/assets/svgs/icons/other/dollar_sheld.svg";
 import Image from "next/image";
 import { useState } from "react";
@@ -16,7 +19,8 @@ import {
 } from "@/components/ui/tooltip";
 import { motion } from "motion/react";
 import PaintIcon from "@/public/assets/svgs/icons/other/paint.svg";
-import MedalIcon from "@/public/assets/svgs/icons/other/medal.svg";
+import CertificateIcon from "@/public/assets/svgs/icons/other/certificate.svg";
+import HighlightListItemGroup from "@/components/molecules/HighlightListItemGroup";
 
 const JOB_DESCRIPTION = `We are hiring English (UK) voice actors to perform
 multi-character dialogue recordings to help train internal
@@ -64,6 +68,7 @@ const mockPortfolioProjects = [
     title: "Portfolio Project 1",
     description: "Portfolio Project 1 description",
     image: "/assets/images/portfolio-project-1.jpg",
+    skills: ["AI Voice"],
   },
 ];
 
@@ -74,6 +79,8 @@ export default function Accept() {
     duration: null,
     coverLetter: "",
   });
+  const [addProfileHighlightsDialogOpen, setAddProfileHighlightsDialogOpen] =
+    useState(false);
   const { uid } = useRouter().query as { uid: string };
   const portfolioProjects = mockPortfolioProjects;
 
@@ -369,6 +376,8 @@ export default function Accept() {
                     ? "cursor-pointer hover:bg-slate-100 transition-colors duration-200 border border-slate-300"
                     : "cursor-not-allowed bg-slate-100"
                 }`}
+                disabled={portfolioProjects.length === 0}
+                onClick={() => setAddProfileHighlightsDialogOpen(true)}
               >
                 <Image src={PaintIcon} alt="Paint" className="w-11 h-10" />
                 <p className="text-sm text-slate-600">
@@ -382,12 +391,23 @@ export default function Accept() {
                 type="button"
                 className="py-10 bg-slate-100 flex flex-col items-center justify-center gap-2 rounded-xl"
               >
-                <Image src={MedalIcon} alt="Medal" className="w-11 h-10" />
+                <Image
+                  src={CertificateIcon}
+                  alt="Certificate"
+                  className="w-11 h-10"
+                />
                 <p className="text-sm text-slate-600">
                   You don't have any certificates.
                 </p>
               </button>
             </div>
+
+            <HighlightListItemGroup
+              items={portfolioProjects as any}
+              onDelete={() => {}}
+              onReorder={() => {}}
+              isGrid={true}
+            />
           </div>
 
           <div className="flex items-center gap-2">
@@ -407,6 +427,11 @@ export default function Accept() {
           </div>
         </form>
       </div>
+
+      <AddProfileHighlightsDialog
+        open={addProfileHighlightsDialogOpen}
+        onClose={() => setAddProfileHighlightsDialogOpen(false)}
+      />
     </FreelancerLayout>
   );
 }

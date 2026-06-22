@@ -19,3 +19,5 @@ export { default as ClientReviewListItem } from "./ClientReviewListItem";
 export type { ClientReviewListItemType } from "./ClientReviewListItem";
 export { default as InviteProposalListItem } from "./InviteProposalListItem";
 export type { InviteProposalListItemType } from "./InviteProposalListItem";
+export { default as HightlightListItem } from "./HightlightListItem";
+export type { HightlightListItemType } from "./HightlightListItem";

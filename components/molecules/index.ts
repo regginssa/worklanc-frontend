@@ -87,3 +87,4 @@ export { default as JobPreviewDrawer } from "./drawers/JobPreviewDrawer";
 export { default as JobBrowseDetailPanels } from "./JobBrowseDetailPanels";
 export { default as JobInProgressItemGroup } from "./JobInProgressItemGroup";
 export { default as InviteProposalListItemGroup } from "./InviteProposalListItemGroup";
+export { default as AddProfileHighlightsDialog } from "./dialogs/AddProfileHighlightsDialog";
