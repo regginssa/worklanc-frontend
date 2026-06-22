@@ -88,8 +88,10 @@ on the voice description listed on the script. These are
 auditions reviewed by the Program Managers and they decide upon
 that. Looking forward to hearing from you soon! Thank you,
 Ezinne Orimoloye -Lifted Enterprise Talent Specialist`;
+
 export default function Interview() {
-  const { uid } = useRouter().query as { uid: string };
+  const router = useRouter();
+  const { uid } = router.query as { uid: string };
 
   return (
     <FreelancerLayout
@@ -190,6 +192,9 @@ export default function Interview() {
               type="primary"
               label="Apply for free"
               classname="w-full py-2.5! font-medium! text-sm! rounded-full!"
+              onClick={() =>
+                router.push(`/nx/proposals/interview/${uid}/accept`)
+              }
             />
             <Button
               type="outline"
