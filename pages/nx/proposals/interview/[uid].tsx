@@ -180,7 +180,8 @@ export default function Interview() {
 
           <div className="p-8 border border-slate-300 rounded-3xl space-y-8">
             <h2 className="text-2xl font-medium">Personal note from client</h2>
-            <CollapsableText text={PERSONAL_NOTE} maxLength={400} />          </div>
+            <CollapsableText text={PERSONAL_NOTE} maxLength={400} />{" "}
+          </div>
         </div>
 
         <div className="flex-1 space-y-8">
@@ -211,7 +212,7 @@ export default function Interview() {
                 <TooltipTrigger asChild>
                   <li className="flex items-center gap-2 text-blue-600 text-sm cursor-pointer">
                     <Icon icon="solar:buildings-outline" className="size-4" />
-                    <p className="text-sm font-medium underline">
+                    <p className="text-xs font-medium underline">
                       WORKLANC ENTERPRISE CLIENT
                     </p>
                   </li>
