@@ -464,29 +464,33 @@ export default function JobBrowseDetailPanels(
                       icon="solar:verified-check-bold"
                       className="text-blue-600 size-4"
                     />
-                    <span>Payment method verified</span>
+                    <span className="text-xs text-slate-600 font-medium">
+                      Payment method verified
+                    </span>
                   </li>
                 )}
 
                 {job.client.ratingAverage != null && (
                   <>
-                    <li className="flex items-center gap-2">
-                      <div className="flex items-center gap-1">
-                        {Array.from({ length: 5 }).map((_, index) => (
-                          <Icon
-                            key={index}
-                            icon="mynaui:star-solid"
-                            className="text-[#ff5900] size-4"
-                          />
-                        ))}
+                    <li className="text-slate-600">
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center">
+                          {Array.from({ length: 5 }).map((_, index) => (
+                            <Icon
+                              key={index}
+                              icon="mynaui:star-solid"
+                              className="text-[#ff5900] size-4"
+                            />
+                          ))}
+                        </div>
+                        <span className="text-base font-medium">
+                          {job.client.ratingAverage}
+                        </span>
                       </div>
-                      <span className="text-base font-medium">
-                        {job.client.ratingAverage}
-                      </span>
-                    </li>
-                    <li className="text-sm">
-                      {job.client.ratingAverage} of {job.client.reviewCount}{" "}
-                      reviews
+                      <p className="text-sm">
+                        {job.client.ratingAverage} of {job.client.reviewCount}{" "}
+                        reviews
+                      </p>
                     </li>
                   </>
                 )}

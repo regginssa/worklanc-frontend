@@ -36,7 +36,7 @@ export default function InviteProposalListItem({
 
       <h3 className="line-clamp-1">
         <Link
-          href={`/proposals/interview/${project.uid}`}
+          href={`/nx/proposals/interview/${project.uid}`}
           className="cursor-pointer underline hover:text-blue-600"
         >
           {project.title}

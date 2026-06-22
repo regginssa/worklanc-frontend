@@ -14,7 +14,7 @@ export default function SkillsGroup({
       {skills.slice(0, max).map((skill) => (
         <li
           key={skill}
-          className={`py-0.5 px-2 rounded-md ${
+          className={`py-0.5 px-3 rounded-md ${
             matchedSkills?.includes(skill) ? "bg-blue-200" : "bg-slate-200"
           } text-sm cursor-pointer`}
         >
@@ -24,7 +24,7 @@ export default function SkillsGroup({
 
       {skills.length > max && (
         <li
-          className={`py-0.5 px-2 rounded-md ${
+          className={`py-0.5 px-3 rounded-md ${
             allMatched ? "bg-blue-200" : "bg-slate-200"
           } text-sm cursor-pointer`}
         >
