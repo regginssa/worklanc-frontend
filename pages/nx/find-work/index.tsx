@@ -12,7 +12,11 @@ import { useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
 import { useQuery } from "@tanstack/react-query";
 import TalentAPI from "@/lib/api/talent";
-import { JobFiltersDialog, JobListItemGroup } from "@/components/molecules";
+import {
+  CompleteProfileDialog,
+  JobFiltersDialog,
+  JobListItemGroup,
+} from "@/components/molecules";
 
 const tabs: TTabItem[] = [
   { label: "Best matches", value: "best_matches" },
@@ -84,6 +88,8 @@ export default function FindWork() {
   const [search, setSearch] = useState("");
   const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const [openFiltersDialog, setOpenFiltersDialog] = useState(false);
+  const [openCompleteProfileDialog, setOpenCompleteProfileDialog] =
+    useState(false);
   const { user } = useAppSelector((state: RootState) => state.user);
 
   const { data: talentProfileData } = useQuery({
@@ -257,9 +263,12 @@ export default function FindWork() {
             </div>
 
             <div className="space-y-2">
-              <Link href="#" className="block text-sm underline cursor-pointer">
+              <button
+                className="block text-sm underline cursor-pointer"
+                onClick={() => setOpenCompleteProfileDialog(true)}
+              >
                 Complete your profile
-              </Link>
+              </button>
               <div className="flex items-center gap-4">
                 <Progress value={70} />
                 <span className="text-xs">70%</span>
@@ -364,6 +373,11 @@ export default function FindWork() {
       <JobFiltersDialog
         open={openFiltersDialog}
         onClose={() => setOpenFiltersDialog(false)}
+      />
+
+      <CompleteProfileDialog
+        open={openCompleteProfileDialog}
+        onClose={() => setOpenCompleteProfileDialog(false)}
       />
     </FreelancerLayout>
   );
