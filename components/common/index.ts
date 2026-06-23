@@ -21,3 +21,4 @@ export { default as InviteProposalListItem } from "./InviteProposalListItem";
 export type { InviteProposalListItemType } from "./InviteProposalListItem";
 export { default as HightlightListItem } from "./HightlightListItem";
 export type { HightlightListItemType } from "./HightlightListItem";
+export { default as ContractTypeRadioGroup } from "./ContractTypeRadioGroup";

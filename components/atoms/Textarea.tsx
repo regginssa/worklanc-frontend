@@ -7,7 +7,7 @@ interface TextareaProps {
   labelClassName?: string;
   classname?: string;
   icon?: string;
-  value: string;
+  value: string | null;
   error?: string;
   required?: boolean;
   rows?: number;
@@ -57,7 +57,7 @@ const Textarea: React.FC<TextareaProps> = ({
           placeholder={placeholder}
           rows={rows}
           required={required}
-          value={value}
+          value={value as any}
           onChange={onChange}
           className="min-h-[80px] w-full resize-y border-none bg-transparent text-sm outline-none placeholder:text-slate-600"
         />

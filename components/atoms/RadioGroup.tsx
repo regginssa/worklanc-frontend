@@ -1,12 +1,12 @@
 export interface RadioOption {
   title: string;
-  value: string;
+  value: any;
   description?: string;
 }
 
 interface RadioGroupProps {
   options: RadioOption[];
-  value: string | null;
+  value: any;
   onChange: (value: string) => void;
   name?: string;
   className?: string;

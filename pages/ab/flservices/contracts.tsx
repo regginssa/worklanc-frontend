@@ -12,9 +12,11 @@ import HeadsetIcon from "@/public/assets/svgs/icons/other/headset.svg";
 import CardsLockIcon from "@/public/assets/svgs/icons/other/cards_lock.svg";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useState } from "react";
+import { NewContractFormDrawer } from "@/components/molecules";
 
 export default function ContractsPage() {
   const [fundOpen, setFundOpen] = useState(false);
+  const [newContractOpen, setNewContractOpen] = useState(false);
 
   return (
     <FreelancerLayout
@@ -69,6 +71,7 @@ export default function ContractsPage() {
               type="primary"
               label="Create a contract"
               classname="h-10! rounded-md! text-sm! font-medium!"
+              onClick={() => setNewContractOpen(true)}
             />
           </div>
         </div>
@@ -182,9 +185,15 @@ export default function ContractsPage() {
             type="primary"
             label="Create a contract"
             classname="rounded-md! text-sm! font-medium!"
+            onClick={() => setNewContractOpen(true)}
           />
         </div>
       </div>
+
+      <NewContractFormDrawer
+        open={newContractOpen}
+        onClose={() => setNewContractOpen(false)}
+      />
 
       <Dialog open={fundOpen} onOpenChange={setFundOpen}>
         <DialogContent className="min-w-3xl">
