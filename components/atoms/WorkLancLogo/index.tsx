@@ -5,11 +5,13 @@ import Logo from "@/public/assets/logos/logo.png";
 interface WorklancLogoProps {
   className?: string;
   href?: string;
+  variant?: "light" | "dark";
 }
 
 const WorklancLogo: React.FC<WorklancLogoProps> = ({
   className = "",
   href = "/",
+  variant = "light",
 }) => {
   return (
     <Link
@@ -24,7 +26,13 @@ const WorklancLogo: React.FC<WorklancLogoProps> = ({
         className="object-contain"
         priority
       />
-      <h1 className="text-2xl font-bold">Worklanc</h1>
+      <h1
+        className={`text-2xl font-bold ${
+          variant === "light" ? "text-black" : "text-white"
+        }`}
+      >
+        Worklanc
+      </h1>
     </Link>
   );
 };

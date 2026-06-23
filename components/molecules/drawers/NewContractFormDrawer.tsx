@@ -9,8 +9,9 @@ import { ArrowLeftIcon } from "lucide-react";
 import NewContractForm from "../NewContractForm";
 import NewContractMilestoneForm from "../NewContractMilestoneForm";
 import { useEffect, useState } from "react";
-import ReviewNewContract from "../ReviewNewContract";
+import NewContractReview from "../NewContractReview";
 import { createEmptyMilestone, Milestone } from "@/types/milestone";
+import NewContractEmailPreview from "../NewContractEmailPreview";
 
 export default function NewContractFormDrawer({
   open,
@@ -19,7 +20,9 @@ export default function NewContractFormDrawer({
   open: boolean;
   onClose: () => void;
 }) {
-  const [step, setStep] = useState<"new" | "milestone" | "review">("new");
+  const [step, setStep] = useState<
+    "new" | "milestone" | "review" | "email-preview"
+  >("new");
   const [newContractFormData, setNewContractFormData] = useState<any>({
     clientFirstName: null,
     clientEmail: null,
@@ -70,6 +73,14 @@ export default function NewContractFormDrawer({
       setStep("milestone");
     } else if (step === "milestone") {
       setStep("new");
+    } else if (step === "review") {
+      if (newContractFormData.budgetType === "fixed") {
+        setStep("milestone");
+      } else {
+        setStep("new");
+      }
+    } else if (step === "email-preview") {
+      setStep("review");
     } else {
       setStep("new");
     }
@@ -78,6 +89,8 @@ export default function NewContractFormDrawer({
   const handleNext = () => {
     if (step === "new" && newContractFormData.budgetType === "fixed") {
       setStep("milestone");
+    } else if (step === "review") {
+      setStep("email-preview");
     } else {
       setStep("review");
     }
@@ -112,7 +125,7 @@ export default function NewContractFormDrawer({
           />
         )}
         {step === "review" && (
-          <ReviewNewContract
+          <NewContractReview
             name={newContractFormData.name}
             description={newContractFormData.description}
             hourlyRate={newContractFormData.hourlyRate}
@@ -125,6 +138,18 @@ export default function NewContractFormDrawer({
               (sum, milestone) => sum + milestone.amount,
               0
             )}
+          />
+        )}
+        {step === "email-preview" && (
+          <NewContractEmailPreview
+            name={newContractFormData.name}
+            amount={milestones.reduce(
+              (sum, milestone) => sum + milestone.amount,
+              0
+            )}
+            milestones={milestones}
+            budgetType={newContractFormData.budgetType}
+            weeklyLimit={newContractFormData.weeklyLimit}
           />
         )}
 
@@ -142,7 +167,7 @@ export default function NewContractFormDrawer({
             <Button
               type="primary"
               isSubmit
-              label="Next"
+              label={step === "email-preview" ? "Send Contract" : "Next"}
               classname="text-sm! font-medium! px-8! py-3! rounded-md!"
               onClick={handleNext}
             />

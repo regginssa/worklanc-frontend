@@ -17,7 +17,7 @@ import {
   StepperTrigger,
 } from "../reui/stepper";
 
-export default function ReviewNewContract({
+export default function NewContractReview({
   name,
   description,
   hourlyRate,

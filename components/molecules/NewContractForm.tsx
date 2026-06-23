@@ -49,7 +49,7 @@ export default function NewContractForm({
 
       <Input
         type="text"
-        name="firstName"
+        name="clientFirstName"
         label="Client's first name"
         labelClassName="block mb-2! text-sm! font-medium!"
         value={formData.clientFirstName}
@@ -70,7 +70,7 @@ export default function NewContractForm({
         name="name"
         label="Contract name"
         labelClassName="block mb-2! text-sm! font-medium!"
-        value={formData.clientFirstName}
+        value={formData.name}
         onChange={handleInputChange}
       />
 
