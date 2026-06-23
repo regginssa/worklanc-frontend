@@ -17,6 +17,7 @@ import {
   JobFiltersDialog,
   JobListItemGroup,
 } from "@/components/molecules";
+import { TurnOnAvailabilityBadgeDialog } from "@/components/molecules";
 
 const tabs: TTabItem[] = [
   { label: "Best matches", value: "best_matches" },
@@ -26,9 +27,9 @@ const tabs: TTabItem[] = [
   { label: "Invites", value: "invites" },
 ];
 
-function EditButton() {
+function EditButton({ onClick }: { onClick: () => void }) {
   return (
-    <button className="cursor-pointer">
+    <button className="cursor-pointer" onClick={onClick}>
       <Icon icon="mdi:pencil-outline" className="w-5 h-5 text-slate-800" />
     </button>
   );
@@ -90,6 +91,10 @@ export default function FindWork() {
   const [openFiltersDialog, setOpenFiltersDialog] = useState(false);
   const [openCompleteProfileDialog, setOpenCompleteProfileDialog] =
     useState(false);
+  const [
+    openTurnOnAvailabilityBadgeDialog,
+    setOpenTurnOnAvailabilityBadgeDialog,
+  ] = useState(false);
   const { user } = useAppSelector((state: RootState) => state.user);
 
   const { data: talentProfileData } = useQuery({
@@ -308,7 +313,13 @@ export default function FindWork() {
                       <h4>{item.title}</h4>
                       <p className="text-slate-600">{item.value}</p>
                     </div>
-                    <EditButton />
+                    <EditButton
+                      onClick={() => {
+                        if (item.title === "Availability badge") {
+                          setOpenTurnOnAvailabilityBadgeDialog(true);
+                        }
+                      }}
+                    />
                   </div>
                 ))}
               </div>
@@ -344,7 +355,7 @@ export default function FindWork() {
                         <span className="font-medium">{item.label}</span>
                         {item.content}
                       </div>
-                      <EditButton />
+                      <EditButton onClick={() => {}} />
                     </div>
                   ))}
                 </div>
@@ -378,6 +389,11 @@ export default function FindWork() {
       <CompleteProfileDialog
         open={openCompleteProfileDialog}
         onClose={() => setOpenCompleteProfileDialog(false)}
+      />
+
+      <TurnOnAvailabilityBadgeDialog
+        open={openTurnOnAvailabilityBadgeDialog}
+        onClose={() => setOpenTurnOnAvailabilityBadgeDialog(false)}
       />
     </FreelancerLayout>
   );
