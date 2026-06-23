@@ -9,6 +9,8 @@ import { ArrowLeftIcon } from "lucide-react";
 import NewContractForm from "../NewContractForm";
 import NewContractMilestoneForm from "../NewContractMilestoneForm";
 import { useEffect, useState } from "react";
+import ReviewNewContract from "../ReviewNewContract";
+import { createEmptyMilestone, Milestone } from "@/types/milestone";
 
 export default function NewContractFormDrawer({
   open,
@@ -26,6 +28,9 @@ export default function NewContractFormDrawer({
     hourlyRate: null,
     receivedHourlyRate: null,
   });
+  const [milestones, setMilestones] = useState<Milestone[]>([
+    createEmptyMilestone(),
+  ]);
 
   useEffect(() => {
     if (open) {
@@ -38,24 +43,43 @@ export default function NewContractFormDrawer({
         hourlyRate: null,
         receivedHourlyRate: null,
       });
+      setMilestones([createEmptyMilestone()]);
     }
   }, [open]);
+
+  const handleMilestoneChange = (
+    index: number,
+    updates: Partial<Milestone>
+  ) => {
+    setMilestones((previousMilestones) =>
+      previousMilestones.map((milestone, milestoneIndex) =>
+        milestoneIndex === index ? { ...milestone, ...updates } : milestone
+      )
+    );
+  };
+
+  const handleAddMilestone = () => {
+    setMilestones((previousMilestones) => [
+      ...previousMilestones,
+      createEmptyMilestone(),
+    ]);
+  };
 
   const handleBack = () => {
     if (step === "review" && newContractFormData.budgetType === "fixed") {
       setStep("milestone");
+    } else if (step === "milestone") {
+      setStep("new");
     } else {
       setStep("new");
     }
   };
 
   const handleNext = () => {
-    if (step === "new") {
-      if (newContractFormData.budgetType === "fixed") {
-        setStep("milestone");
-      } else {
-        setStep("review");
-      }
+    if (step === "new" && newContractFormData.budgetType === "fixed") {
+      setStep("milestone");
+    } else {
+      setStep("review");
     }
   };
 
@@ -80,7 +104,29 @@ export default function NewContractFormDrawer({
             onFormDataChange={setNewContractFormData}
           />
         )}
-        {step === "milestone" && <NewContractMilestoneForm />}
+        {step === "milestone" && (
+          <NewContractMilestoneForm
+            milestones={milestones}
+            onMilestoneChange={handleMilestoneChange}
+            onAddMilestone={handleAddMilestone}
+          />
+        )}
+        {step === "review" && (
+          <ReviewNewContract
+            name={newContractFormData.name}
+            description={newContractFormData.description}
+            hourlyRate={newContractFormData.hourlyRate}
+            weeklyLimit={newContractFormData.weeklyLimit}
+            endDate={newContractFormData.endDate}
+            clientEmail={newContractFormData.clientEmail}
+            milestones={milestones}
+            budgetType={newContractFormData.budgetType}
+            totalAmount={milestones.reduce(
+              (sum, milestone) => sum + milestone.amount,
+              0
+            )}
+          />
+        )}
 
         <DrawerFooter>
           <div className="flex w-full justify-end gap-4">

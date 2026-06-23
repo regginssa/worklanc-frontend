@@ -1,32 +1,21 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
 import { SERVICE_FEE_PERCENT } from "@/utils/rate";
-import { createEmptyMilestone, Milestone } from "@/types/milestone";
+import { Milestone } from "@/types/milestone";
 import AddMilestoneGroup from "./AddMilestoneGroup";
+import { Tag } from "lucide-react";
 
-export default function NewContractMilestoneForm() {
-  const [milestones, setMilestones] = useState<Milestone[]>([
-    createEmptyMilestone(),
-  ]);
+export type NewContractMilestoneFormProps = {
+  milestones: Milestone[];
+  onMilestoneChange: (index: number, updates: Partial<Milestone>) => void;
+  onAddMilestone: () => void;
+};
 
-  const handleMilestoneChange = (
-    index: number,
-    updates: Partial<Milestone>
-  ) => {
-    setMilestones((previousMilestones) =>
-      previousMilestones.map((milestone, milestoneIndex) =>
-        milestoneIndex === index ? { ...milestone, ...updates } : milestone
-      )
-    );
-  };
-
-  const handleAddMilestone = () => {
-    setMilestones((previousMilestones) => [
-      ...previousMilestones,
-      createEmptyMilestone(),
-    ]);
-  };
-
+export default function NewContractMilestoneForm({
+  milestones,
+  onMilestoneChange,
+  onAddMilestone,
+}: NewContractMilestoneFormProps) {
   const totalAmount = useMemo(
     () =>
       milestones.reduce(
@@ -42,14 +31,18 @@ export default function NewContractMilestoneForm() {
     <form className="no-scrollbar overflow-y-auto space-y-8 px-8">
       <h1 className="text-2xl font-medium">Contract amount</h1>
 
+      <div className="flex items-center justify-center">
+        <span className="text-5xl font-medium">${totalAmount.toFixed(2)}</span>
+      </div>
+
       <AddMilestoneGroup
         milestones={milestones}
-        onMilestoneChange={handleMilestoneChange}
-        onAddMilestone={handleAddMilestone}
+        onMilestoneChange={onMilestoneChange}
+        onAddMilestone={onAddMilestone}
       />
 
       <div className="flex items-center justify-between text-slate-600 font-light text-base">
-        <p className="">
+        <p>
           {SERVICE_FEE_PERCENT}% Worklanc service fee{" "}
           <Link href="#" className="cursor-pointer text-blue-600 underline">
             Learn more
@@ -58,6 +51,20 @@ export default function NewContractMilestoneForm() {
 
         <span>${serviceFee.toFixed(2)}</span>
       </div>
+
+      {totalAmount > 0 && (
+        <div className="flex items-center gap-4 rounded-sm freelancer-plus-alert p-4 mt-6 text-white text-sm">
+          <Tag className="size-5" />
+          <p>
+            Keep the entire ${Number(totalAmount).toFixed(2)}, no service fee,
+            if you upgrade to{" "}
+            <Link href="#" className="font-medium underline cursor-pointer">
+              FL+
+            </Link>
+            .
+          </p>
+        </div>
+      )}
 
       <div className="flex items-center justify-between">
         <p className="text-base">You'll receive</p>

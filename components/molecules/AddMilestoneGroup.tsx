@@ -58,9 +58,9 @@ export default function AddMilestoneGroup({
         type="button"
         whileTap={{ scale: 0.95 }}
         onClick={onAddMilestone}
-        className="flex items-center gap-2 text-sm font-medium text-blue-600 cursor-pointer"
+        className="flex items-center gap-2 text-base font-medium text-blue-600 cursor-pointer"
       >
-        <Plus className="size-4" />
+        <Plus className="size-5" />
         Add milestone
       </motion.button>
     </ul>
