@@ -227,7 +227,7 @@ export default function AuthorizedHeader() {
           <Link href="#" className="">
             <LucideCircleQuestionMark className="w-6 h-6" />
           </Link>
-          <Link href="#" className="">
+          <Link href="/ab/notifications" className="">
             <LucideBell className="w-6 h-6" />
           </Link>
         </div>

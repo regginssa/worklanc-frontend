@@ -100,3 +100,4 @@ export { default as BoostYourProfileDialog } from "./dialogs/BoostYourProfileDia
 export { default as ProfileVisibilityDialog } from "./dialogs/ProfileVisibilityDialog";
 export { default as JobPreferenceDialog } from "./dialogs/JobPreferenceDialog";
 export { default as EditCategoriesDialog } from "./dialogs/EditCategoriesDialog";
+export { default as StaySafeDialog } from "./dialogs/StaySafeDialog";
