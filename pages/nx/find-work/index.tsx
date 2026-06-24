@@ -13,6 +13,7 @@ import { RootState } from "@/store/store";
 import { useQuery } from "@tanstack/react-query";
 import TalentAPI from "@/lib/api/talent";
 import {
+  BoostYourProfileDialog,
   CompleteProfileDialog,
   JobFiltersDialog,
   JobListItemGroup,
@@ -95,6 +96,8 @@ export default function FindWork() {
     openTurnOnAvailabilityBadgeDialog,
     setOpenTurnOnAvailabilityBadgeDialog,
   ] = useState(false);
+  const [openBoostYourProfileDialog, setOpenBoostYourProfileDialog] =
+    useState(false);
   const { user } = useAppSelector((state: RootState) => state.user);
 
   const { data: talentProfileData } = useQuery({
@@ -318,6 +321,9 @@ export default function FindWork() {
                         if (item.title === "Availability badge") {
                           setOpenTurnOnAvailabilityBadgeDialog(true);
                         }
+                        if (item.title === "Boost your profile") {
+                          setOpenBoostYourProfileDialog(true);
+                        }
                       }}
                     />
                   </div>
@@ -394,6 +400,11 @@ export default function FindWork() {
       <TurnOnAvailabilityBadgeDialog
         open={openTurnOnAvailabilityBadgeDialog}
         onClose={() => setOpenTurnOnAvailabilityBadgeDialog(false)}
+      />
+
+      <BoostYourProfileDialog
+        open={openBoostYourProfileDialog}
+        onClose={() => setOpenBoostYourProfileDialog(false)}
       />
     </FreelancerLayout>
   );

@@ -1,3 +1,5 @@
+import { cn } from "@/lib/utils";
+
 export interface RadioOption {
   title: string;
   value: any;
@@ -10,6 +12,7 @@ interface RadioGroupProps {
   onChange: (value: string) => void;
   name?: string;
   className?: string;
+  direction?: "vertical" | "horizontal";
 }
 
 export default function RadioGroup({
@@ -18,9 +21,17 @@ export default function RadioGroup({
   onChange,
   name,
   className = "",
+  direction = "vertical",
 }: RadioGroupProps) {
   return (
-    <ul className={`space-y-4 ${className}`}>
+    <ul
+      className={cn(
+        direction === "horizontal"
+          ? "flex flex-row flex-wrap gap-4"
+          : "space-y-4",
+        className
+      )}
+    >
       {options.map((option) => {
         const isSelected = value === option.value;
 

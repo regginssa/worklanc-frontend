@@ -58,7 +58,7 @@ export default function TitleDialog({
 
         <DialogFooter>
           <DialogClose asChild>
-            <button className="py-2.5 px-5 cursor-pointer text-sm font-medium">
+            <button className="py-2.5 px-5 cursor-pointer text-sm font-medium hover:underline">
               Cancel
             </button>
           </DialogClose>
