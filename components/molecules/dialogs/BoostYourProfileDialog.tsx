@@ -51,7 +51,7 @@ export default function BoostYourProfileDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <form className="space-y-8 px-4 pb-6 no-scrollbar max-h-[60vh] overflow-y-auto">
+        <div className="space-y-8 px-4 pb-6 no-scrollbar max-h-[60vh] overflow-y-auto">
           <div className="p-6 rounded-3xl border border-slate-300 flex items-start gap-4">
             <div className="flex-1 space-y-6">
               <div className="space-y-2">
@@ -80,7 +80,7 @@ export default function BoostYourProfileDialog({
                   </motion.button>
                 </div>
                 <p className="text-xs font-light">
-                  Supported formats: MP4 (100 MB max)
+                  Supported divats: MP4 (100 MB max)
                 </p>
               </div>
 
@@ -268,7 +268,7 @@ export default function BoostYourProfileDialog({
               </div>
             </div>
           </div>
-        </form>
+        </div>
 
         <DialogFooter>
           <DialogClose asChild>
