@@ -13,12 +13,18 @@ import { RootState } from "@/store/store";
 import { useQuery } from "@tanstack/react-query";
 import TalentAPI from "@/lib/api/talent";
 import {
+  AvailabilityDialog,
   BoostYourProfileDialog,
   CompleteProfileDialog,
+  EditCategoriesDialog,
+  emptyAvailabilityForm,
   JobFiltersDialog,
   JobListItemGroup,
+  JobPreferenceDialog,
+  ProfileVisibilityDialog,
 } from "@/components/molecules";
 import { TurnOnAvailabilityBadgeDialog } from "@/components/molecules";
+import { ExternalLink } from "lucide-react";
 
 const tabs: TTabItem[] = [
   { label: "Best matches", value: "best_matches" },
@@ -97,6 +103,12 @@ export default function FindWork() {
     setOpenTurnOnAvailabilityBadgeDialog,
   ] = useState(false);
   const [openBoostYourProfileDialog, setOpenBoostYourProfileDialog] =
+    useState(false);
+  const [openAvailabilityDialog, setOpenAvailabilityDialog] = useState(false);
+  const [openProfileVisibilityDialog, setOpenProfileVisibilityDialog] =
+    useState(false);
+  const [openJobPreferenceDialog, setOpenJobPreferenceDialog] = useState(false);
+  const [openEditCategoriesDialog, setOpenEditCategoriesDialog] =
     useState(false);
   const { user } = useAppSelector((state: RootState) => state.user);
 
@@ -361,7 +373,26 @@ export default function FindWork() {
                         <span className="font-medium">{item.label}</span>
                         {item.content}
                       </div>
-                      <EditButton onClick={() => {}} />
+                      <EditButton
+                        onClick={() => {
+                          switch (item.label) {
+                            case "Hours per week":
+                              setOpenAvailabilityDialog(true);
+                              break;
+                            case "Profile Visibility":
+                              setOpenProfileVisibilityDialog(true);
+                              break;
+                            case "Job Preference":
+                              setOpenJobPreferenceDialog(true);
+                              break;
+                            case "My Categories":
+                              setOpenEditCategoriesDialog(true);
+                              break;
+                            default:
+                              break;
+                          }
+                        }}
+                      />
                     </div>
                   ))}
                 </div>
@@ -384,6 +415,29 @@ export default function FindWork() {
               </CollapsibleSection>
             </div>
           </div>
+
+          <ul className="p-6 rounded-3xl bg-slate-50 space-y-4">
+            <li className="">
+              <Link
+                href="/ab/flservices/contracts"
+                target="_blank"
+                className="flex items-center gap-2 text-sm font-light underline cursor-pointer hover:text-blue-600"
+              >
+                <span>Direct Contracts</span>
+                <ExternalLink className="size-4" />
+              </Link>
+            </li>
+            <li className="">
+              <Link
+                href="/ab/flservices/withdrawals"
+                target="_blank"
+                className="flex items-center gap-2 text-sm font-light underline cursor-pointer hover:text-blue-600"
+              >
+                <span>Withdrawals</span>
+                <ExternalLink className="size-4" />
+              </Link>
+            </li>
+          </ul>
         </div>
       </div>
 
@@ -405,6 +459,29 @@ export default function FindWork() {
       <BoostYourProfileDialog
         open={openBoostYourProfileDialog}
         onClose={() => setOpenBoostYourProfileDialog(false)}
+      />
+
+      <AvailabilityDialog
+        open={openAvailabilityDialog}
+        onClose={() => setOpenAvailabilityDialog(false)}
+        formData={emptyAvailabilityForm()}
+        onChangeFormData={() => {}}
+        onSave={() => {}}
+      />
+
+      <ProfileVisibilityDialog
+        open={openProfileVisibilityDialog}
+        onClose={() => setOpenProfileVisibilityDialog(false)}
+      />
+
+      <JobPreferenceDialog
+        open={openJobPreferenceDialog}
+        onClose={() => setOpenJobPreferenceDialog(false)}
+      />
+
+      <EditCategoriesDialog
+        open={openEditCategoriesDialog}
+        onClose={() => setOpenEditCategoriesDialog(false)}
       />
     </FreelancerLayout>
   );

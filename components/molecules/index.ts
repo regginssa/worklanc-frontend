@@ -97,3 +97,6 @@ export { default as NewContractEmailPreview } from "./NewContractEmailPreview";
 export { default as CompleteProfileDialog } from "./dialogs/CompleteProfileDialog";
 export { default as TurnOnAvailabilityBadgeDialog } from "./dialogs/TurnOnAvailabilityBadgeDialog";
 export { default as BoostYourProfileDialog } from "./dialogs/BoostYourProfileDialog";
+export { default as ProfileVisibilityDialog } from "./dialogs/ProfileVisibilityDialog";
+export { default as JobPreferenceDialog } from "./dialogs/JobPreferenceDialog";
+export { default as EditCategoriesDialog } from "./dialogs/EditCategoriesDialog";
