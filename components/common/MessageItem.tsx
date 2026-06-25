@@ -49,7 +49,7 @@ export default function MessageItem({
           <h3 className="font-semibold">
             {firstName} {lastName}
           </h3>
-          <span className="text-slate-500">{formatDate(time, "dd/MM/yy")}</span>
+          <span className="text-slate-500">{formatDate(time, "HH:mm a")}</span>
         </div>
 
         <p className="text-slate-600 font-light">{message}</p>
