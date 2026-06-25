@@ -24,3 +24,5 @@ export type { HightlightListItemType } from "./HightlightListItem";
 export { default as ContractTypeRadioGroup } from "./ContractTypeRadioGroup";
 export { default as ContactListItem } from "./ContactListItem";
 export type { ContactListItemType } from "./ContactListItem";
+export { default as MessageItem } from "./MessageItem";
+export type { MessageItemType } from "./MessageItem";

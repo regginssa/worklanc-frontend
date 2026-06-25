@@ -102,3 +102,5 @@ export { default as JobPreferenceDialog } from "./dialogs/JobPreferenceDialog";
 export { default as EditCategoriesDialog } from "./dialogs/EditCategoriesDialog";
 export { default as StaySafeDialog } from "./dialogs/StaySafeDialog";
 export { default as ContactListItemGroup } from "./ContactListItemGroup";
+export { default as MessageItemGroup } from "./MessageItemGroup";
+export { default as MessageForm } from "./MessageForm";

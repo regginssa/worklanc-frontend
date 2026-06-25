@@ -5,6 +5,7 @@ interface IconButtonProps {
   variant: "primary" | "secondary" | "outline" | "text";
   icon: string;
   className?: string;
+  iconClassName?: string;
   onClick: () => void;
   onHover?: () => void;
   onLeave?: () => void;
@@ -26,6 +27,7 @@ export default function IconButton({
   variant,
   icon,
   className,
+  iconClassName,
   onClick,
   onHover,
   onLeave,
@@ -51,7 +53,7 @@ export default function IconButton({
       {loading ? (
         <Icon icon="svg-spinners:bars-rotate-fade" className="w-5 h-5" />
       ) : (
-        <Icon icon={icon} className="w-5 h-5" />
+        <Icon icon={icon} className={`w-5 h-5 ${iconClassName}`} />
       )}
     </motion.button>
   );
