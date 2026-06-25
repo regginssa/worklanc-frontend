@@ -2,13 +2,15 @@ import { Search } from "lucide-react";
 import { useRouter } from "next/router";
 import { Icon } from "@iconify/react";
 import { useState } from "react";
-import { StaySafeDialog } from "@/components/molecules";
+import { ContactListItemGroup, StaySafeDialog } from "@/components/molecules";
 import { Header } from "@/components/organisms";
 import { Button, SEO } from "@/components/atoms";
+import { MOCK_CONTACTS } from "@/static/data/contacts";
 
 export default function RoomPage() {
   const [openSafe, setOpenSafe] = useState(true);
   const { uid } = useRouter().query as { uid: string };
+  const contacts = MOCK_CONTACTS;
 
   return (
     <>
@@ -35,7 +37,7 @@ export default function RoomPage() {
         </div>
 
         <main className="flex min-h-0 flex-1 gap-10 px-6 py-2">
-          <div className="flex min-h-0 w-1/4 shrink-0 flex-col rounded-lg bg-slate-50 px-4 py-6">
+          <div className="flex min-h-0 w-1/4 shrink-0 flex-col rounded-lg bg-slate-50 px-4 py-6 gap-4">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-medium">Messages</h1>
@@ -68,11 +70,15 @@ export default function RoomPage() {
               </div>
             </div>
 
-            <div className="flex flex-1 flex-col items-center justify-center">
-              <p className="text-sm text-slate-500">
-                Conversations will appear here
-              </p>
-            </div>
+            {contacts.length > 0 ? (
+              <ContactListItemGroup items={contacts} />
+            ) : (
+              <div className="flex flex-1 flex-col items-center justify-center">
+                <p className="text-sm text-slate-500">
+                  Conversations will appear here
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="min-h-0 min-w-0 flex-1 rounded-lg">
