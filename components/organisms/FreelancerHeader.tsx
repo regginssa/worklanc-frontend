@@ -213,7 +213,7 @@ export default function AuthorizedHeader() {
             sections={navs.manageFinancesNavs}
           />
           <Link
-            href="#"
+            href="/ab/messages/rooms/123456789"
             className="rounded-full px-3 py-2 text-sm font-medium text-slate-800 transition-all duration-200 hover:text-slate-600 cursor-pointer"
           >
             Messages
