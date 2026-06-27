@@ -105,3 +105,4 @@ export { default as ContactListItemGroup } from "./ContactListItemGroup";
 export { default as MessageItemGroup } from "./MessageItemGroup";
 export { default as MessageForm } from "./MessageForm";
 export { default as PaypalBillingForm } from "./PaypalBillingForm";
+export { default as CryptoBillingForm } from "./CryptoBillingForm";

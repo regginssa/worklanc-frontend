@@ -12,3 +12,17 @@ export async function savePayPalPaymentMethod(vaultSetupToken: string) {
     body: JSON.stringify({ vaultSetupToken }),
   });
 }
+
+export async function saveCryptoWallet(body: {
+  address: string;
+  chain: string;
+  token: string;
+  label?: string;
+  message: string;
+  signature: string;
+}) {
+  return request("/payments/crypto/wallets", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}

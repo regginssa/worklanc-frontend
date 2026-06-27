@@ -12,7 +12,7 @@ import ChrleLogo from "@/public/assets/svgs/icons/logos/chrle.png";
 import BabyuLogo from "@/public/assets/svgs/icons/logos/babyu.png";
 import { useState } from "react";
 import { PaymentMethod } from "@/types/payment";
-import { PaypalBillingForm, StripeBillingForm } from "../molecules";
+import { PaypalBillingForm, StripeBillingForm, CryptoBillingForm } from "../molecules";
 
 export default function AddBillingMethodSection({
   onCancel,
@@ -90,21 +90,27 @@ export default function AddBillingMethodSection({
           </li>
         )}
 
-        <li className="flex items-center gap-2">
-          <Radio
-            checked={selectedBillingMethod === "crypto"}
-            onCheck={() => setSelectedBillingMethod("crypto")}
-          />
-          <span>Cryptocurrency</span>
+        <li className="space-y-6">
           <div className="flex items-center gap-2">
-            <Image src={ChrleLogo} alt="CHRLE" width={24} height={24} />
-            <Image src={BabyuLogo} alt="BABYU" width={24} height={24} />
-            <Image src={EthLogo} alt="Ethereum" width={24} height={24} />
-            <Image src={BnbLogo} alt="BNB" width={24} height={24} />
-            <Image src={SolLogo} alt="Solana" width={24} height={24} />
-            <Image src={UsdtLogo} alt="USDT" width={24} height={24} />
-            <Image src={UsdcLogo} alt="USDC" width={24} height={24} />
+            <Radio
+              checked={selectedBillingMethod === "crypto"}
+              onCheck={() => setSelectedBillingMethod("crypto")}
+            />
+            <span>Cryptocurrency</span>
+            <div className="flex items-center gap-2">
+              <Image src={ChrleLogo} alt="CHRLE" width={24} height={24} />
+              <Image src={BabyuLogo} alt="BABYU" width={24} height={24} />
+              <Image src={EthLogo} alt="Ethereum" width={24} height={24} />
+              <Image src={BnbLogo} alt="BNB" width={24} height={24} />
+              <Image src={SolLogo} alt="Solana" width={24} height={24} />
+              <Image src={UsdtLogo} alt="USDT" width={24} height={24} />
+              <Image src={UsdcLogo} alt="USDC" width={24} height={24} />
+            </div>
           </div>
+
+          {selectedBillingMethod === "crypto" && (
+            <CryptoBillingForm onSuccess={onCancel} />
+          )}
         </li>
       </ul>
     </section>
