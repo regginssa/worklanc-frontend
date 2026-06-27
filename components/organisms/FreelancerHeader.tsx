@@ -127,7 +127,10 @@ export default function AuthorizedHeader() {
     manageFinancesNavs: [
       {
         items: [
-          { label: "Financial overview", href: "/nx/reports/overview" },
+          {
+            label: "Financial overview",
+            href: "/nx/reports/overview?tab=in-progress",
+          },
           { label: "Your reports", href: "#" },
           { label: "Billings and earnings", href: "#" },
           { label: "Transactions", href: "#" },
