@@ -48,7 +48,7 @@ export default function FreelancerSettingsLayout({
             <h2 className="text-2xl font-medium">Billing</h2>
             <ul className="text-sm text-slate-600">
               <li className="border-l border-slate-200 py-2 px-4 hover:text-black">
-                <Link href="#" className="">
+                <Link href="/nx/payments/deposit-methods" className="">
                   Billing & Payments
                 </Link>
               </li>

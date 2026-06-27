@@ -12,7 +12,7 @@ import ChrleLogo from "@/public/assets/svgs/icons/logos/chrle.png";
 import BabyuLogo from "@/public/assets/svgs/icons/logos/babyu.png";
 import { useState } from "react";
 import { PaymentMethod } from "@/types/payment";
-import { StripeBillingForm } from "../molecules";
+import { PaypalBillingForm, StripeBillingForm } from "../molecules";
 
 export default function AddBillingMethodSection({
   onCancel,
@@ -21,6 +21,8 @@ export default function AddBillingMethodSection({
 }) {
   const [selectedBillingMethod, setSelectedBillingMethod] =
     useState<PaymentMethod | null>(null);
+
+  const accountType = "talent";
 
   return (
     <section
@@ -64,21 +66,29 @@ export default function AddBillingMethodSection({
           {selectedBillingMethod === "card" && <StripeBillingForm />}
         </li>
 
-        <li className="flex items-center gap-2">
-          <Radio
-            checked={selectedBillingMethod === "paypal"}
-            onCheck={() => setSelectedBillingMethod("paypal")}
-          />
-          <Image src={PaypalLogo} alt="Paypal" width={80} height={20} />
+        <li className="space-y-6">
+          <div className="flex items-center gap-2">
+            <Radio
+              checked={selectedBillingMethod === "paypal"}
+              onCheck={() => setSelectedBillingMethod("paypal")}
+            />
+            <Image src={PaypalLogo} alt="Paypal" width={80} height={20} />
+          </div>
+
+          {selectedBillingMethod === "paypal" && (
+            <PaypalBillingForm onSuccess={onCancel} />
+          )}
         </li>
 
-        <li className="flex items-center gap-2">
-          <Radio
-            checked={selectedBillingMethod === "venmo"}
-            onCheck={() => setSelectedBillingMethod("venmo")}
-          />
-          <Image src={VenmoLogo} alt="Venmo" width={80} height={10} />
-        </li>
+        {accountType !== "talent" && (
+          <li className="flex items-center gap-2">
+            <Radio
+              checked={selectedBillingMethod === "venmo"}
+              onCheck={() => setSelectedBillingMethod("venmo")}
+            />
+            <Image src={VenmoLogo} alt="Venmo" width={80} height={10} />
+          </li>
+        )}
 
         <li className="flex items-center gap-2">
           <Radio
