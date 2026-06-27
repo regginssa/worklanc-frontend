@@ -32,6 +32,8 @@ function initializeAppKit() {
     metadata: appKitMetadata,
     features: {
       analytics: false,
+      socials: false,
+      email: false,
     },
   });
 

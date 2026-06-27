@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
     config.resolve.alias = {
       ...config.resolve.alias,
       canvas: false,
+      accounts: false,
+      "@wagmi/connectors": path.join(
+        process.cwd(),
+        "node_modules/@wagmi/connectors",
+      ),
       // pdfjs-dist/webpack.mjs avoids "Object.defineProperty called on non-object" in Next dev.
       "pdfjs-dist": path.join(
         process.cwd(),
