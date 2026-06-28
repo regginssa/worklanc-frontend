@@ -11,18 +11,29 @@ import BnbLogo from "@/public/assets/svgs/icons/logos/bnb.svg";
 import ChrleLogo from "@/public/assets/svgs/icons/logos/chrle.png";
 import BabyuLogo from "@/public/assets/svgs/icons/logos/babyu.png";
 import { useState } from "react";
-import { PaymentMethod } from "@/types/payment";
-import { PaypalBillingForm, StripeBillingForm, CryptoBillingForm } from "../molecules";
+import { PaymentMethod, type SavedCard } from "@/types/payment";
+import {
+  CardBillingSection,
+  CryptoBillingForm,
+  PaypalBillingForm,
+  SavedCardsListSkeleton,
+} from "../molecules";
 
 export default function AddBillingMethodSection({
   onCancel,
+  cards,
+  onCardsChange,
+  accountType,
+  isLoadingCards = false,
 }: {
   onCancel: () => void;
+  cards: SavedCard[];
+  onCardsChange: () => void | Promise<void>;
+  accountType: "talent" | "client";
+  isLoadingCards?: boolean;
 }) {
   const [selectedBillingMethod, setSelectedBillingMethod] =
-    useState<PaymentMethod | null>(null);
-
-  const accountType = "talent";
+    useState<PaymentMethod | null>(cards.length > 0 ? "card" : null);
 
   return (
     <section
@@ -63,7 +74,12 @@ export default function AddBillingMethodSection({
             </div>
           </div>
 
-          {selectedBillingMethod === "card" && <StripeBillingForm />}
+          {selectedBillingMethod === "card" &&
+            (isLoadingCards ? (
+              <SavedCardsListSkeleton />
+            ) : (
+              <CardBillingSection cards={cards} onCardsChange={onCardsChange} />
+            ))}
         </li>
 
         <li className="space-y-6">
