@@ -17,6 +17,7 @@ import {
   useAppKit,
   useAppKitAccount,
   useAppKitProvider,
+  useDisconnect,
 } from "@reown/appkit/react";
 import { Icon } from "@iconify/react";
 import { useEffect, useMemo, useState } from "react";
@@ -70,6 +71,7 @@ export default function CryptoBillingForm({
 function CryptoBillingFormContent({ onSuccess }: CryptoBillingFormProps) {
   const { open } = useAppKit();
   const { address, caipAddress, isConnected } = useAppKitAccount();
+  const { disconnect } = useDisconnect();
   const { walletProvider: solanaProvider } =
     useAppKitProvider<Provider>("solana");
   const { signMessageAsync } = useSignMessage();
@@ -80,6 +82,7 @@ function CryptoBillingFormContent({ onSuccess }: CryptoBillingFormProps) {
     useState<CryptoTokenId>("chrle");
   const [walletLabel, setWalletLabel] = useState("");
   const [loading, setLoading] = useState(false);
+  const [disconnecting, setDisconnecting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
   const selectedChain = getChainById(selectedChainId);
@@ -128,6 +131,23 @@ function CryptoBillingFormContent({ onSuccess }: CryptoBillingFormProps) {
   const handleSwitchNetwork = () => {
     setFormError(null);
     open({ view: "Networks" });
+  };
+
+  const handleDisconnectWallet = async () => {
+    setFormError(null);
+    setDisconnecting(true);
+
+    try {
+      await disconnect();
+      toast.success("Wallet disconnected.");
+    } catch (error) {
+      const messageText =
+        error instanceof Error ? error.message : "Unable to disconnect wallet.";
+      setFormError(messageText);
+      toast.error(messageText);
+    } finally {
+      setDisconnecting(false);
+    }
   };
 
   const handleSaveWallet = async () => {
@@ -187,19 +207,23 @@ function CryptoBillingFormContent({ onSuccess }: CryptoBillingFormProps) {
       if (result) {
         toast.success("Crypto wallet connected.");
         onSuccess?.();
+      } else {
+        setFormError("Unable to save wallet. Please try again.");
       }
     } catch (error) {
       const messageText =
         error instanceof Error ? error.message : "Unable to verify wallet.";
       setFormError(messageText);
-      toast.error("Unable to connect crypto wallet.");
+      if (!messageText.toLowerCase().includes("user rejected")) {
+        toast.error(messageText);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="space-y-8 rounded-2xl border border-slate-200 bg-slate-50/60 p-6">
+    <div className="space-y-8">
       <div className="space-y-2">
         <h4 className="text-lg font-medium">Connect a crypto wallet</h4>
         <p className="text-sm font-light text-slate-600">
@@ -318,9 +342,14 @@ function CryptoBillingFormContent({ onSuccess }: CryptoBillingFormProps) {
       </ul>
 
       {formError && (
-        <p className="text-sm text-red-600" role="alert">
-          {formError}
-        </p>
+        <div className="flex items-center gap-2 flex-1">
+          <Icon
+            icon="mdi:information-outline"
+            width={16}
+            className="text-red-500"
+          />
+          <p className="text-red-600 text-sm">{formError}</p>
+        </div>
       )}
 
       <div className="flex flex-wrap items-center justify-end gap-3">
@@ -354,6 +383,16 @@ function CryptoBillingFormContent({ onSuccess }: CryptoBillingFormProps) {
               loading={loading}
               disabled={!walletMatchesChain || loading}
               onClick={handleSaveWallet}
+            />
+            <Button
+              type="secondary"
+              label="Disconnect wallet"
+              icon="mdi:logout-variant"
+              size="medium"
+              classname="rounded-full!"
+              loading={disconnecting}
+              disabled={!isConnected || !address || disconnecting || loading}
+              onClick={handleDisconnectWallet}
             />
           </>
         )}

@@ -1,4 +1,5 @@
 import { request } from "./client";
+import { localRequest } from "./localClient";
 
 export async function createPayPalVaultSetupToken() {
   return request<{ vaultSetupToken: string }>("/payments/paypal/setup-token", {
@@ -21,7 +22,7 @@ export async function saveCryptoWallet(body: {
   message: string;
   signature: string;
 }) {
-  return request("/payments/crypto/wallets", {
+  return localRequest("/api/payments/crypto/wallets", {
     method: "POST",
     body: JSON.stringify(body),
   });
