@@ -1,5 +1,3 @@
-"use client";
-
 import { IconButton } from "@/components/atoms";
 import {
   formatCardNumber,
