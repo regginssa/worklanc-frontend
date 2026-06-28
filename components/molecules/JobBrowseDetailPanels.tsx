@@ -34,6 +34,7 @@ import type {
   JobInProgressItemType,
 } from "@/components/common";
 import ClientReviewListItemGroup from "./ClientReviewListItemGroup";
+import { useRouter } from "next/router";
 
 const mapJobsInProgress = (
   items: BrowseJobDetail["jobsInProgress"]
@@ -187,6 +188,7 @@ export default function JobBrowseDetailPanels(
 
   const { job, variant = "drawer" } = props;
   const [jobsInProgressOpen, setJobsInProgressOpen] = useState(true);
+  const router = useRouter();
   const skills = getJobSkills(job);
   const clientLocalTime = formatClientLocalTime(job.client);
   const historyCount = job.jobsInProgress.length + job.clientReviews.length;
@@ -414,6 +416,7 @@ export default function JobBrowseDetailPanels(
                 type="primary"
                 label="Buy Connects to apply"
                 classname="py-2.5! w-full! rounded-full! font-medium! text-sm!"
+                onClick={() => router.push("/nx/plans/connects/buy")}
               />
               <Button
                 type="outline"

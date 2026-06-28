@@ -3,6 +3,7 @@ import { FreelancerLayout } from "@/components/layouts";
 import CoinsIcon from "@/public/assets/svgs/icons/other/coins.svg";
 import EmptyIcon from "@/public/assets/svgs/icons/other/empty_teams.svg";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 const DATE_OPTIONS = [
   { label: "Last 7 days", value: "last-7-days" },
@@ -11,6 +12,7 @@ const DATE_OPTIONS = [
 ];
 
 export default function ConnectsHistory() {
+  const router = useRouter();
   return (
     <FreelancerLayout
       seo={{
@@ -30,6 +32,7 @@ export default function ConnectsHistory() {
               type="primary"
               label="Buy Connects"
               classname="py-2.5! px-5! font-medium! text-sm! rounded-full!"
+              onClick={() => router.push("/nx/plans/connects/buy")}
             />
           </div>
 

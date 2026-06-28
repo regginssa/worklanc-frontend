@@ -9,7 +9,7 @@ export interface FreelancerProfileConnectsProps {
 export default function FreelancerProfileConnects({
   count,
   detailsHref = "#",
-  buyHref = "#",
+  buyHref = "/nx/plans/connects/buy",
 }: FreelancerProfileConnectsProps) {
   return (
     <div className="space-y-4 rounded-2xl bg-slate-100 p-6">

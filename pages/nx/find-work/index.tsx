@@ -25,6 +25,7 @@ import {
 } from "@/components/molecules";
 import { TurnOnAvailabilityBadgeDialog } from "@/components/molecules";
 import { ExternalLink } from "lucide-react";
+import { useRouter } from "next/router";
 
 const tabs: TTabItem[] = [
   { label: "Best matches", value: "best_matches" },
@@ -111,7 +112,7 @@ export default function FindWork() {
   const [openEditCategoriesDialog, setOpenEditCategoriesDialog] =
     useState(false);
   const { user } = useAppSelector((state: RootState) => state.user);
-
+  const router = useRouter();
   const { data: talentProfileData } = useQuery({
     queryKey: ["talent-profile"],
     queryFn: TalentAPI.getProfile,
@@ -352,6 +353,7 @@ export default function FindWork() {
                   label="Buy Connects"
                   size="medium"
                   classname="w-full py-2! rounded-full! text-sm! font-medium!"
+                  onClick={() => router.push("/nx/plans/connects/buy")}
                 />
                 <Link href="#" className="underline text-sm cursor-pointer">
                   View details

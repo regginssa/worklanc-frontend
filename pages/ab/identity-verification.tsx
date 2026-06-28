@@ -4,17 +4,16 @@ import { Icon } from "@iconify/react";
 import { Button } from "@/components/atoms";
 import {
   Stepper,
-  StepperContent,
   StepperDescription,
   StepperIndicator,
   StepperItem,
   StepperNav,
-  StepperPanel,
   StepperSeparator,
   StepperTitle,
   StepperTrigger,
 } from "@/components/reui/stepper";
 import { CheckIcon, LoaderCircleIcon, ShieldCheck } from "lucide-react";
+import { useRouter } from "next/router";
 
 const steps = [
   {
@@ -35,6 +34,7 @@ const steps = [
 ];
 
 export default function IdentityVerification() {
+  const router = useRouter();
   return (
     <FreelancerSettingsLayout
       seo={{
@@ -90,6 +90,7 @@ export default function IdentityVerification() {
           type="primary"
           label="Buy connects to get IDV Badge"
           classname="py-2.5! px-10! font-medium! text-sm! rounded-md!"
+          onClick={() => router.push("/nx/plans/connects/buy")}
         />
 
         <div className="bg-slate-300 h-[1px] w-full"></div>
