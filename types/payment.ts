@@ -1,3 +1,5 @@
+import type { CryptoChainId, CryptoTokenId } from "@/lib/crypto/assets";
+
 export type PaymentMethod = "card" | "paypal" | "venmo" | "crypto";
 
 export type SavedCard = {
@@ -11,6 +13,23 @@ export type SavedCard = {
   billingName: string | null;
   isDefault: boolean;
   createdAt: string;
+};
+
+export type SavedCryptoWallet = {
+  uid: string;
+  type: "crypto";
+  provider: "crypto";
+  address: string;
+  chain: CryptoChainId;
+  token: CryptoTokenId;
+  label: string | null;
+  isDefault: boolean;
+  createdAt: string;
+};
+
+export type PaymentMethodsResponse = {
+  cards: SavedCard[];
+  cryptoWallets: SavedCryptoWallet[];
 };
 
 export const CARD_BRAND_ICONS: Record<string, string> = {
@@ -42,7 +61,7 @@ export function getCardBrandIcon(brand: string | null | undefined): string {
 }
 
 export function getEmptyBillingMethodsDescription(
-  accountType: "talent" | "client"
+  accountType: "talent" | "client",
 ): string {
   if (accountType === "talent") {
     return "You haven't set up any billing methods yet. Add a method so you can buy Connects or Subscribe to a plan when you're ready.";

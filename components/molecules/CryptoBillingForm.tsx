@@ -1,6 +1,5 @@
 import { Button, Input } from "@/components/atoms";
 import CryptoAssetDropdown from "@/components/molecules/CryptoAssetDropdown";
-import { saveCryptoWallet } from "@/lib/api/payments";
 import { reownProjectId } from "@/lib/appkit/config";
 import {
   CRYPTO_CHAINS,
@@ -12,6 +11,7 @@ import {
   isWalletOnChain,
   shortenAddress,
 } from "@/lib/crypto/assets";
+import type { SavedCryptoWallet } from "@/types/payment";
 import type { Provider } from "@reown/appkit-adapter-solana/react";
 import {
   useAppKit,
@@ -25,7 +25,17 @@ import { toast } from "sonner";
 import { useSignMessage } from "wagmi";
 
 interface CryptoBillingFormProps {
-  onSuccess?: () => void;
+  editingWallet?: SavedCryptoWallet | null;
+  onSave?: (body: {
+    address: string;
+    chain: string;
+    token: string;
+    label?: string;
+    message: string;
+    signature: string;
+  }) => boolean | void | Promise<boolean | void>;
+  onCancel?: () => void;
+  saveLabel?: string;
 }
 
 function bytesToBase64(bytes: Uint8Array) {
@@ -51,7 +61,10 @@ function buildVerificationMessage(params: {
 }
 
 export default function CryptoBillingForm({
-  onSuccess,
+  editingWallet = null,
+  onSave,
+  onCancel,
+  saveLabel = "Verify and save wallet",
 }: CryptoBillingFormProps) {
   if (!reownProjectId) {
     return (
@@ -65,10 +78,22 @@ export default function CryptoBillingForm({
     );
   }
 
-  return <CryptoBillingFormContent onSuccess={onSuccess} />;
+  return (
+    <CryptoBillingFormContent
+      editingWallet={editingWallet}
+      onSave={onSave}
+      onCancel={onCancel}
+      saveLabel={saveLabel}
+    />
+  );
 }
 
-function CryptoBillingFormContent({ onSuccess }: CryptoBillingFormProps) {
+function CryptoBillingFormContent({
+  editingWallet = null,
+  onSave,
+  onCancel,
+  saveLabel = "Verify and save wallet",
+}: CryptoBillingFormProps) {
   const { open } = useAppKit();
   const { address, caipAddress, isConnected } = useAppKitAccount();
   const { disconnect } = useDisconnect();
@@ -76,11 +101,13 @@ function CryptoBillingFormContent({ onSuccess }: CryptoBillingFormProps) {
     useAppKitProvider<Provider>("solana");
   const { signMessageAsync } = useSignMessage();
 
-  const [selectedChainId, setSelectedChainId] =
-    useState<CryptoChainId>("solana");
-  const [selectedTokenId, setSelectedTokenId] =
-    useState<CryptoTokenId>("chrle");
-  const [walletLabel, setWalletLabel] = useState("");
+  const [selectedChainId, setSelectedChainId] = useState<CryptoChainId>(
+    editingWallet?.chain ?? "solana",
+  );
+  const [selectedTokenId, setSelectedTokenId] = useState<CryptoTokenId>(
+    editingWallet?.token ?? "chrle",
+  );
+  const [walletLabel, setWalletLabel] = useState(editingWallet?.label ?? "");
   const [loading, setLoading] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -195,7 +222,7 @@ function CryptoBillingFormContent({ onSuccess }: CryptoBillingFormProps) {
         signature = await signMessageAsync({ message });
       }
 
-      const result = await saveCryptoWallet({
+      const saved = await onSave?.({
         address,
         chain: selectedChainId,
         token: selectedTokenId,
@@ -204,10 +231,7 @@ function CryptoBillingFormContent({ onSuccess }: CryptoBillingFormProps) {
         signature,
       });
 
-      if (result) {
-        toast.success("Crypto wallet connected.");
-        onSuccess?.();
-      } else {
+      if (onSave && saved === false) {
         setFormError("Unable to save wallet. Please try again.");
       }
     } catch (error) {
@@ -376,7 +400,7 @@ function CryptoBillingFormContent({ onSuccess }: CryptoBillingFormProps) {
             )}
             <Button
               type="primary"
-              label="Verify and save wallet"
+              label={saveLabel}
               icon="mdi:check-decagram-outline"
               size="medium"
               classname="rounded-full!"
@@ -384,6 +408,16 @@ function CryptoBillingFormContent({ onSuccess }: CryptoBillingFormProps) {
               disabled={!walletMatchesChain || loading}
               onClick={handleSaveWallet}
             />
+            {onCancel && (
+              <Button
+                type="secondary"
+                label="Cancel"
+                size="medium"
+                classname="rounded-full!"
+                disabled={loading}
+                onClick={onCancel}
+              />
+            )}
             <Button
               type="secondary"
               label="Disconnect wallet"

@@ -4,6 +4,7 @@ import { ed25519 } from "@noble/curves/ed25519";
 import { verifyMessage } from "viem";
 
 type SaveCryptoWalletBody = {
+  uid?: string;
   address: string;
   chain: "solana" | "ethereum" | "bnb";
   token: string;
@@ -43,20 +44,36 @@ async function verifyEvmSignature(
 async function forwardToBackend(
   req: NextApiRequest,
   body: SaveCryptoWalletBody,
+  method: "POST" | "PATCH",
 ) {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   if (!backendUrl) return null;
 
+  const endpoint =
+    method === "PATCH" && body.uid
+      ? `${backendUrl}/api/payments/methods/${body.uid}`
+      : `${backendUrl}/api/payments/crypto/wallets`;
+
+  const payload =
+    method === "PATCH"
+      ? {
+          address: body.address,
+          chain: body.chain,
+          token: body.token,
+          label: body.label,
+        }
+      : body;
+
   try {
-    const res = await fetch(`${backendUrl}/api/payments/crypto/wallets`, {
-      method: "POST",
+    const res = await fetch(endpoint, {
+      method,
       headers: {
         "Content-Type": "application/json",
         ...(req.headers.authorization
           ? { Authorization: req.headers.authorization }
           : {}),
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(payload),
     });
 
     const data = await res.json().catch(() => null);
@@ -68,56 +85,80 @@ async function forwardToBackend(
   return null;
 }
 
+async function verifyWalletBody(body: SaveCryptoWalletBody) {
+  const { address, chain, token, message, signature } = body;
+
+  if (!address || !chain || !token || !message || !signature) {
+    return { error: "Missing required wallet fields.", status: 400 as const };
+  }
+
+  if (!message.includes(address)) {
+    return {
+      error: "Signed message does not match wallet.",
+      status: 400 as const,
+    };
+  }
+
+  let verified = false;
+
+  if (chain === "solana") {
+    verified = await verifySolanaSignature(address, message, signature);
+  } else if (chain === "ethereum" || chain === "bnb") {
+    verified = await verifyEvmSignature(address, message, signature);
+  } else {
+    return { error: "Unsupported chain.", status: 400 as const };
+  }
+
+  if (!verified) {
+    return {
+      error: "Wallet signature verification failed.",
+      status: 401 as const,
+    };
+  }
+
+  return { error: null, status: 200 as const };
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  if (req.method !== "POST") {
+  if (req.method !== "POST" && req.method !== "PATCH") {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
   const body = req.body as SaveCryptoWalletBody;
-  const { address, chain, token, label, message, signature } = body;
 
-  if (!address || !chain || !token || !message || !signature) {
-    return res.status(400).json({ message: "Missing required wallet fields." });
-  }
-
-  if (!message.includes(address)) {
-    return res.status(400).json({ message: "Signed message does not match wallet." });
+  if (req.method === "PATCH" && !body.uid) {
+    return res.status(400).json({ message: "uid is required for updates." });
   }
 
   try {
-    let verified = false;
-
-    if (chain === "solana") {
-      verified = await verifySolanaSignature(address, message, signature);
-    } else if (chain === "ethereum" || chain === "bnb") {
-      verified = await verifyEvmSignature(address, message, signature);
-    } else {
-      return res.status(400).json({ message: "Unsupported chain." });
+    const verification = await verifyWalletBody(body);
+    if (verification.error) {
+      return res.status(verification.status).json({
+        message: verification.error,
+      });
     }
 
-    if (!verified) {
-      return res.status(401).json({ message: "Wallet signature verification failed." });
-    }
-
-    const backendResult = await forwardToBackend(req, body);
+    const backendResult = await forwardToBackend(req, body, req.method);
     if (backendResult) {
-      return res.status(200).json(backendResult);
+      return res.status(req.method === "POST" ? 201 : 200).json(backendResult);
     }
 
-    return res.status(200).json({
-      ok: true,
-      wallet: {
-        address,
-        chain,
-        token,
-        label: label ?? null,
-        verifiedAt: new Date().toISOString(),
-      },
-      message: "Wallet verified and saved.",
-    });
+    const wallet = {
+      uid: body.uid ?? "local",
+      type: "crypto" as const,
+      provider: "crypto" as const,
+      address: body.address,
+      chain: body.chain,
+      token: body.token,
+      label: body.label ?? null,
+      isDefault: true,
+      createdAt: new Date().toISOString(),
+    };
+
+    return res.status(req.method === "POST" ? 201 : 200).json({ wallet });
   } catch (error) {
     const messageText =
       error instanceof Error ? error.message : "Unable to verify wallet.";

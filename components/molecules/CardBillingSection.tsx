@@ -8,7 +8,7 @@ import {
 import type { SavedCard } from "@/types/payment";
 import { useState } from "react";
 import { toast } from "sonner";
-import SavedCardsList, { AddNewCardButton } from "./SavedCardsList";
+import SavedCardsList from "./SavedCardsList";
 import StripeBillingForm from "./StripeBillingForm";
 
 interface CardBillingSectionProps {
@@ -20,7 +20,6 @@ export default function CardBillingSection({
   cards,
   onCardsChange,
 }: CardBillingSectionProps) {
-  const [showAddForm, setShowAddForm] = useState(cards.length === 0);
   const [editingCard, setEditingCard] = useState<SavedCard | null>(null);
   const [deletingUid, setDeletingUid] = useState<string | null>(null);
 
@@ -32,7 +31,6 @@ export default function CardBillingSection({
     if (!result?.card) return;
 
     toast.success(editingCard ? "Card updated." : "Card saved.");
-    setShowAddForm(false);
     setEditingCard(null);
     await onCardsChange();
   };
@@ -47,38 +45,30 @@ export default function CardBillingSection({
     toast.success("Card removed.");
     if (editingCard?.uid === card.uid) {
       setEditingCard(null);
-      setShowAddForm(cards.length <= 1);
     }
     await onCardsChange();
   };
 
   const handleCancelForm = () => {
-    setShowAddForm(false);
     setEditingCard(null);
   };
 
-  if (showAddForm || editingCard) {
+  if (cards.length === 0 || editingCard) {
     return (
       <StripeBillingForm
         onSave={handleSave}
-        onCancel={cards.length > 0 || editingCard ? handleCancelForm : undefined}
+        onCancel={cards.length > 0 ? handleCancelForm : undefined}
         saveLabel={editingCard ? "Update card" : "Save"}
       />
     );
   }
 
   return (
-    <div className="space-y-4">
-      <SavedCardsList
-        cards={cards}
-        onEdit={(card) => {
-          setEditingCard(card);
-          setShowAddForm(false);
-        }}
-        onDelete={handleDelete}
-        deletingUid={deletingUid}
-      />
-      <AddNewCardButton onClick={() => setShowAddForm(true)} />
-    </div>
+    <SavedCardsList
+      cards={cards}
+      onEdit={setEditingCard}
+      onDelete={handleDelete}
+      deletingUid={deletingUid}
+    />
   );
 }

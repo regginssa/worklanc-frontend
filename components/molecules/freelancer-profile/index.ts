@@ -18,6 +18,7 @@ export { default as FreelancerProfileLanguages } from "./FreelancerProfileLangua
 export { default as FreelancerProfileVerifications } from "./FreelancerProfileVerifications";
 export { default as FreelancerProfileLicenses } from "./FreelancerProfileLicenses";
 export { default as FreelancerProfileSidebarEducation } from "./FreelancerProfileSidebarEducation";
+export { default as FreelancerProfilePageSkeleton } from "./FreelancerProfilePageSkeleton";
 
 export type { FreelancerProfileHeaderProps } from "./FreelancerProfileHeader";
 export type { FreelancerProfileTitleRateProps } from "./FreelancerProfileTitleRate";

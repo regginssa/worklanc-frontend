@@ -15,6 +15,7 @@ import {
   FreelancerProfileLanguages,
   FreelancerProfileOtherExperiences,
   FreelancerProfileOverview,
+  FreelancerProfilePageSkeleton,
   FreelancerProfilePortfolio,
   FreelancerProfileProjectCatalog,
   FreelancerProfilePromoteAds,
@@ -384,7 +385,21 @@ export default function FreelancerProfilePage() {
     setVideoIntroOpen(true);
   };
 
-  if (isLoading || !profile || !freelancer) {
+  if (isLoading) {
+    return (
+      <FreelancerLayout
+        seo={{
+          title: "Freelancer profile",
+          description: "",
+          url: `/freelancers/${uid ?? ""}`,
+        }}
+      >
+        <FreelancerProfilePageSkeleton />
+      </FreelancerLayout>
+    );
+  }
+
+  if (!profile || !freelancer) {
     return (
       <FreelancerLayout
         seo={{
@@ -394,7 +409,7 @@ export default function FreelancerProfilePage() {
         }}
       >
         <div className="rounded-3xl border border-slate-300 p-12 text-center text-slate-600">
-          {isLoading ? "Loading profile..." : "Profile not found"}
+          Profile not found
         </div>
       </FreelancerLayout>
     );

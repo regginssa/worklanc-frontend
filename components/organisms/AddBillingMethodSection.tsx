@@ -11,29 +11,44 @@ import BnbLogo from "@/public/assets/svgs/icons/logos/bnb.svg";
 import ChrleLogo from "@/public/assets/svgs/icons/logos/chrle.png";
 import BabyuLogo from "@/public/assets/svgs/icons/logos/babyu.png";
 import { useState } from "react";
-import { PaymentMethod, type SavedCard } from "@/types/payment";
+import {
+  PaymentMethod,
+  type SavedCard,
+  type SavedCryptoWallet,
+} from "@/types/payment";
 import {
   CardBillingSection,
-  CryptoBillingForm,
+  CryptoBillingSection,
   PaypalBillingForm,
   SavedCardsListSkeleton,
+  SavedCryptoWalletListSkeleton,
 } from "../molecules";
 
 export default function AddBillingMethodSection({
   onCancel,
   cards,
+  cryptoWallets,
   onCardsChange,
+  onCryptoChange,
   accountType,
-  isLoadingCards = false,
+  isLoading = false,
 }: {
   onCancel: () => void;
   cards: SavedCard[];
+  cryptoWallets: SavedCryptoWallet[];
   onCardsChange: () => void | Promise<void>;
+  onCryptoChange: () => void | Promise<void>;
   accountType: "talent" | "client";
-  isLoadingCards?: boolean;
+  isLoading?: boolean;
 }) {
   const [selectedBillingMethod, setSelectedBillingMethod] =
-    useState<PaymentMethod | null>(cards.length > 0 ? "card" : null);
+    useState<PaymentMethod | null>(
+      cards.length > 0
+        ? "card"
+        : cryptoWallets.length > 0
+          ? "crypto"
+          : null,
+    );
 
   return (
     <section
@@ -75,7 +90,7 @@ export default function AddBillingMethodSection({
           </div>
 
           {selectedBillingMethod === "card" &&
-            (isLoadingCards ? (
+            (isLoading ? (
               <SavedCardsListSkeleton />
             ) : (
               <CardBillingSection cards={cards} onCardsChange={onCardsChange} />
@@ -124,9 +139,15 @@ export default function AddBillingMethodSection({
             </div>
           </div>
 
-          {selectedBillingMethod === "crypto" && (
-            <CryptoBillingForm onSuccess={onCancel} />
-          )}
+          {selectedBillingMethod === "crypto" &&
+            (isLoading ? (
+              <SavedCryptoWalletListSkeleton />
+            ) : (
+              <CryptoBillingSection
+                wallets={cryptoWallets}
+                onWalletsChange={onCryptoChange}
+              />
+            ))}
         </li>
       </ul>
     </section>

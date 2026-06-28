@@ -8,9 +8,11 @@ import { Icon } from "@iconify/react";
 import { useState } from "react";
 import { AddBillingMethodSection } from "@/components/organisms";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchSavedCards } from "@/lib/api/payments";
+import { fetchPaymentMethods } from "@/lib/api/payments";
 import CardBillingSection from "@/components/molecules/CardBillingSection";
-import { SavedCardsListSkeleton } from "@/components/molecules";
+import CryptoBillingSection from "@/components/molecules/CryptoBillingSection";
+import { SavedCardsListSkeleton } from "@/components/molecules/SavedCardsList";
+import { SavedCryptoWalletListSkeleton } from "@/components/molecules/SavedCryptoWalletList";
 import { getEmptyBillingMethodsDescription } from "@/types/payment";
 
 export default function DepositMethods() {
@@ -20,19 +22,18 @@ export default function DepositMethods() {
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
-    queryKey: ["payment-methods", "cards"],
-    queryFn: fetchSavedCards,
+    queryKey: ["payment-methods"],
+    queryFn: fetchPaymentMethods,
   });
 
   const cards = data?.cards ?? [];
+  const cryptoWallets = data?.cryptoWallets ?? [];
 
-  const refreshCards = async () => {
-    await queryClient.invalidateQueries({
-      queryKey: ["payment-methods", "cards"],
-    });
+  const refreshPaymentMethods = async () => {
+    await queryClient.invalidateQueries({ queryKey: ["payment-methods"] });
   };
 
-  const hasBillingMethods = cards.length > 0;
+  const hasBillingMethods = cards.length > 0 || cryptoWallets.length > 0;
 
   return (
     <Layout accountType={"talent"}>
@@ -68,9 +69,11 @@ export default function DepositMethods() {
       {showAddBillingMethodSection ? (
         <AddBillingMethodSection
           cards={cards}
+          cryptoWallets={cryptoWallets}
           accountType={accountType}
-          isLoadingCards={isLoading}
-          onCardsChange={refreshCards}
+          isLoading={isLoading}
+          onCardsChange={refreshPaymentMethods}
+          onCryptoChange={refreshPaymentMethods}
           onCancel={() => setShowAddBillingMethodSection(false)}
         />
       ) : (
@@ -78,15 +81,34 @@ export default function DepositMethods() {
           <div className="mb-10">
             <h3 className="text-2xl font-medium">Billing methods</h3>
             {isLoading ? (
-              <div className="mt-6">
+              <div className="mt-6 space-y-6">
                 <SavedCardsListSkeleton />
+                <SavedCryptoWalletListSkeleton />
               </div>
             ) : hasBillingMethods ? (
-              <div className="mt-6">
-                <CardBillingSection
-                  cards={cards}
-                  onCardsChange={refreshCards}
-                />
+              <div className="mt-6 space-y-8">
+                {cards.length > 0 && (
+                  <div className="space-y-3">
+                    <p className="text-sm font-medium text-slate-700">
+                      Debit or credit card
+                    </p>
+                    <CardBillingSection
+                      cards={cards}
+                      onCardsChange={refreshPaymentMethods}
+                    />
+                  </div>
+                )}
+                {cryptoWallets.length > 0 && (
+                  <div className="space-y-3">
+                    <p className="text-sm font-medium text-slate-700">
+                      Cryptocurrency
+                    </p>
+                    <CryptoBillingSection
+                      wallets={cryptoWallets}
+                      onWalletsChange={refreshPaymentMethods}
+                    />
+                  </div>
+                )}
               </div>
             ) : (
               <p className="text-sm text-slate-600 mt-4">

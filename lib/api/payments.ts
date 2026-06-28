@@ -1,9 +1,13 @@
 import { request } from "./client";
 import { localRequest } from "./localClient";
-import type { SavedCard } from "@/types/payment";
+import type {
+  PaymentMethodsResponse,
+  SavedCard,
+  SavedCryptoWallet,
+} from "@/types/payment";
 
-export async function fetchSavedCards() {
-  return request<{ cards: SavedCard[] }>("/payments/methods");
+export async function fetchPaymentMethods() {
+  return request<PaymentMethodsResponse>("/payments/methods");
 }
 
 export async function saveStripePaymentMethod(paymentMethodId: string) {
@@ -29,6 +33,43 @@ export async function deletePaymentMethod(uid: string) {
   });
 }
 
+export async function saveCryptoWallet(body: {
+  address: string;
+  chain: string;
+  token: string;
+  label?: string;
+  message: string;
+  signature: string;
+}) {
+  return localRequest<{ wallet: SavedCryptoWallet }>(
+    "/api/payments/crypto/wallets",
+    {
+      method: "POST",
+      body: JSON.stringify(body),
+    },
+  );
+}
+
+export async function updateCryptoWallet(
+  uid: string,
+  body: {
+    address: string;
+    chain: string;
+    token: string;
+    label?: string;
+    message: string;
+    signature: string;
+  },
+) {
+  return localRequest<{ wallet: SavedCryptoWallet }>(
+    "/api/payments/crypto/wallets",
+    {
+      method: "PATCH",
+      body: JSON.stringify({ uid, ...body }),
+    },
+  );
+}
+
 export async function createPayPalVaultSetupToken() {
   return request<{ vaultSetupToken: string }>("/payments/paypal/setup-token", {
     method: "POST",
@@ -39,19 +80,5 @@ export async function savePayPalPaymentMethod(vaultSetupToken: string) {
   return request("/payments/paypal/save", {
     method: "POST",
     body: JSON.stringify({ vaultSetupToken }),
-  });
-}
-
-export async function saveCryptoWallet(body: {
-  address: string;
-  chain: string;
-  token: string;
-  label?: string;
-  message: string;
-  signature: string;
-}) {
-  return localRequest("/api/payments/crypto/wallets", {
-    method: "POST",
-    body: JSON.stringify(body),
   });
 }
