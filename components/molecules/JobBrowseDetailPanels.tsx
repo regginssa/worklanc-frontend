@@ -35,6 +35,8 @@ import type {
 } from "@/components/common";
 import ClientReviewListItemGroup from "./ClientReviewListItemGroup";
 import { useRouter } from "next/router";
+import { useAppSelector } from "@/store/hooks";
+import { selectConnectsBalance } from "@/store/slices/userSlice";
 
 const mapJobsInProgress = (
   items: BrowseJobDetail["jobsInProgress"]
@@ -182,6 +184,7 @@ type JobBrowseDetailPanelsProps =
 export default function JobBrowseDetailPanels(
   props: JobBrowseDetailPanelsProps
 ) {
+  const balance = useAppSelector(selectConnectsBalance);
   if (props.loading) {
     return <JobBrowseDetailPanelsSkeleton variant={props.variant} />;
   }
@@ -395,26 +398,28 @@ export default function JobBrowseDetailPanels(
 
         <div className="flex-1">
           <div className="p-8 space-y-8">
-            <div className="bg-slate-100 rounded-lg p-4 flex items-start gap-2">
-              <Icon icon="grommet-icons:announce" className="size-6" />
-              <div className="space-y-1 text-sm flex-1">
-                <p>
-                  You'll need Connects to bid. They're like credits that show
-                  clients you're serious.
-                </p>
-                <Link
-                  href="#"
-                  className="underline cursor-pointer hover:text-blue-600"
-                >
-                  Learn more
-                </Link>
+            {balance === 0 && (
+              <div className="bg-slate-100 rounded-lg p-4 flex items-start gap-2">
+                <Icon icon="grommet-icons:announce" className="size-6" />
+                <div className="space-y-1 text-sm flex-1">
+                  <p>
+                    You'll need Connects to bid. They're like credits that show
+                    clients you're serious.
+                  </p>
+                  <Link
+                    href="#"
+                    className="underline cursor-pointer hover:text-blue-600"
+                  >
+                    Learn more
+                  </Link>
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="space-y-4">
               <Button
                 type="primary"
-                label="Buy Connects to apply"
+                label={balance === 0 ? "Buy Connects to apply" : "Apply"}
                 classname="py-2.5! w-full! rounded-full! font-medium! text-sm!"
                 onClick={() => router.push("/nx/plans/connects/buy")}
               />
@@ -453,7 +458,7 @@ export default function JobBrowseDetailPanels(
               </div>
               <div className="flex items-center gap-1">
                 <span>Available Connects:</span>
-                <span className="text-slate-900 font-medium">0</span>
+                <span className="text-slate-900 font-medium">{balance}</span>
               </div>
             </div>
 
