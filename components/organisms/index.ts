@@ -9,3 +9,4 @@ export { default as AuthorizedFooter } from "./AuthorizedFooter";
 export { default as AddBillingMethodSection } from "./AddBillingMethodSection";
 export { default as CheckoutBillingMethodSection } from "./CheckoutBillingMethodSection";
 export { default as TalentFilter } from "./TalentFilter";
+export { default as JobFilter } from "./JobFilter";

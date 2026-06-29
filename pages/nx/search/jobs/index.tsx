@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { useRouter } from "next/router";
 import { Icon } from "@iconify/react";
 import { JobListItemGroup } from "@/components/molecules";
+import { JobFilter } from "@/components/organisms";
 
 const sortByOptions = [
   { label: "Sort by: Best Matches", value: "best_matches" },
@@ -58,7 +59,9 @@ export default function SearchJobsPage() {
 
       <div className="flex items-start gap-4">
         {/* FILTERS */}
-        <div className="w-1/4"></div>
+        <div className="w-1/4">
+          <JobFilter />
+        </div>
 
         <div className="flex-1">
           <div className="flex items-center justify-between pb-4 border-b border-slate-300">
