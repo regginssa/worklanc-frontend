@@ -1,52 +1,24 @@
-import {
-  appKitMetadata,
-  appKitNetworks,
-  reownProjectId,
-  wagmiAdapter,
-} from "@/lib/appkit/config";
-import { SolanaAdapter } from "@reown/appkit-adapter-solana/react";
-import { createAppKit } from "@reown/appkit/react";
+"use client";
+
+import { initAppKit } from "@/lib/appkit/init";
+import { wagmiAdapter } from "@/lib/appkit/config";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { WagmiProvider } from "wagmi";
+
+initAppKit();
 
 const queryClient = new QueryClient();
 
-let appKitInitialized = false;
-
-function initializeAppKit() {
-  if (typeof window === "undefined" || !reownProjectId || !wagmiAdapter) {
-    return;
-  }
-
-  if (appKitInitialized) {
-    return;
-  }
-
-  const solanaAdapter = new SolanaAdapter();
-
-  createAppKit({
-    adapters: [wagmiAdapter, solanaAdapter],
-    networks: appKitNetworks,
-    projectId: reownProjectId,
-    metadata: appKitMetadata,
-    features: {
-      analytics: false,
-      socials: false,
-      email: false,
-    },
-  });
-
-  appKitInitialized = true;
-}
-
 export default function AppKitProvider({ children }: { children: ReactNode }) {
-  const [ready] = useState(() => {
-    initializeAppKit();
-    return true;
-  });
+  const [mounted, setMounted] = useState(false);
 
-  if (!ready || !wagmiAdapter?.wagmiConfig) {
+  useEffect(() => {
+    initAppKit();
+    setMounted(true);
+  }, []);
+
+  if (!mounted || !wagmiAdapter?.wagmiConfig) {
     return <>{children}</>;
   }
 

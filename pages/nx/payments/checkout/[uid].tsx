@@ -24,7 +24,10 @@ import { formatCentsToUsd } from "@/types/connect";
 import { getPromoCodeFormatError } from "@/lib/validation/promoCode";
 import type { CheckoutBillingSelection, PaymentMethod } from "@/types/payment";
 import type { CryptoTokenId } from "@/lib/crypto/assets";
-import { useCryptoCheckoutPayment } from "@/hooks/useCryptoCheckoutPayment";
+import CryptoCheckoutPaymentHost, {
+  type CryptoCheckoutPaymentHandle,
+  type CryptoCheckoutPaymentStage,
+} from "@/components/molecules/connects/CryptoCheckoutPaymentHost";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAppDispatch } from "@/store/hooks";
 import { setConnectsBalance } from "@/store/slices/userSlice";
@@ -32,7 +35,7 @@ import { Icon } from "@iconify/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { formatDate } from "date-fns";
 import CoinsIcon from "@/public/assets/svgs/icons/other/coins.svg";
@@ -42,7 +45,14 @@ export default function CheckoutPage() {
   const { uid } = router.query as { uid?: string };
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
-  const { sendPayment: sendCryptoCheckoutPayment } = useCryptoCheckoutPayment();
+  const cryptoPaymentApiRef = useRef<CryptoCheckoutPaymentHandle | null>(null);
+  const [isCryptoWalletConnected, setIsCryptoWalletConnected] = useState(false);
+  const [isCryptoPaymentReady, setIsCryptoPaymentReady] = useState(false);
+
+  const handleCryptoPaymentReady = useCallback((api: CryptoCheckoutPaymentHandle) => {
+    cryptoPaymentApiRef.current = api;
+    setIsCryptoPaymentReady(true);
+  }, []);
 
   const [selectedBillingMethod, setSelectedBillingMethod] =
     useState<PaymentMethod>("card");
@@ -56,6 +66,11 @@ export default function CheckoutPage() {
   const [promoCode, setPromoCode] = useState("");
   const [promoError, setPromoError] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [cryptoPaymentStage, setCryptoPaymentStage] =
+    useState<CryptoCheckoutPaymentStage>("idle");
+  const [cryptoPaymentMessage, setCryptoPaymentMessage] = useState<string | null>(
+    null,
+  );
 
   const { data: checkoutData, isLoading: isCheckoutLoading } = useQuery({
     queryKey: ["connect-checkout", uid],
@@ -163,6 +178,19 @@ export default function CheckoutPage() {
   }, [checkout?.promoCode]);
 
   useEffect(() => {
+    if (selectedBillingMethod !== "crypto") return;
+    setCryptoPaymentStage("idle");
+    setCryptoPaymentMessage(null);
+  }, [selectedBillingMethod, billingSelection.wallet?.uid, billingSelection.cryptoTokenId]);
+
+  useEffect(() => {
+    if (selectedBillingMethod === "crypto") return;
+    cryptoPaymentApiRef.current = null;
+    setIsCryptoPaymentReady(false);
+    setIsCryptoWalletConnected(false);
+  }, [selectedBillingMethod]);
+
+  useEffect(() => {
     if (!checkoutData) return;
 
     if (
@@ -213,6 +241,11 @@ export default function CheckoutPage() {
   };
 
   const isPromoApplyDisabled = isApplyingPromo || Boolean(promoError);
+  const isCryptoPayDisabled =
+    selectedBillingMethod === "crypto" &&
+    (!billingSelection.wallet ||
+      !isCryptoWalletConnected ||
+      !isCryptoPaymentReady);
 
   useEffect(() => {
     if (!uid || isCheckoutLoading) return;
@@ -265,6 +298,8 @@ export default function CheckoutPage() {
       if (!billingSelection.wallet || !billingSelection.cryptoTokenId) return;
 
       setIsPaying(true);
+      setCryptoPaymentStage("preparing");
+      setCryptoPaymentMessage("Preparing a secure quote...");
 
       try {
         const prepared = await prepareConnectCheckoutCryptoPayment(uid, {
@@ -273,7 +308,8 @@ export default function CheckoutPage() {
         });
 
         if (!prepared?.payment) {
-          setIsPaying(false);
+          setCryptoPaymentStage("failed");
+          setCryptoPaymentMessage("Unable to prepare crypto payment. Please try again.");
           return;
         }
 
@@ -286,11 +322,24 @@ export default function CheckoutPage() {
           return;
         }
 
+        setCryptoPaymentStage("awaiting_approval");
+        setCryptoPaymentMessage("Approve this payment in your wallet.");
+
+        const sendCryptoCheckoutPayment =
+          cryptoPaymentApiRef.current?.sendPayment;
+        if (!sendCryptoCheckoutPayment) {
+          throw new Error(
+            "Wallet payment module is not ready. Wait a moment and try again.",
+          );
+        }
+
         const txHash = await sendCryptoCheckoutPayment(
           prepared.payment,
           billingSelection.cryptoTokenId as CryptoTokenId,
         );
 
+        setCryptoPaymentStage("verifying");
+        setCryptoPaymentMessage("Transaction sent. Verifying on-chain confirmation...");
         toast.message("Payment sent. Waiting for on-chain confirmation...");
 
         let confirmed = false;
@@ -303,6 +352,8 @@ export default function CheckoutPage() {
               dispatch(setConnectsBalance(result.connectsBalance));
             }
             confirmed = true;
+            setCryptoPaymentStage("confirmed");
+            setCryptoPaymentMessage("Payment confirmed. Connects credited.");
             await router.replace("/nx/find-work");
             break;
           }
@@ -313,6 +364,10 @@ export default function CheckoutPage() {
         }
 
         if (!confirmed) {
+          setCryptoPaymentStage("verifying");
+          setCryptoPaymentMessage(
+            "Payment submitted. We will credit connects once blockchain confirmation completes.",
+          );
           toast.message(
             "Payment submitted. Connects will be credited once the transaction is confirmed.",
           );
@@ -322,6 +377,8 @@ export default function CheckoutPage() {
           error instanceof Error
             ? error.message
             : "Unable to complete crypto payment.";
+        setCryptoPaymentStage("failed");
+        setCryptoPaymentMessage(message);
         toast.error(message);
       } finally {
         setIsPaying(false);
@@ -555,6 +612,15 @@ export default function CheckoutPage() {
           </p>
 
           <div className="space-y-4 text-center">
+            {selectedBillingMethod === "crypto" && (
+              <CryptoCheckoutPaymentHost
+                selectedWallet={billingSelection.wallet}
+                stage={cryptoPaymentStage}
+                message={cryptoPaymentMessage}
+                onReady={handleCryptoPaymentReady}
+                onConnectionChange={setIsCryptoWalletConnected}
+              />
+            )}
             <Button
               type="primary"
               label="Buy Connects"
@@ -564,7 +630,8 @@ export default function CheckoutPage() {
                 !billingSelection.isReady ||
                 isPaying ||
                 estimatedTotalUsd === 0 ||
-                estimatedTotalLabel === "Calculating..."
+                estimatedTotalLabel === "Calculating..." ||
+                isCryptoPayDisabled
               }
               onClick={handlePay}
             />

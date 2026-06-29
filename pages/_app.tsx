@@ -1,4 +1,5 @@
 import "@/styles/globals.css";
+import "@/lib/appkit/init";
 import type { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import MainLayout from "@/components/layouts/MainLayout";
