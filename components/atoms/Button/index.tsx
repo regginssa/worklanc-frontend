@@ -98,6 +98,7 @@ const Button: React.FC<ButtonProps> = ({
         } ${sizeClasses[size]}`}
         disabled={disabled || loading}
         onClick={onClick}
+        type="button"
       >
         {icon && !loading && <Icon icon={icon} className="w-5 h-5" />}
         {label}
@@ -136,6 +137,7 @@ const Button: React.FC<ButtonProps> = ({
         className={`p-2 rounded-full hover:bg-[#252525] transition-all duration-300 ease-in-out cursor-pointer ${classname}`}
         disabled={disabled || loading}
         onClick={onClick}
+        type="button"
       >
         <Icon
           icon={icon}
@@ -157,6 +159,7 @@ const Button: React.FC<ButtonProps> = ({
         }`}
         disabled={disabled || loading}
         onClick={onClick}
+        type="button"
       >
         {icon && !loading && <Icon icon={icon} className="w-5 h-5" />}
         {label}

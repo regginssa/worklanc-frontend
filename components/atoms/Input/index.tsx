@@ -92,13 +92,13 @@ const Input: React.FC<InputProps> = ({
       {(subLabel || error) && (
         <div className="flex items-center justify-between gap-6">
           {!!error && (
-            <div className="flex items-center gap-2 flex-1">
+            <div className="flex items-start gap-2 flex-1">
               <Icon
                 icon="mdi:information-outline"
                 width={16}
                 className="text-red-500"
               />
-              <p className="text-red-600 text-sm">{error}</p>
+              <p className="text-red-600 text-sm flex-1">{error}</p>
             </div>
           )}
           {subLabel && <p className="text-xs text-slate-600">{subLabel}</p>}

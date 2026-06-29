@@ -1,26 +1,117 @@
+"use client";
+
 import { Button, Dropdown, Input } from "@/components/atoms";
 import { FreelancerLayout } from "@/components/layouts";
+import { ConnectBuyPageSkeleton } from "@/components/molecules/connects/ConnectCheckoutSkeletons";
+import { getPromoCodeFormatError } from "@/lib/validation/promoCode";
+import {
+  createConnectCheckout,
+  fetchConnectBundles,
+} from "@/lib/api/connects";
+import {
+  formatCentsToUsd,
+  formatConnectBundleLabel,
+  type ConnectBundleOption,
+} from "@/types/connect";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { useRouter } from "next/router";
-import { ArrowRight, Star } from "lucide-react";
-import { useState } from "react";
 import { addYears, formatDate } from "date-fns";
-
-const CONNECT_OPTIONS = [
-  { label: "100 for $15", value: 100 },
-  { label: "200 for $25", value: 200 },
-  { label: "300 for $35", value: 300 },
-  { label: "400 for $45", value: 400 },
-  { label: "500 for $55", value: 500 },
-];
+import { ArrowRight, Star } from "lucide-react";
+import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 export default function Buy() {
-  const [formData, setFormData] = useState({
-    connectAmount: 100,
-    promoCode: "",
-  });
   const router = useRouter();
+  const [connectAmount, setConnectAmount] = useState<number | null>(null);
+  const [promoCode, setPromoCode] = useState("");
+  const [appliedPromoCode, setAppliedPromoCode] = useState<string | null>(null);
+  const [promoError, setPromoError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["connect-bundles"],
+    queryFn: fetchConnectBundles,
+  });
+
+  const bundles = data?.bundles ?? [];
+
+  const selectedBundle = useMemo<ConnectBundleOption | undefined>(() => {
+    if (bundles.length === 0) return undefined;
+    const amount = connectAmount ?? bundles[0]?.connectAmount;
+    return bundles.find((bundle: ConnectBundleOption) => bundle.connectAmount === amount) ?? bundles[0];
+  }, [bundles, connectAmount]);
+
+  const dropdownOptions = useMemo(
+    () =>
+      bundles.map((bundle: ConnectBundleOption) => ({
+        label: formatConnectBundleLabel(bundle),
+        value: bundle.connectAmount,
+      })),
+    [bundles],
+  );
+
+  const handleApplyPromo = () => {
+    const trimmed = promoCode.trim();
+    const formatError = getPromoCodeFormatError(promoCode);
+
+    if (formatError) {
+      setPromoError(formatError);
+      return;
+    }
+
+    setPromoError(null);
+
+    if (!trimmed) {
+      setAppliedPromoCode(null);
+      toast.success("Promo code removed.");
+      return;
+    }
+
+    setAppliedPromoCode(trimmed.toUpperCase());
+    toast.success("Promo code applied.");
+  };
+
+  const handlePromoChange = (value: string) => {
+    setPromoCode(value);
+    setPromoError(getPromoCodeFormatError(value));
+  };
+
+  const handleBuyConnects = async () => {
+    if (!selectedBundle) return;
+
+    setIsSubmitting(true);
+
+    const result = await createConnectCheckout({
+      connectAmount: selectedBundle.connectAmount,
+      promoCode: appliedPromoCode ?? undefined,
+    });
+
+    setIsSubmitting(false);
+
+    if (!result?.checkout?.uid) return;
+
+    if (result.reused) {
+      toast.message("Resuming your previous checkout.");
+    }
+
+    await router.push(`/nx/payments/checkout/${result.checkout.uid}`);
+  };
+
+  if (isLoading) {
+    return (
+      <FreelancerLayout
+        seo={{
+          title: "Buy Connects - Worklanc",
+          description: "Buy Connects - Worklanc",
+          url: "nx/plans/connects/buy",
+        }}
+      >
+        <ConnectBuyPageSkeleton />
+      </FreelancerLayout>
+    );
+  }
 
   return (
     <FreelancerLayout
@@ -65,22 +156,27 @@ export default function Buy() {
           label="Select the amount to buy"
           labelClassName="mb-2"
           name="amount"
-          options={CONNECT_OPTIONS}
-          value={formData.connectAmount}
+          options={dropdownOptions}
+          value={selectedBundle?.connectAmount}
           classname="w-1/3!"
-          onSelect={(value) =>
-            setFormData({ ...formData, connectAmount: value })
-          }
+          disabled={dropdownOptions.length === 0}
+          onSelect={(value) => setConnectAmount(Number(value))}
         />
 
         <div className="text-sm">
           <p>Your account will be charged</p>
-          <p className="mt-2 text-slate-600">$15.00</p>
+          <p className="mt-2 text-slate-600">
+            {selectedBundle
+              ? formatCentsToUsd(selectedBundle.priceCents)
+              : "--"}
+          </p>
         </div>
 
         <div className="text-sm">
           <p>Your new Connects balance will be</p>
-          <p className="mt-2 text-slate-600">100</p>
+          <p className="mt-2 text-slate-600">
+            {selectedBundle?.connectAmount ?? "--"}
+          </p>
         </div>
 
         <div className="text-sm">
@@ -90,26 +186,37 @@ export default function Buy() {
           </p>
         </div>
 
-        <div className="flex items-end gap-6">
-          <Input
-            type="text"
-            label="Promo code"
-            name="promoCode"
-            placeholder="Enter code"
-            classname="w-1/3!"
-            labelClassName="text-sm! mb-2! font-medium!"
-            value={formData.promoCode}
-            onChange={(e: any) =>
-              setFormData({ ...formData, promoCode: e.target.value })
-            }
-          />
+        <div className="space-y-2">
+          <div className="flex items-end gap-6">
+            <Input
+              type="text"
+              label="Promo code"
+              name="promoCode"
+              placeholder="Enter code"
+              classname="w-1/3!"
+              labelClassName="text-sm! mb-2! font-medium!"
+              value={promoCode}
+              error={promoError ?? undefined}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handlePromoChange(e.target.value)
+              }
+            />
 
-          <Button
-            type="outline"
-            label="Apply"
-            size="medium"
-            classname="py-0! h-10! px-5! rounded-full! text-sm! font-medium!"
-          />
+            <Button
+              type="outline"
+              label="Apply"
+              size="medium"
+              classname="py-0! h-10! px-5! rounded-full! text-sm! font-medium!"
+              disabled={Boolean(promoError)}
+              onClick={handleApplyPromo}
+            />
+          </div>
+
+          {appliedPromoCode && (
+            <p className="text-sm text-green-700">
+              Promo code applied: {appliedPromoCode}
+            </p>
+          )}
         </div>
 
         <div className="flex items-center gap-2 text-sm">
@@ -123,7 +230,7 @@ export default function Buy() {
         </div>
 
         <p className="text-sm text-slate-600">
-          You're authorizing Worklanc to charge your account. If you have
+          You&apos;re authorizing Worklanc to charge your account. If you have
           sufficient funds, we will withdraw from your account balance. If not,
           the full amount will be charged to your primary billing method.{" "}
           <Link href="#" className="underline text-slate-900">
@@ -133,8 +240,10 @@ export default function Buy() {
 
         <div className="flex items-center justify-end">
           <motion.button
+            type="button"
             whileTap={{ scale: 0.95 }}
             className="text-blue-600 cursor-pointer text-sm font-medium py-2.5! px-5!"
+            onClick={() => router.push("/nx/find-work")}
           >
             Cancel
           </motion.button>
@@ -143,7 +252,9 @@ export default function Buy() {
             type="primary"
             label="Buy Connects"
             classname="py-2.5! px-5! font-medium! text-sm! rounded-full!"
-            onClick={() => router.push(`/nx/payments/checkout/1`)}
+            loading={isSubmitting}
+            disabled={!selectedBundle || isSubmitting}
+            onClick={handleBuyConnects}
           />
         </div>
       </div>

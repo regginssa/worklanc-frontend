@@ -120,7 +120,9 @@ export default function CheckoutCryptoBillingSection({
       {selectedWallet && !showAddForm && tokenOptions.length > 0 && (
         <CryptoAssetDropdown
           label="Pay with"
-          subLabel={`Choose the token to pay with on ${getChainById(selectedWallet.chain)?.label ?? selectedWallet.chain}.`}
+          subLabel={`Choose the token to pay with on ${
+            getChainById(selectedWallet.chain)?.label ?? selectedWallet.chain
+          }.`}
           name="checkoutCryptoToken"
           placeholder="Select a token"
           options={tokenOptions}
@@ -144,16 +146,16 @@ export default function CheckoutCryptoBillingSection({
       {wallets.length > 0 &&
         wallets.length < CRYPTO_CHAINS.length &&
         !showAddForm && (
-        <motion.button
-          type="button"
-          whileTap={{ scale: 0.95 }}
-          className="text-blue-600 cursor-pointer hover:underline text-sm font-medium flex items-center gap-2"
-          onClick={() => setShowAddForm(true)}
-        >
-          <Icon icon="mdi:plus" className="size-5" />
-          Add new wallet
-        </motion.button>
-      )}
+          <motion.button
+            type="button"
+            whileTap={{ scale: 0.95 }}
+            className="text-blue-600 cursor-pointer hover:underline text-sm font-medium flex items-center gap-2"
+            onClick={() => setShowAddForm(true)}
+          >
+            <Icon icon="mdi:plus" className="size-5" />
+            Add new wallet
+          </motion.button>
+        )}
     </div>
   );
 }
