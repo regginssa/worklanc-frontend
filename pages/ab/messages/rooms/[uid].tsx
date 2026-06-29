@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { Eye, Search } from "lucide-react";
 import { useRouter } from "next/router";
 import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
@@ -13,6 +13,10 @@ import { Button, IconButton, SEO } from "@/components/atoms";
 import { MOCK_CONTACTS } from "@/static/data/contacts";
 import { MOCK_MESSAGES } from "@/static/data/messages";
 import { IconLabel } from "@/components/common";
+import Image from "next/image";
+import UserPic from "@/public/assets/webps/avatars/man2.webp";
+import { formatDate } from "date-fns";
+import Link from "next/link";
 
 export default function RoomPage() {
   const [openSafe, setOpenSafe] = useState(true);
@@ -188,7 +192,45 @@ export default function RoomPage() {
             )}
           </div>
 
-          <div className="h-full min-h-0 w-1/4 shrink-0 overflow-hidden rounded-lg bg-slate-50"></div>
+          <div className="h-full min-h-0 w-1/4 shrink-0 overflow-hidden rounded-lg bg-slate-50 py-10 relative">
+            <button className="absolute text-slate-600 top-4 right-4 cursor-pointer hover:text-blue-600">
+              <Icon icon="mdi:close" className="size-6" />
+            </button>
+
+            <div className="flex flex-col items-center justify-center gap-4">
+              <div className="relative size-[60px]">
+                <Image
+                  src={UserPic}
+                  alt="User"
+                  className="rounded-full object-cover size-[60px]"
+                />
+                <span className="absolute top-0 left-1 size-3 rounded-full bg-green-600 border border-white"></span>
+              </div>
+
+              <div className="space-y-1 text-center">
+                <h3 className="text-xl font-medium">Marco N.</h3>
+                <div className="flex items-center gap-2 text-slate-600">
+                  <Icon icon="mdi:building" className="size-4" />
+                  <p className="text-sm font-light">
+                    Gold Lake Tech International
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-sm font-light text-slate-600">
+                {formatDate(new Date(), "HH:mm a")} local time
+              </p>
+
+              <Link
+                href="#"
+                target="_blank"
+                className="flex items-center justify-center gap-2 text-blue-600 cursor-pointer hover:underline"
+              >
+                <Eye className="size-4" />
+                <span className="text-sm font-light">View proposal</span>
+              </Link>
+            </div>
+          </div>
         </main>
       </div>
 
