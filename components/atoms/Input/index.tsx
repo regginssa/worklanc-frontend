@@ -17,6 +17,7 @@ interface InputProps {
   maxLength?: number;
   loading?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onEnter?: () => void;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -35,6 +36,7 @@ const Input: React.FC<InputProps> = ({
   disabled,
   maxLength,
   loading,
+  onEnter,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -71,6 +73,11 @@ const Input: React.FC<InputProps> = ({
           onChange={(e: any) => onChange(e)}
           disabled={disabled}
           maxLength={maxLength}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && onEnter) {
+              onEnter();
+            }
+          }}
         />
 
         {loading && (

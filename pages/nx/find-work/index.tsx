@@ -112,7 +112,9 @@ export default function FindWork() {
   const [openJobPreferenceDialog, setOpenJobPreferenceDialog] = useState(false);
   const [openEditCategoriesDialog, setOpenEditCategoriesDialog] =
     useState(false);
-  const { user, status: authStatus } = useAppSelector((state: RootState) => state.user);
+  const { user, status: authStatus } = useAppSelector(
+    (state: RootState) => state.user
+  );
   const router = useRouter();
   const { data: talentProfileData } = useQuery({
     queryKey: ["talent-profile"],
@@ -158,6 +160,12 @@ export default function FindWork() {
       ),
     },
   ];
+
+  const handleSearchEnter = () => {
+    if (search.trim().length > 0) {
+      router.push(`/nx/search/jobs?keyword=${search}`);
+    }
+  };
 
   return (
     <FreelancerLayout
@@ -229,6 +237,7 @@ export default function FindWork() {
               icon="mdi:search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onEnter={handleSearchEnter}
             />
 
             <Button

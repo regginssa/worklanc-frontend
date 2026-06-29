@@ -11,6 +11,7 @@ import {
   getJobFeedStatusLabel,
   getJobSkills,
 } from "@/utils/jobBrowseDisplay";
+import { IconButton } from "../atoms";
 
 function SkeletonBar({ className }: { className?: string }) {
   return (
@@ -118,20 +119,36 @@ export default function JobListItem(props: JobListItemProps) {
         job.isRead ? "bg-slate-100 hover:bg-slate-100" : "hover:bg-slate-100"
       }`}
     >
-      <div className="flex items-center gap-2 text-xs">
-        <span>{formatPostedAgo(job.publishedAt)}</span>
-        <span>•</span>
-        <span>Proposals: {formatProposalCount(job.proposalCount)}</span>
+      <div className="flex items-start gap-4">
+        <div className="space-y-4 flex-1">
+          <div className="flex items-center gap-2 text-xs">
+            <span>{formatPostedAgo(job.publishedAt)}</span>
+            <span>•</span>
+            <span>Proposals: {formatProposalCount(job.proposalCount)}</span>
+          </div>
+
+          <h3
+            className="text-xl cursor-pointer hover:text-blue-600 hover:underline group-hover:text-blue-600"
+            onClick={onClock}
+          >
+            {job.title}
+          </h3>
+          <p className="text-xs text-slate-600">{formatListBudgetLine(job)}</p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <IconButton
+            variant="secondary"
+            icon="mdi:dislike-outline"
+            onClick={() => {}}
+          />
+          <IconButton
+            variant="secondary"
+            icon="mdi:heart-outline"
+            onClick={() => {}}
+          />
+        </div>
       </div>
-
-      <h3
-        className="text-xl cursor-pointer hover:text-blue-600 hover:underline group-hover:text-blue-600"
-        onClick={onClock}
-      >
-        {job.title}
-      </h3>
-
-      <p className="text-xs text-slate-600">{formatListBudgetLine(job)}</p>
 
       {job.description && (
         <CollapsableText
