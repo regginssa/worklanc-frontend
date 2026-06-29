@@ -21,6 +21,8 @@ import { addYears, formatDate } from "date-fns";
 import { ArrowRight, Star } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
+import { useAppSelector } from "@/store/hooks";
+import { selectConnectsBalance } from "@/store/slices/userSlice";
 
 export default function Buy() {
   const router = useRouter();
@@ -34,6 +36,8 @@ export default function Buy() {
     queryKey: ["connect-bundles"],
     queryFn: fetchConnectBundles,
   });
+
+  const currentConnectsBalance = useAppSelector(selectConnectsBalance);
 
   const bundles = data?.bundles ?? [];
 
@@ -127,7 +131,7 @@ export default function Buy() {
             <h1 className="text-3xl font-medium">Buy Connects</h1>
             <div className="text-sm">
               <p>Your available Connects</p>
-              <p className="mt-2 text-slate-600">0</p>
+              <p className="mt-2 text-slate-600">{currentConnectsBalance}</p>
             </div>
           </div>
 
@@ -175,7 +179,9 @@ export default function Buy() {
         <div className="text-sm">
           <p>Your new Connects balance will be</p>
           <p className="mt-2 text-slate-600">
-            {selectedBundle?.connectAmount ?? "--"}
+            {selectedBundle
+              ? currentConnectsBalance + selectedBundle.connectAmount
+              : "--"}
           </p>
         </div>
 

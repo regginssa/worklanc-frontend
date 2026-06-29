@@ -61,6 +61,7 @@ export interface User {
   zipCode: string | null;
   timezone: string | null;
   marketingOptIn: boolean;
+  connectsBalance: number;
   createdAt: ISOTimestampString;
   accounts: Account[];
 }

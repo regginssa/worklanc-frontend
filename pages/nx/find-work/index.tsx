@@ -9,6 +9,7 @@ import TabBar, { TTabItem } from "@/components/atoms/TabBar";
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
 import { useAppSelector } from "@/store/hooks";
+import { selectConnectsBalance } from "@/store/slices/userSlice";
 import { RootState } from "@/store/store";
 import { useQuery } from "@tanstack/react-query";
 import TalentAPI from "@/lib/api/talent";
@@ -111,13 +112,15 @@ export default function FindWork() {
   const [openJobPreferenceDialog, setOpenJobPreferenceDialog] = useState(false);
   const [openEditCategoriesDialog, setOpenEditCategoriesDialog] =
     useState(false);
-  const { user } = useAppSelector((state: RootState) => state.user);
+  const { user, status: authStatus } = useAppSelector((state: RootState) => state.user);
   const router = useRouter();
   const { data: talentProfileData } = useQuery({
     queryKey: ["talent-profile"],
     queryFn: TalentAPI.getProfile,
     enabled: Boolean(user),
   });
+
+  const connectsBalance = useAppSelector(selectConnectsBalance);
 
   const profile = talentProfileData?.profile ?? null;
   const profileTitle = profile?.title?.trim() || "Add your professional title";
@@ -346,7 +349,18 @@ export default function FindWork() {
           </div>
 
           <div className="p-6 rounded-3xl bg-slate-50">
-            <CollapsibleSection title="Connects: 0">
+            <CollapsibleSection
+              title={
+                authStatus === "loading" || authStatus === "idle" ? (
+                  <span className="text-lg font-medium inline-flex items-center gap-2">
+                    Connects:
+                    <span className="inline-block h-5 w-8 rounded bg-slate-200 animate-pulse" />
+                  </span>
+                ) : (
+                  `Connects: ${connectsBalance}`
+                )
+              }
+            >
               <div className="space-y-2 pt-6">
                 <Button
                   type="outline"

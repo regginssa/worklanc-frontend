@@ -6,6 +6,8 @@ import {
 import type { User } from "@/types/user";
 import AuthAPI, { getAuthToken } from "@/lib/api/auth";
 
+import type { RootState } from "../store";
+
 export type AuthStatus =
   | "idle" // not yet checked
   | "loading" // checking /me
@@ -51,6 +53,11 @@ const userSlice = createSlice({
     setStatus(state, action: PayloadAction<AuthStatus>) {
       state.status = action.payload;
     },
+    setConnectsBalance(state, action: PayloadAction<number>) {
+      if (state.user) {
+        state.user.connectsBalance = action.payload;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -68,5 +75,10 @@ const userSlice = createSlice({
   },
 });
 
-export const { setUser, clearUser, setStatus } = userSlice.actions;
+export const { setUser, clearUser, setStatus, setConnectsBalance } =
+  userSlice.actions;
+
+export const selectConnectsBalance = (state: RootState) =>
+  state.user.user?.connectsBalance ?? 0;
+
 export default userSlice.reducer;

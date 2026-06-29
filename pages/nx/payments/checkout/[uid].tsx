@@ -22,6 +22,8 @@ import { formatCentsToUsd } from "@/types/connect";
 import { getPromoCodeFormatError } from "@/lib/validation/promoCode";
 import type { CheckoutBillingSelection, PaymentMethod } from "@/types/payment";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAppDispatch } from "@/store/hooks";
+import { setConnectsBalance } from "@/store/slices/userSlice";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -34,6 +36,7 @@ import CoinsIcon from "@/public/assets/svgs/icons/other/coins.svg";
 export default function CheckoutPage() {
   const router = useRouter();
   const { uid } = router.query as { uid?: string };
+  const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
 
   const [selectedBillingMethod, setSelectedBillingMethod] =
@@ -185,13 +188,17 @@ export default function CheckoutPage() {
 
     if (result?.existingCheckoutUid && result.existingCheckoutUid !== uid) {
       toast.message("Redirecting to your existing checkout for this promo.");
-      await router.replace(`/nx/payments/checkout/${result.existingCheckoutUid}`);
+      await router.replace(
+        `/nx/payments/checkout/${result.existingCheckoutUid}`
+      );
       return;
     }
 
     if (!result?.checkout) return;
 
-    await queryClient.invalidateQueries({ queryKey: ["connect-checkout", uid] });
+    await queryClient.invalidateQueries({
+      queryKey: ["connect-checkout", uid],
+    });
     toast.success(trimmed ? "Promo code applied." : "Promo code removed.");
   };
 
@@ -207,7 +214,7 @@ export default function CheckoutPage() {
 
     if (!checkoutData?.checkout) {
       setCheckoutError(
-        checkoutData?.message ?? "This checkout was not found or has expired.",
+        checkoutData?.message ?? "This checkout was not found or has expired."
       );
       return;
     }
@@ -216,7 +223,7 @@ export default function CheckoutPage() {
 
     if (current.status === "expired") {
       setCheckoutError(
-        "This checkout has expired. Start again from the buy page.",
+        "This checkout has expired. Start again from the buy page."
       );
       return;
     }
@@ -260,7 +267,10 @@ export default function CheckoutPage() {
 
     if (result.checkout.status === "completed" || result.alreadyPaid) {
       toast.success("Connects purchased successfully.");
-      await router.push("/nx/find-work");
+      if (typeof result.connectsBalance === "number") {
+        dispatch(setConnectsBalance(result.connectsBalance));
+      }
+      await router.replace("/nx/find-work");
     }
   };
 
@@ -404,8 +414,7 @@ export default function CheckoutPage() {
           <div className="text-sm">
             <p>These Connects will expire on</p>
             <p className="mt-2 text-slate-600">
-              {connectsExpireLabel ??
-                "1 year after you complete purchase"}
+              {connectsExpireLabel ?? "1 year after you complete purchase"}
             </p>
           </div>
 

@@ -5,6 +5,10 @@ export async function fetchConnectBundles() {
   return request<{ bundles: ConnectBundleOption[] }>("/connects/bundles");
 }
 
+export async function fetchConnectsBalance() {
+  return request<{ connectsBalance: number }>("/connects/balance");
+}
+
 export async function createConnectCheckout(body: {
   connectAmount: number;
   promoCode?: string;
@@ -43,7 +47,7 @@ export async function payConnectCheckoutWithCard(
 ) {
   return request<{
     checkout: ConnectCheckout;
-    availableConnects: number;
+    connectsBalance: number;
     alreadyPaid?: boolean;
   }>(`/connects/checkouts/${uid}/pay/card`, {
     method: "POST",
