@@ -164,6 +164,32 @@ export function getTokenOption(chainId: CryptoChainId, tokenId: CryptoTokenId) {
   );
 }
 
+export function getPrimaryTokenOption(tokenId: CryptoTokenId) {
+  return CRYPTO_TOKENS.find((token) => token.id === tokenId);
+}
+
+export const DEFAULT_CHECKOUT_TOKEN: Record<CryptoChainId, CryptoTokenId> = {
+  solana: "chrle",
+  ethereum: "eth",
+  bnb: "bnb",
+};
+
+export function getDefaultTokenForChain(chainId: CryptoChainId): CryptoTokenId {
+  return DEFAULT_CHECKOUT_TOKEN[chainId];
+}
+
+export function getAvailableChains(
+  existingWallets: { uid: string; chain: CryptoChainId }[],
+  editingWalletUid?: string | null,
+) {
+  const usedChains = new Set(
+    existingWallets
+      .filter((wallet) => wallet.uid !== editingWalletUid)
+      .map((wallet) => wallet.chain),
+  );
+  return CRYPTO_CHAINS.filter((chain) => !usedChains.has(chain.id));
+}
+
 export function isWalletOnChain(
   chainId: CryptoChainId,
   caipAddress?: string,

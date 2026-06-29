@@ -143,7 +143,7 @@ export default function Buy() {
             type="primary"
             label="Buy Connects"
             classname="py-2.5! px-5! font-medium! text-sm! rounded-full!"
-            onClick={() => router.push("/nx/plans/connects/buy")}
+            onClick={() => router.push(`/nx/payments/checkout/1`)}
           />
         </div>
       </div>

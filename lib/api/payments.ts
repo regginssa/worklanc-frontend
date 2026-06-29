@@ -4,7 +4,9 @@ import type {
   PaymentMethodsResponse,
   SavedCard,
   SavedCryptoWallet,
+  SavedPayPal,
 } from "@/types/payment";
+import type { CryptoTokenPrices } from "@/lib/crypto/pricing";
 
 export async function fetchPaymentMethods() {
   return request<PaymentMethodsResponse>("/payments/methods");
@@ -36,7 +38,6 @@ export async function deletePaymentMethod(uid: string) {
 export async function saveCryptoWallet(body: {
   address: string;
   chain: string;
-  token: string;
   label?: string;
   message: string;
   signature: string;
@@ -55,7 +56,6 @@ export async function updateCryptoWallet(
   body: {
     address: string;
     chain: string;
-    token: string;
     label?: string;
     message: string;
     signature: string;
@@ -77,8 +77,14 @@ export async function createPayPalVaultSetupToken() {
 }
 
 export async function savePayPalPaymentMethod(vaultSetupToken: string) {
-  return request("/payments/paypal/save", {
+  return request<{ paypal: SavedPayPal }>("/payments/paypal/save", {
     method: "POST",
     body: JSON.stringify({ vaultSetupToken }),
   });
+}
+
+export async function fetchCryptoPrices() {
+  return localRequest<{ prices: CryptoTokenPrices; updatedAt: string }>(
+    "/api/payments/crypto/prices",
+  );
 }

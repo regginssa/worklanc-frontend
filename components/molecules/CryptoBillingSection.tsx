@@ -5,7 +5,10 @@ import {
   saveCryptoWallet,
   updateCryptoWallet,
 } from "@/lib/api/payments";
+import { CRYPTO_CHAINS } from "@/lib/crypto/assets";
 import type { SavedCryptoWallet } from "@/types/payment";
+import { Icon } from "@iconify/react";
+import { motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
 import CryptoBillingForm from "./CryptoBillingForm";
@@ -14,21 +17,23 @@ import SavedCryptoWalletList from "./SavedCryptoWalletList";
 interface CryptoBillingSectionProps {
   wallets: SavedCryptoWallet[];
   onWalletsChange: () => void | Promise<void>;
+  showAddNewWallet?: boolean;
 }
 
 export default function CryptoBillingSection({
   wallets,
   onWalletsChange,
+  showAddNewWallet = false,
 }: CryptoBillingSectionProps) {
   const [editingWallet, setEditingWallet] = useState<SavedCryptoWallet | null>(
-    null,
+    null
   );
+  const [showAddForm, setShowAddForm] = useState(wallets.length === 0);
   const [deletingUid, setDeletingUid] = useState<string | null>(null);
 
   const handleSave = async (body: {
     address: string;
     chain: string;
-    token: string;
     label?: string;
     message: string;
     signature: string;
@@ -39,8 +44,11 @@ export default function CryptoBillingSection({
 
     if (!result?.wallet) return false;
 
-    toast.success(editingWallet ? "Wallet updated." : "Crypto wallet connected.");
+    toast.success(
+      editingWallet ? "Wallet updated." : "Crypto wallet connected."
+    );
     setEditingWallet(null);
+    setShowAddForm(false);
     await onWalletsChange();
     return true;
   };
@@ -59,27 +67,71 @@ export default function CryptoBillingSection({
     await onWalletsChange();
   };
 
-  const handleCancelForm = () => {
+  const handleEdit = (wallet: SavedCryptoWallet) => {
+    setShowAddForm(false);
+    setEditingWallet(wallet);
+  };
+
+  const handleCancelEdit = () => {
     setEditingWallet(null);
   };
 
-  if (wallets.length === 0 || editingWallet) {
-    return (
-      <CryptoBillingForm
-        editingWallet={editingWallet}
-        onSave={handleSave}
-        onCancel={wallets.length > 0 ? handleCancelForm : undefined}
-        saveLabel={editingWallet ? "Update wallet" : "Verify and save wallet"}
-      />
-    );
-  }
+  const handleCancelAdd = () => {
+    setShowAddForm(false);
+  };
 
   return (
-    <SavedCryptoWalletList
-      wallets={wallets}
-      onEdit={setEditingWallet}
-      onDelete={handleDelete}
-      deletingUid={deletingUid}
-    />
+    <div className="space-y-6">
+      {wallets.length > 0 && (
+        <SavedCryptoWalletList
+          wallets={wallets}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          deletingUid={deletingUid}
+        />
+      )}
+
+      {editingWallet && (
+        <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-6">
+          <CryptoBillingForm
+            key={`edit-${editingWallet.uid}`}
+            editingWallet={editingWallet}
+            lockNetwork
+            existingWallets={wallets}
+            onSave={handleSave}
+            onCancel={handleCancelEdit}
+            saveLabel="Update wallet"
+          />
+        </div>
+      )}
+
+      {!editingWallet && (showAddForm || wallets.length === 0) && (
+        <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-6">
+          <CryptoBillingForm
+            key="add"
+            existingWallets={wallets}
+            onSave={handleSave}
+            onCancel={wallets.length > 0 ? handleCancelAdd : undefined}
+            saveLabel="Verify and save wallet"
+          />
+        </div>
+      )}
+
+      {!editingWallet &&
+        wallets.length > 0 &&
+        wallets.length < CRYPTO_CHAINS.length &&
+        !showAddForm &&
+        showAddNewWallet && (
+          <motion.button
+            type="button"
+            whileTap={{ scale: 0.95 }}
+            className="text-blue-600 cursor-pointer hover:underline text-sm font-medium flex items-center gap-2"
+            onClick={() => setShowAddForm(true)}
+          >
+            <Icon icon="mdi:plus" className="size-5" />
+            Add new wallet
+          </motion.button>
+        )}
+    </div>
   );
 }

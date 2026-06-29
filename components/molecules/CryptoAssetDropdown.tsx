@@ -61,7 +61,7 @@ export default function CryptoAssetDropdown({
           type="button"
           whileTap={{ scale: 0.97 }}
           disabled={disabled}
-          onClick={() => setOpen((prev) => !prev)}
+          onClick={() => !disabled && setOpen((prev) => !prev)}
           className={`flex h-10 w-full items-center gap-3 rounded-lg px-4 py-2 transition-all duration-200 ${
             error
               ? "border-2 border-red-500"
@@ -101,7 +101,7 @@ export default function CryptoAssetDropdown({
         </motion.button>
 
         <AnimatePresence>
-          {open && (
+          {open && !disabled && (
             <motion.ul
               initial={{ opacity: 0, y: -8, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}

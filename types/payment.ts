@@ -21,8 +21,18 @@ export type SavedCryptoWallet = {
   provider: "crypto";
   address: string;
   chain: CryptoChainId;
-  token: CryptoTokenId;
+  token?: CryptoTokenId | null;
   label: string | null;
+  isDefault: boolean;
+  createdAt: string;
+};
+
+export type SavedPayPal = {
+  uid: string;
+  type: "paypal";
+  provider: "paypal";
+  email: string | null;
+  payerId: string | null;
   isDefault: boolean;
   createdAt: string;
 };
@@ -30,6 +40,16 @@ export type SavedCryptoWallet = {
 export type PaymentMethodsResponse = {
   cards: SavedCard[];
   cryptoWallets: SavedCryptoWallet[];
+  paypalAccounts?: SavedPayPal[];
+};
+
+export type CheckoutBillingSelection = {
+  method: PaymentMethod;
+  card?: SavedCard;
+  wallet?: SavedCryptoWallet;
+  paypal?: SavedPayPal;
+  cryptoTokenId?: CryptoTokenId;
+  isReady: boolean;
 };
 
 export const CARD_BRAND_ICONS: Record<string, string> = {

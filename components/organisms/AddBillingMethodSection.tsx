@@ -43,11 +43,7 @@ export default function AddBillingMethodSection({
 }) {
   const [selectedBillingMethod, setSelectedBillingMethod] =
     useState<PaymentMethod | null>(
-      cards.length > 0
-        ? "card"
-        : cryptoWallets.length > 0
-          ? "crypto"
-          : null,
+      cards.length > 0 ? "card" : cryptoWallets.length > 0 ? "crypto" : null
     );
 
   return (
@@ -146,6 +142,7 @@ export default function AddBillingMethodSection({
               <CryptoBillingSection
                 wallets={cryptoWallets}
                 onWalletsChange={onCryptoChange}
+                showAddNewWallet={true}
               />
             ))}
         </li>

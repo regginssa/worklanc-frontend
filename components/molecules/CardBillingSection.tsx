@@ -58,7 +58,7 @@ export default function CardBillingSection({
       <StripeBillingForm
         onSave={handleSave}
         onCancel={cards.length > 0 ? handleCancelForm : undefined}
-        saveLabel={editingCard ? "Update card" : "Save"}
+        saveLabel={editingCard ? "Update card" : "Verify and save card"}
       />
     );
   }

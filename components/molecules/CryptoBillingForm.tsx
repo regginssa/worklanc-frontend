@@ -4,9 +4,8 @@ import { reownProjectId } from "@/lib/appkit/config";
 import {
   CRYPTO_CHAINS,
   type CryptoChainId,
-  type CryptoTokenId,
+  getAvailableChains,
   getChainById,
-  getTokenOption,
   getTokensForChain,
   isWalletOnChain,
   shortenAddress,
@@ -20,16 +19,18 @@ import {
   useDisconnect,
 } from "@reown/appkit/react";
 import { Icon } from "@iconify/react";
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useSignMessage } from "wagmi";
 
 interface CryptoBillingFormProps {
   editingWallet?: SavedCryptoWallet | null;
+  lockNetwork?: boolean;
+  existingWallets?: SavedCryptoWallet[];
   onSave?: (body: {
     address: string;
     chain: string;
-    token: string;
     label?: string;
     message: string;
     signature: string;
@@ -45,14 +46,12 @@ function bytesToBase64(bytes: Uint8Array) {
 function buildVerificationMessage(params: {
   address: string;
   chainLabel: string;
-  tokenLabel: string;
   nickname: string;
 }) {
   return [
     "Verify wallet ownership for Worklanc",
     `Wallet: ${params.address}`,
     `Network: ${params.chainLabel}`,
-    `Preferred token: ${params.tokenLabel}`,
     params.nickname ? `Label: ${params.nickname}` : null,
     `Issued at: ${new Date().toISOString()}`,
   ]
@@ -62,6 +61,8 @@ function buildVerificationMessage(params: {
 
 export default function CryptoBillingForm({
   editingWallet = null,
+  lockNetwork = false,
+  existingWallets = [],
   onSave,
   onCancel,
   saveLabel = "Verify and save wallet",
@@ -81,6 +82,8 @@ export default function CryptoBillingForm({
   return (
     <CryptoBillingFormContent
       editingWallet={editingWallet}
+      lockNetwork={lockNetwork}
+      existingWallets={existingWallets}
       onSave={onSave}
       onCancel={onCancel}
       saveLabel={saveLabel}
@@ -90,6 +93,8 @@ export default function CryptoBillingForm({
 
 function CryptoBillingFormContent({
   editingWallet = null,
+  lockNetwork = false,
+  existingWallets = [],
   onSave,
   onCancel,
   saveLabel = "Verify and save wallet",
@@ -101,11 +106,13 @@ function CryptoBillingFormContent({
     useAppKitProvider<Provider>("solana");
   const { signMessageAsync } = useSignMessage();
 
-  const [selectedChainId, setSelectedChainId] = useState<CryptoChainId>(
-    editingWallet?.chain ?? "solana",
+  const availableChains = useMemo(
+    () => getAvailableChains(existingWallets, editingWallet?.uid),
+    [existingWallets, editingWallet?.uid],
   );
-  const [selectedTokenId, setSelectedTokenId] = useState<CryptoTokenId>(
-    editingWallet?.token ?? "chrle",
+
+  const [selectedChainId, setSelectedChainId] = useState<CryptoChainId>(
+    editingWallet?.chain ?? availableChains[0]?.id ?? "solana",
   );
   const [walletLabel, setWalletLabel] = useState(editingWallet?.label ?? "");
   const [loading, setLoading] = useState(false);
@@ -113,41 +120,42 @@ function CryptoBillingFormContent({
   const [formError, setFormError] = useState<string | null>(null);
 
   const selectedChain = getChainById(selectedChainId);
-  const selectedToken = getTokenOption(selectedChainId, selectedTokenId);
+  const supportedTokens = useMemo(
+    () => getTokensForChain(selectedChainId),
+    [selectedChainId],
+  );
 
   const chainOptions = useMemo(
     () =>
-      CRYPTO_CHAINS.map((chain) => ({
+      (lockNetwork && editingWallet
+        ? CRYPTO_CHAINS.filter((chain) => chain.id === editingWallet.chain)
+        : availableChains
+      ).map((chain) => ({
         value: chain.id,
         label: chain.label,
         description: chain.description,
         icon: chain.icon,
       })),
-    []
-  );
-
-  const tokenOptions = useMemo(
-    () =>
-      getTokensForChain(selectedChainId).map((token) => ({
-        value: token.id,
-        label: `${token.label} (${token.symbol})`,
-        description: token.description,
-        icon: token.icon,
-      })),
-    [selectedChainId]
+    [availableChains, editingWallet, lockNetwork],
   );
 
   useEffect(() => {
-    const tokens = getTokensForChain(selectedChainId);
-    if (!tokens.some((token) => token.id === selectedTokenId)) {
-      setSelectedTokenId(tokens[0]?.id ?? "chrle");
+    if (!editingWallet) return;
+    setSelectedChainId(editingWallet.chain);
+    setWalletLabel(editingWallet.label ?? "");
+  }, [editingWallet]);
+
+  useEffect(() => {
+    if (lockNetwork) return;
+    if (!availableChains.some((chain) => chain.id === selectedChainId)) {
+      setSelectedChainId(availableChains[0]?.id ?? "solana");
     }
-  }, [selectedChainId, selectedTokenId]);
+  }, [availableChains, lockNetwork, selectedChainId]);
 
   const walletMatchesChain = isWalletOnChain(
     selectedChainId,
     caipAddress,
-    address
+    address,
   );
 
   const handleConnectWallet = () => {
@@ -185,14 +193,14 @@ function CryptoBillingFormContent({
       return;
     }
 
-    if (!selectedChain || !selectedToken) {
-      setFormError("Select a network and token.");
+    if (!selectedChain) {
+      setFormError("Select a network.");
       return;
     }
 
     if (!walletMatchesChain) {
       setFormError(
-        `Switch your wallet to ${selectedChain.label} before saving.`
+        `Switch your wallet to ${selectedChain.label} before saving.`,
       );
       return;
     }
@@ -200,7 +208,6 @@ function CryptoBillingFormContent({
     const message = buildVerificationMessage({
       address,
       chainLabel: selectedChain.label,
-      tokenLabel: selectedToken.label,
       nickname: walletLabel.trim(),
     });
 
@@ -215,7 +222,7 @@ function CryptoBillingFormContent({
         }
 
         const signedMessage = await solanaProvider.signMessage(
-          new TextEncoder().encode(message)
+          new TextEncoder().encode(message),
         );
         signature = bytesToBase64(signedMessage);
       } else {
@@ -225,7 +232,6 @@ function CryptoBillingFormContent({
       const saved = await onSave?.({
         address,
         chain: selectedChainId,
-        token: selectedTokenId,
         label: walletLabel.trim() || undefined,
         message,
         signature,
@@ -246,40 +252,75 @@ function CryptoBillingFormContent({
     }
   };
 
+  if (!lockNetwork && !editingWallet && availableChains.length === 0) {
+    return (
+      <p className="text-sm text-slate-600">
+        You have already added a wallet for each supported network.
+      </p>
+    );
+  }
+
   return (
     <div className="space-y-8">
       <div className="space-y-2">
-        <h4 className="text-lg font-medium">Connect a crypto wallet</h4>
+        <h4 className="text-lg font-medium">
+          {editingWallet ? "Update crypto wallet" : "Connect a crypto wallet"}
+        </h4>
         <p className="text-sm font-light text-slate-600">
-          Link your own wallet to deposit funds on Worklanc. Worklanc never asks
-          for your seed phrase or private key — you approve every deposit from
-          your wallet when you are ready.
+          {editingWallet
+            ? "Reconnect or update the wallet details for this network. The network cannot be changed."
+            : "Link your own wallet to deposit funds on Worklanc. One wallet per network — you can pay with any supported token on that network at checkout. Worklanc never asks for your seed phrase or private key."}
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <CryptoAssetDropdown
-          label="Network"
-          subLabel="Choose the blockchain network your wallet will use for deposits."
-          name="cryptoChain"
-          placeholder="Select a network"
-          options={chainOptions}
-          value={selectedChainId}
-          onSelect={(value) => setSelectedChainId(value as CryptoChainId)}
-        />
+      <CryptoAssetDropdown
+        label="Network"
+        subLabel="Choose the blockchain network your wallet will use for deposits."
+        name="cryptoChain"
+        placeholder="Select a network"
+        options={chainOptions}
+        value={selectedChainId}
+        disabled={lockNetwork}
+        onSelect={(value) => setSelectedChainId(value as CryptoChainId)}
+      />
 
-        <CryptoAssetDropdown
-          label="Preferred deposit token"
-          subLabel={`Pick the token you plan to deposit on ${
-            selectedChain?.label ?? "this network"
-          }.`}
-          name="cryptoToken"
-          placeholder="Select a token"
-          options={tokenOptions}
-          value={selectedTokenId}
-          onSelect={(value) => setSelectedTokenId(value as CryptoTokenId)}
-        />
-      </div>
+      {selectedChain && supportedTokens.length > 0 && (
+        <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-4 space-y-3">
+          <div className="flex items-center gap-3">
+            <Image
+              src={selectedChain.icon}
+              alt={selectedChain.label}
+              width={32}
+              height={32}
+              className="size-8 shrink-0 rounded-full"
+            />
+            <p className="text-sm text-slate-700">
+              Worklanc supports the following tokens on{" "}
+              <span className="font-medium text-slate-900">
+                {selectedChain.label}
+              </span>
+              :
+            </p>
+          </div>
+          <ul className="flex flex-wrap gap-2">
+            {supportedTokens.map((token) => (
+              <li
+                key={token.id}
+                className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-800"
+              >
+                <Image
+                  src={token.icon}
+                  alt={token.symbol}
+                  width={20}
+                  height={20}
+                  className="size-5 shrink-0 rounded-full"
+                />
+                <span className="font-medium">{token.label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <Input
         type="text"
@@ -359,8 +400,8 @@ function CryptoBillingFormContent({
             className="mt-0.5 size-4 shrink-0"
           />
           <span>
-            Always confirm the exact network and token before sending a deposit.
-            Sending on the wrong network can result in lost funds.
+            Always confirm the exact network before sending a deposit. Sending on
+            the wrong network can result in lost funds.
           </span>
         </li>
       </ul>
@@ -408,16 +449,6 @@ function CryptoBillingFormContent({
               disabled={!walletMatchesChain || loading}
               onClick={handleSaveWallet}
             />
-            {onCancel && (
-              <Button
-                type="secondary"
-                label="Cancel"
-                size="medium"
-                classname="rounded-full!"
-                disabled={loading}
-                onClick={onCancel}
-              />
-            )}
             <Button
               type="secondary"
               label="Disconnect wallet"
@@ -429,6 +460,17 @@ function CryptoBillingFormContent({
               onClick={handleDisconnectWallet}
             />
           </>
+        )}
+
+        {onCancel && (
+          <Button
+            type="secondary"
+            label="Cancel"
+            size="medium"
+            classname="rounded-full!"
+            disabled={loading || disconnecting}
+            onClick={onCancel}
+          />
         )}
       </div>
     </div>

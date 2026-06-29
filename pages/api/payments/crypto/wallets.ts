@@ -7,7 +7,6 @@ type SaveCryptoWalletBody = {
   uid?: string;
   address: string;
   chain: "solana" | "ethereum" | "bnb";
-  token: string;
   label?: string;
   message: string;
   signature: string;
@@ -58,8 +57,6 @@ async function forwardToBackend(
     method === "PATCH"
       ? {
           address: body.address,
-          chain: body.chain,
-          token: body.token,
           label: body.label,
         }
       : body;
@@ -86,9 +83,9 @@ async function forwardToBackend(
 }
 
 async function verifyWalletBody(body: SaveCryptoWalletBody) {
-  const { address, chain, token, message, signature } = body;
+  const { address, chain, message, signature } = body;
 
-  if (!address || !chain || !token || !message || !signature) {
+  if (!address || !chain || !message || !signature) {
     return { error: "Missing required wallet fields.", status: 400 as const };
   }
 
@@ -152,7 +149,7 @@ export default async function handler(
       provider: "crypto" as const,
       address: body.address,
       chain: body.chain,
-      token: body.token,
+      token: null,
       label: body.label ?? null,
       isDefault: true,
       createdAt: new Date().toISOString(),
