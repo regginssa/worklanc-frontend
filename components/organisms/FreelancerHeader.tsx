@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { UserAvatar } from "../atoms";
 import { Switch } from "../ui/switch";
-import { LucideBell, LucideCircleQuestionMark } from "lucide-react";
+import { CircleQuestionMarkIcon, LucideBell, LucideBrain } from "lucide-react";
 import { useAppSelector } from "@/store/hooks";
 import { useQuery } from "@tanstack/react-query";
 import TalentAPI from "@/lib/api/talent";
@@ -227,11 +227,14 @@ export default function AuthorizedHeader() {
       <div className="flex items-center gap-6">
         <HeaderSearch />
         <div className="flex items-center gap-6">
-          <Link href="#" className="">
-            <LucideCircleQuestionMark className="w-6 h-6" />
+          <Link href="#" className="group cursor-pointer">
+            <CircleQuestionMarkIcon className="size-5 text-slate-600 group-hover:text-slate-800" />
           </Link>
-          <Link href="/ab/notifications" className="">
-            <LucideBell className="w-6 h-6" />
+          <Link href="/ab/notifications" className="group cursor-pointer">
+            <LucideBell className="size-5 text-slate-600 group-hover:text-slate-800" />
+          </Link>
+          <Link href="#" className="group cursor-pointer">
+            <LucideBrain className="size-5 text-slate-600 group-hover:text-slate-800" />
           </Link>
         </div>
 
