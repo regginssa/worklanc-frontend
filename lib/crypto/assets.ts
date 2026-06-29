@@ -168,6 +168,10 @@ export function getPrimaryTokenOption(tokenId: CryptoTokenId) {
   return CRYPTO_TOKENS.find((token) => token.id === tokenId);
 }
 
+export function getChainForToken(tokenId: CryptoTokenId): CryptoChainId | null {
+  return getPrimaryTokenOption(tokenId)?.chainId ?? null;
+}
+
 export const DEFAULT_CHECKOUT_TOKEN: Record<CryptoChainId, CryptoTokenId> = {
   solana: "chrle",
   ethereum: "eth",

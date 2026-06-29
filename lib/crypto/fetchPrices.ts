@@ -6,11 +6,6 @@ const STABLECOIN_USD_PRICES: Pick<CryptoTokenPrices, "usdc" | "usdt"> = {
   usdt: 1,
 };
 
-const FALLBACK_USD_PRICES: Partial<Record<CryptoTokenId, number>> = {
-  chrle: Number(process.env.CHRLE_USD_PRICE ?? "0.05"),
-  babyu: Number(process.env.BABYU_USD_PRICE ?? "0.01"),
-};
-
 type NativeTokenPrices = Pick<CryptoTokenPrices, "eth" | "sol" | "bnb">;
 type WorklancTokenPrices = Pick<CryptoTokenPrices, "chrle" | "babyu">;
 
@@ -45,10 +40,7 @@ async function fetchWorklancTokenPricesUsd(): Promise<WorklancTokenPrices> {
   const chrleTokenAddress = process.env.CHRLE_TOKEN_ADDRESS;
 
   if (!babyuTokenAddress || !chrleTokenAddress) {
-    return {
-      babyu: FALLBACK_USD_PRICES.babyu ?? 0,
-      chrle: FALLBACK_USD_PRICES.chrle ?? 0,
-    };
+    return { babyu: 0, chrle: 0 };
   }
 
   try {
@@ -74,33 +66,12 @@ async function fetchWorklancTokenPricesUsd(): Promise<WorklancTokenPrices> {
     }
 
     return {
-      babyu: babyuUsd || FALLBACK_USD_PRICES.babyu || 0,
-      chrle: chrleUsd || FALLBACK_USD_PRICES.chrle || 0,
+      babyu: babyuUsd > 0 ? babyuUsd : 0,
+      chrle: chrleUsd > 0 ? chrleUsd : 0,
     };
   } catch {
-    return {
-      babyu: FALLBACK_USD_PRICES.babyu ?? 0,
-      chrle: FALLBACK_USD_PRICES.chrle ?? 0,
-    };
+    return { babyu: 0, chrle: 0 };
   }
-}
-
-function withFallbacks(prices: CryptoTokenPrices): CryptoTokenPrices {
-  const merged: CryptoTokenPrices = {
-    ...STABLECOIN_USD_PRICES,
-    ...prices,
-  };
-
-  for (const [tokenId, fallbackPrice] of Object.entries(
-    FALLBACK_USD_PRICES,
-  ) as [CryptoTokenId, number][]) {
-    const current = merged[tokenId];
-    if (!current || current <= 0) {
-      merged[tokenId] = fallbackPrice;
-    }
-  }
-
-  return merged;
 }
 
 export async function fetchCryptoPricesUsd(): Promise<CryptoTokenPrices> {
@@ -109,8 +80,9 @@ export async function fetchCryptoPricesUsd(): Promise<CryptoTokenPrices> {
     fetchWorklancTokenPricesUsd(),
   ]);
 
-  return withFallbacks({
+  return {
+    ...STABLECOIN_USD_PRICES,
     ...nativePrices,
     ...worklancPrices,
-  });
+  };
 }

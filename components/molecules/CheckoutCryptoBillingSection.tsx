@@ -1,15 +1,21 @@
 "use client";
 
 import CryptoAssetDropdown from "@/components/molecules/CryptoAssetDropdown";
-import { saveCryptoWallet } from "@/lib/api/payments";
+import {
+  deletePaymentMethod,
+  saveCryptoWallet,
+  updateCryptoWallet,
+} from "@/lib/api/payments";
 import {
   CRYPTO_CHAINS,
   getChainById,
+  getChainForToken,
   getDefaultTokenForChain,
   getTokensForChain,
   type CryptoChainId,
   type CryptoTokenId,
 } from "@/lib/crypto/assets";
+import { useEvmChainSwitch } from "@/hooks/useEvmChainSwitch";
 import type { SavedCryptoWallet } from "@/types/payment";
 import { Icon } from "@iconify/react";
 import { motion } from "motion/react";
@@ -40,6 +46,11 @@ export default function CheckoutCryptoBillingSection({
   onWalletsChange,
 }: CheckoutCryptoBillingSectionProps) {
   const [showAddForm, setShowAddForm] = useState(wallets.length === 0);
+  const [editingWallet, setEditingWallet] = useState<SavedCryptoWallet | null>(
+    null,
+  );
+  const [deletingUid, setDeletingUid] = useState<string | null>(null);
+  const { switchToChain } = useEvmChainSwitch();
 
   const selectedWallet =
     wallets.find((wallet) => wallet.uid === selectedUid) ?? wallets[0] ?? null;
@@ -66,6 +77,12 @@ export default function CheckoutCryptoBillingSection({
     }
   }, [selectedWallet, selectedTokenId, onTokenChange]);
 
+  useEffect(() => {
+    if (!selectedWallet) return;
+    if (selectedWallet.chain === "solana") return;
+    void switchToChain(selectedWallet.chain);
+  }, [selectedWallet, switchToChain]);
+
   const tokenOptions = useMemo(() => {
     if (!selectedWallet) return [];
 
@@ -84,15 +101,54 @@ export default function CheckoutCryptoBillingSection({
     message: string;
     signature: string;
   }) => {
-    const result = await saveCryptoWallet(body);
+    const result = editingWallet
+      ? await updateCryptoWallet(editingWallet.uid, body)
+      : await saveCryptoWallet(body);
+
     if (!result?.wallet) return false;
 
-    toast.success("Crypto wallet connected.");
+    toast.success(
+      editingWallet ? "Wallet updated." : "Crypto wallet connected.",
+    );
+    setEditingWallet(null);
     setShowAddForm(false);
     await onWalletsChange();
     onSelect(result.wallet);
     onTokenChange(getDefaultTokenForChain(result.wallet.chain));
     return true;
+  };
+
+  const handleDelete = async (wallet: SavedCryptoWallet) => {
+    setDeletingUid(wallet.uid);
+
+    const result = await deletePaymentMethod(wallet.uid);
+    setDeletingUid(null);
+
+    if (!result?.success) return;
+
+    toast.success("Wallet removed.");
+
+    if (editingWallet?.uid === wallet.uid) {
+      setEditingWallet(null);
+    }
+
+    if (wallet.uid === selectedUid) {
+      const remaining = wallets.filter((item) => item.uid !== wallet.uid);
+      if (remaining[0]) {
+        onSelect(remaining[0]);
+      }
+    }
+
+    await onWalletsChange();
+  };
+
+  const handleEdit = (wallet: SavedCryptoWallet) => {
+    setShowAddForm(false);
+    setEditingWallet(wallet);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingWallet(null);
   };
 
   const handleCancelAdd = () => {
@@ -104,20 +160,49 @@ export default function CheckoutCryptoBillingSection({
     if (!tokenBelongsToChain(selectedTokenId, wallet.chain)) {
       onTokenChange(getDefaultTokenForChain(wallet.chain));
     }
+    if (wallet.chain !== "solana") {
+      void switchToChain(wallet.chain);
+    }
   };
+
+  const handleTokenSelect = (value: string) => {
+    const tokenId = value as CryptoTokenId;
+    const tokenChain = getChainForToken(tokenId);
+
+    onTokenChange(tokenId);
+
+    if (!tokenChain || tokenChain === "solana") return;
+
+    const matchingWallet = wallets.find((wallet) => wallet.chain === tokenChain);
+    if (matchingWallet && matchingWallet.uid !== selectedUid) {
+      onSelect(matchingWallet);
+    }
+
+    void switchToChain(tokenChain);
+  };
+
+  const showWalletList = wallets.length > 0 && !editingWallet;
+  const showTokenPicker =
+    selectedWallet &&
+    !showAddForm &&
+    !editingWallet &&
+    tokenOptions.length > 0;
 
   return (
     <div className="space-y-4">
-      {wallets.length > 0 && (
+      {showWalletList && (
         <SavedCryptoWalletList
           wallets={wallets}
           selectable
           selectedUid={selectedUid}
           onSelect={handleWalletSelect}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          deletingUid={deletingUid}
         />
       )}
 
-      {selectedWallet && !showAddForm && tokenOptions.length > 0 && (
+      {showTokenPicker && (
         <CryptoAssetDropdown
           label="Pay with"
           subLabel={`Choose the token to pay with on ${
@@ -127,11 +212,25 @@ export default function CheckoutCryptoBillingSection({
           placeholder="Select a token"
           options={tokenOptions}
           value={selectedTokenId}
-          onSelect={(value) => onTokenChange(value as CryptoTokenId)}
+          onSelect={handleTokenSelect}
         />
       )}
 
-      {showAddForm && (
+      {editingWallet && (
+        <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-6">
+          <CryptoBillingForm
+            key={`edit-${editingWallet.uid}`}
+            editingWallet={editingWallet}
+            lockNetwork
+            existingWallets={wallets}
+            onSave={handleSave}
+            onCancel={handleCancelEdit}
+            saveLabel="Update wallet"
+          />
+        </div>
+      )}
+
+      {!editingWallet && showAddForm && (
         <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-6">
           <CryptoBillingForm
             key="add"
@@ -143,7 +242,8 @@ export default function CheckoutCryptoBillingSection({
         </div>
       )}
 
-      {wallets.length > 0 &&
+      {!editingWallet &&
+        wallets.length > 0 &&
         wallets.length < CRYPTO_CHAINS.length &&
         !showAddForm && (
           <motion.button

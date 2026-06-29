@@ -4,10 +4,7 @@ import { Button, Dropdown, Input } from "@/components/atoms";
 import { FreelancerLayout } from "@/components/layouts";
 import { ConnectBuyPageSkeleton } from "@/components/molecules/connects/ConnectCheckoutSkeletons";
 import { getPromoCodeFormatError } from "@/lib/validation/promoCode";
-import {
-  createConnectCheckout,
-  fetchConnectBundles,
-} from "@/lib/api/connects";
+import { createConnectCheckout, fetchConnectBundles } from "@/lib/api/connects";
 import {
   formatCentsToUsd,
   formatConnectBundleLabel,
@@ -44,7 +41,11 @@ export default function Buy() {
   const selectedBundle = useMemo<ConnectBundleOption | undefined>(() => {
     if (bundles.length === 0) return undefined;
     const amount = connectAmount ?? bundles[0]?.connectAmount;
-    return bundles.find((bundle: ConnectBundleOption) => bundle.connectAmount === amount) ?? bundles[0];
+    return (
+      bundles.find(
+        (bundle: ConnectBundleOption) => bundle.connectAmount === amount
+      ) ?? bundles[0]
+    );
   }, [bundles, connectAmount]);
 
   const dropdownOptions = useMemo(
@@ -53,7 +54,7 @@ export default function Buy() {
         label: formatConnectBundleLabel(bundle),
         value: bundle.connectAmount,
       })),
-    [bundles],
+    [bundles]
   );
 
   const handleApplyPromo = () => {
@@ -212,7 +213,7 @@ export default function Buy() {
               type="outline"
               label="Apply"
               size="medium"
-              classname="py-0! h-10! px-5! rounded-full! text-sm! font-medium!"
+              classname="py-0! h-10! px-5! rounded-full! text-sm! font-medium! border!"
               disabled={Boolean(promoError)}
               onClick={handleApplyPromo}
             />

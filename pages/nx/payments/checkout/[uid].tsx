@@ -4,8 +4,10 @@ import { ConnectCheckoutPageSkeleton } from "@/components/molecules/connects/Con
 import { CheckoutBillingMethodSection } from "@/components/organisms";
 import {
   applyConnectCheckoutPromo,
+  confirmConnectCheckoutCryptoPayment,
   fetchConnectCheckout,
   payConnectCheckoutWithCard,
+  prepareConnectCheckoutCryptoPayment,
 } from "@/lib/api/connects";
 import { fetchCryptoPrices, fetchPaymentMethods } from "@/lib/api/payments";
 import {
@@ -21,6 +23,8 @@ import {
 import { formatCentsToUsd } from "@/types/connect";
 import { getPromoCodeFormatError } from "@/lib/validation/promoCode";
 import type { CheckoutBillingSelection, PaymentMethod } from "@/types/payment";
+import type { CryptoTokenId } from "@/lib/crypto/assets";
+import { useCryptoCheckoutPayment } from "@/hooks/useCryptoCheckoutPayment";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAppDispatch } from "@/store/hooks";
 import { setConnectsBalance } from "@/store/slices/userSlice";
@@ -38,6 +42,7 @@ export default function CheckoutPage() {
   const { uid } = router.query as { uid?: string };
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
+  const { sendPayment: sendCryptoCheckoutPayment } = useCryptoCheckoutPayment();
 
   const [selectedBillingMethod, setSelectedBillingMethod] =
     useState<PaymentMethod>("card");
@@ -228,10 +233,14 @@ export default function CheckoutPage() {
       return;
     }
 
+    const isCryptoProcessing =
+      current.status === "processing" && current.paymentMethod === "crypto";
+
     if (
       current.status !== "pending" &&
       current.status !== "failed" &&
-      current.status !== "completed"
+      current.status !== "completed" &&
+      !isCryptoProcessing
     ) {
       setCheckoutError("This checkout is no longer available for payment.");
       return;
@@ -247,8 +256,77 @@ export default function CheckoutPage() {
   const handlePay = async () => {
     if (!uid || !checkout || !billingSelection.isReady) return;
 
-    if (selectedBillingMethod !== "card") {
-      toast.message("PayPal and crypto checkout are coming soon.");
+    if (selectedBillingMethod === "paypal") {
+      toast.message("PayPal checkout is coming soon.");
+      return;
+    }
+
+    if (selectedBillingMethod === "crypto") {
+      if (!billingSelection.wallet || !billingSelection.cryptoTokenId) return;
+
+      setIsPaying(true);
+
+      try {
+        const prepared = await prepareConnectCheckoutCryptoPayment(uid, {
+          cryptoWalletUid: billingSelection.wallet.uid,
+          cryptoToken: billingSelection.cryptoTokenId,
+        });
+
+        if (!prepared?.payment) {
+          setIsPaying(false);
+          return;
+        }
+
+        if (prepared.alreadyPaid && prepared.checkout) {
+          toast.success("Connects purchased successfully.");
+          if (typeof prepared.connectsBalance === "number") {
+            dispatch(setConnectsBalance(prepared.connectsBalance));
+          }
+          await router.replace("/nx/find-work");
+          return;
+        }
+
+        const txHash = await sendCryptoCheckoutPayment(
+          prepared.payment,
+          billingSelection.cryptoTokenId as CryptoTokenId,
+        );
+
+        toast.message("Payment sent. Waiting for on-chain confirmation...");
+
+        let confirmed = false;
+        for (let attempt = 0; attempt < 20; attempt += 1) {
+          const result = await confirmConnectCheckoutCryptoPayment(uid, txHash);
+
+          if (result?.alreadyPaid || result?.checkout?.status === "completed") {
+            toast.success("Connects purchased successfully.");
+            if (typeof result.connectsBalance === "number") {
+              dispatch(setConnectsBalance(result.connectsBalance));
+            }
+            confirmed = true;
+            await router.replace("/nx/find-work");
+            break;
+          }
+
+          if (!result?.pending) break;
+
+          await new Promise((resolve) => setTimeout(resolve, 3000));
+        }
+
+        if (!confirmed) {
+          toast.message(
+            "Payment submitted. Connects will be credited once the transaction is confirmed.",
+          );
+        }
+      } catch (error) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : "Unable to complete crypto payment.";
+        toast.error(message);
+      } finally {
+        setIsPaying(false);
+      }
+
       return;
     }
 
@@ -323,7 +401,7 @@ export default function CheckoutPage() {
 
   const authorizationMessage =
     selectedBillingMethod === "crypto" && cryptoToken
-      ? `You're authorizing Worklanc to charge ${estimatedTotalLabel} from your connected wallet.`
+      ? `You will send ${estimatedTotalLabel} directly from your wallet to Worklanc's treasury address.`
       : selectedBillingMethod === "paypal"
       ? "You're authorizing Worklanc to charge your PayPal account."
       : `You're authorizing Worklanc to charge ${formatCentsToUsd(

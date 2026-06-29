@@ -1,5 +1,5 @@
 import { request } from "./client";
-import type { ConnectBundleOption, ConnectCheckout } from "@/types/connect";
+import type { ConnectBundleOption, ConnectCheckout, ConnectCheckoutCryptoPayment } from "@/types/connect";
 
 export async function fetchConnectBundles() {
   return request<{ bundles: ConnectBundleOption[] }>("/connects/bundles");
@@ -52,5 +52,36 @@ export async function payConnectCheckoutWithCard(
   }>(`/connects/checkouts/${uid}/pay/card`, {
     method: "POST",
     body: JSON.stringify({ cardPaymentMethodUid }),
+  });
+}
+
+export async function prepareConnectCheckoutCryptoPayment(
+  uid: string,
+  body: { cryptoWalletUid: string; cryptoToken: string },
+) {
+  return request<{
+    checkout: ConnectCheckout;
+    payment: ConnectCheckoutCryptoPayment;
+    alreadyPaid?: boolean;
+    connectsBalance?: number;
+  }>(`/connects/checkouts/${uid}/pay/crypto/prepare`, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+export async function confirmConnectCheckoutCryptoPayment(
+  uid: string,
+  txHash: string,
+) {
+  return request<{
+    checkout: ConnectCheckout;
+    connectsBalance?: number;
+    alreadyPaid?: boolean;
+    pending?: boolean;
+    message?: string;
+  }>(`/connects/checkouts/${uid}/pay/crypto/confirm`, {
+    method: "POST",
+    body: JSON.stringify({ txHash }),
   });
 }

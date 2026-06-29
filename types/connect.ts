@@ -13,6 +13,17 @@ export type ConnectCheckoutStatus =
   | "failed"
   | "expired";
 
+export type ConnectCheckoutCryptoPayment = {
+  chain: "solana" | "ethereum" | "bnb";
+  token: string;
+  amount: string;
+  treasuryAddress: string;
+  senderAddress: string;
+  tokenContract: string | null;
+  quoteExpiresAt: string;
+  checkoutUid: string;
+};
+
 export type ConnectCheckout = {
   uid: string;
   connectAmount: number;
@@ -29,6 +40,17 @@ export type ConnectCheckout = {
   expiresAt: string;
   createdAt: string;
   updatedAt: string;
+  cryptoPayment?: {
+    chain: "solana" | "ethereum" | "bnb";
+    token: string;
+    amount: string;
+    treasuryAddress: string;
+    senderAddress: string;
+    tokenContract: string | null;
+    tokenPriceUsd: string | null;
+    quoteExpiresAt: string | null;
+    txHash: string | null;
+  } | null;
 };
 
 export function formatConnectBundleLabel(bundle: ConnectBundleOption): string {
