@@ -7,6 +7,7 @@ export { default as Footer } from "./Footer";
 export { default as NavHoverDropdown } from "./NavHoverDropdown";
 export { default as AuthorizedFooter } from "./AuthorizedFooter";
 export { default as AddBillingMethodSection } from "./AddBillingMethodSection";
+export { default as AddWithdrawalMethodSection } from "./AddWithdrawalMethodSection";
 export { default as CheckoutBillingMethodSection } from "./CheckoutBillingMethodSection";
 export { default as TalentFilter } from "./TalentFilter";
 export { default as JobFilter } from "./JobFilter";

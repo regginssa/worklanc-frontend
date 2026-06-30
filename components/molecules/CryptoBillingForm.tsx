@@ -28,6 +28,8 @@ interface CryptoBillingFormProps {
   editingWallet?: SavedCryptoWallet | null;
   lockNetwork?: boolean;
   existingWallets?: SavedCryptoWallet[];
+  variant?: "billing" | "withdrawal";
+  allowedChains?: CryptoChainId[];
   onSave?: (body: {
     address: string;
     chain: string;
@@ -63,6 +65,8 @@ export default function CryptoBillingForm({
   editingWallet = null,
   lockNetwork = false,
   existingWallets = [],
+  variant = "billing",
+  allowedChains,
   onSave,
   onCancel,
   saveLabel = "Verify and save wallet",
@@ -84,6 +88,8 @@ export default function CryptoBillingForm({
       editingWallet={editingWallet}
       lockNetwork={lockNetwork}
       existingWallets={existingWallets}
+      variant={variant}
+      allowedChains={allowedChains}
       onSave={onSave}
       onCancel={onCancel}
       saveLabel={saveLabel}
@@ -95,10 +101,13 @@ function CryptoBillingFormContent({
   editingWallet = null,
   lockNetwork = false,
   existingWallets = [],
+  variant = "billing",
+  allowedChains,
   onSave,
   onCancel,
   saveLabel = "Verify and save wallet",
 }: CryptoBillingFormProps) {
+  const isWithdrawal = variant === "withdrawal";
   const { open } = useAppKit();
   const { address, caipAddress, isConnected } = useAppKitAccount();
   const { disconnect } = useDisconnect();
@@ -106,13 +115,17 @@ function CryptoBillingFormContent({
     useAppKitProvider<Provider>("solana");
   const { signMessageAsync } = useSignMessage();
 
-  const availableChains = useMemo(
-    () => getAvailableChains(existingWallets, editingWallet?.uid),
-    [existingWallets, editingWallet?.uid],
-  );
+  const availableChains = useMemo(() => {
+    const chains = getAvailableChains(existingWallets, editingWallet?.uid);
+    if (!allowedChains?.length) return chains;
+    return chains.filter((chain) => allowedChains.includes(chain.id));
+  }, [allowedChains, existingWallets, editingWallet?.uid]);
 
   const [selectedChainId, setSelectedChainId] = useState<CryptoChainId>(
-    editingWallet?.chain ?? availableChains[0]?.id ?? "solana",
+    editingWallet?.chain ??
+      allowedChains?.[0] ??
+      availableChains[0]?.id ??
+      "solana",
   );
   const [walletLabel, setWalletLabel] = useState(editingWallet?.label ?? "");
   const [loading, setLoading] = useState(false);
@@ -264,18 +277,28 @@ function CryptoBillingFormContent({
     <div className="space-y-8">
       <div className="space-y-2">
         <h4 className="text-lg font-medium">
-          {editingWallet ? "Update crypto wallet" : "Connect a crypto wallet"}
+          {editingWallet
+            ? "Update crypto wallet"
+            : isWithdrawal
+              ? "Connect a crypto wallet for withdrawals"
+              : "Connect a crypto wallet"}
         </h4>
         <p className="text-sm font-light text-slate-600">
           {editingWallet
             ? "Reconnect or update the wallet details for this network. The network cannot be changed."
-            : "Link your own wallet to deposit funds on Worklanc. One wallet per network — you can pay with any supported token on that network at checkout. Worklanc never asks for your seed phrase or private key."}
+            : isWithdrawal
+              ? "Link your wallet to receive earnings on Worklanc. One wallet per network — you can withdraw in any supported token on that network. Worklanc never asks for your seed phrase or private key."
+              : "Link your own wallet to deposit funds on Worklanc. One wallet per network — you can pay with any supported token on that network at checkout. Worklanc never asks for your seed phrase or private key."}
         </p>
       </div>
 
       <CryptoAssetDropdown
         label="Network"
-        subLabel="Choose the blockchain network your wallet will use for deposits."
+        subLabel={
+          isWithdrawal
+            ? "Choose the blockchain network your wallet will use for withdrawals."
+            : "Choose the blockchain network your wallet will use for deposits."
+        }
         name="cryptoChain"
         placeholder="Select a network"
         options={chainOptions}
@@ -299,7 +322,7 @@ function CryptoBillingFormContent({
               <span className="font-medium text-slate-900">
                 {selectedChain.label}
               </span>
-              :
+              {isWithdrawal ? " for withdrawals" : ""}:
             </p>
           </div>
           <ul className="flex flex-wrap gap-2">
@@ -367,8 +390,8 @@ function CryptoBillingFormContent({
             role="alert"
           >
             Your wallet is connected on a different network. Switch to{" "}
-            <strong>{selectedChain?.label}</strong> before saving this deposit
-            method.
+            <strong>{selectedChain?.label}</strong> before saving this{" "}
+            {isWithdrawal ? "withdrawal" : "deposit"} method.
           </div>
         )}
       </div>
@@ -400,8 +423,9 @@ function CryptoBillingFormContent({
             className="mt-0.5 size-4 shrink-0"
           />
           <span>
-            Always confirm the exact network before sending a deposit. Sending on
-            the wrong network can result in lost funds.
+            Always confirm the exact network before{" "}
+            {isWithdrawal ? "receiving a withdrawal" : "sending a deposit"}.
+            Using the wrong network can result in lost funds.
           </span>
         </li>
       </ul>
