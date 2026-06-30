@@ -10,19 +10,22 @@ import { toast } from "sonner";
 import CryptoBillingForm from "./CryptoBillingForm";
 import SavedCryptoWithdrawalList from "./SavedCryptoWithdrawalList";
 
+type CryptoWithdrawalSaveBody = {
+  address: string;
+  chain: string;
+  label?: string;
+  message: string;
+  signature: string;
+};
+
 interface CryptoWithdrawalSectionProps {
   wallets: SavedCryptoWithdrawal[];
-  onSave: (body: {
-    address: string;
-    chain: string;
-    label?: string;
-  }) => boolean | void | Promise<boolean | void>;
+  onSave: (
+    body: CryptoWithdrawalSaveBody,
+  ) => boolean | void | Promise<boolean | void>;
   onUpdate?: (
     uid: string,
-    body: {
-      address: string;
-      label?: string;
-    },
+    body: CryptoWithdrawalSaveBody,
   ) => boolean | void | Promise<boolean | void>;
   onDelete: (wallet: SavedCryptoWithdrawal) => void | Promise<void>;
   onSetDefault?: (wallet: SavedCryptoWithdrawal) => void | Promise<void>;
@@ -57,23 +60,10 @@ export default function CryptoWithdrawalSection({
     createdAt: wallet.createdAt,
   }));
 
-  const handleSave = async (body: {
-    address: string;
-    chain: string;
-    label?: string;
-    message: string;
-    signature: string;
-  }) => {
+  const handleSave = async (body: CryptoWithdrawalSaveBody) => {
     const result = editingWallet
-      ? await onUpdate?.(editingWallet.uid, {
-          address: body.address,
-          label: body.label,
-        })
-      : await onSave({
-          address: body.address,
-          chain: body.chain,
-          label: body.label,
-        });
+      ? await onUpdate?.(editingWallet.uid, body)
+      : await onSave(body);
 
     if (result === false) return false;
 

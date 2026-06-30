@@ -1,3 +1,5 @@
+"use client";
+
 import type { SavedPayoneerWithdrawal } from "@/types/disbursement";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -6,25 +8,33 @@ import SavedPayoneerWithdrawalList from "./SavedPayoneerWithdrawalList";
 
 interface PayoneerWithdrawalSectionProps {
   account: SavedPayoneerWithdrawal | null;
-  onConnect: (email: string) => void | Promise<void>;
+  onRegister: (
+    email: string,
+  ) => Promise<{ registrationLink: string } | null | void>;
   onDelete: () => void | Promise<void>;
+  onRefresh?: () => void | Promise<void>;
   onSetDefault?: () => void | Promise<void>;
   showDefaultControl?: boolean;
 }
 
 export default function PayoneerWithdrawalSection({
   account,
-  onConnect,
+  onRegister,
   onDelete,
+  onRefresh,
   onSetDefault,
   showDefaultControl = true,
 }: PayoneerWithdrawalSectionProps) {
   const [showAddForm, setShowAddForm] = useState(!account);
   const [deleting, setDeleting] = useState(false);
 
-  const handleConnect = async (email: string) => {
-    await onConnect(email);
-    setShowAddForm(false);
+  const handleRegister = async (email: string) => {
+    const result = await onRegister(email);
+    if (result?.registrationLink) {
+      setShowAddForm(false);
+      toast.success("Continue setup on Payoneer in the new tab.");
+    }
+    return result ?? null;
   };
 
   const handleDelete = async () => {
@@ -46,16 +56,14 @@ export default function PayoneerWithdrawalSection({
           onDelete={handleDelete}
           deleting={deleting}
           onSetDefault={onSetDefault}
+          onRefresh={onRefresh}
           showDefaultControl={showDefaultControl}
         />
       )}
 
       {!account && showAddForm && (
         <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-6">
-          <PayoneerWithdrawalForm
-            onSuccess={handleConnect}
-            onCancel={undefined}
-          />
+          <PayoneerWithdrawalForm onRegister={handleRegister} />
         </div>
       )}
     </div>

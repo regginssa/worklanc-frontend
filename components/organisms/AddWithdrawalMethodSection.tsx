@@ -21,12 +21,21 @@ import PayoneerWithdrawalSection from "../molecules/PayoneerWithdrawalSection";
 
 type WithdrawalPickerType = "payoneer" | "crypto";
 
+type CryptoSaveBody = {
+  address: string;
+  chain: string;
+  label?: string;
+  message: string;
+  signature: string;
+};
+
 export default function AddWithdrawalMethodSection({
   onCancel,
   payoneer,
   cryptoWallets,
-  onPayoneerConnect,
+  onPayoneerRegister,
   onPayoneerDelete,
+  onPayoneerRefresh,
   onCryptoSave,
   onCryptoUpdate,
   onCryptoDelete,
@@ -37,16 +46,17 @@ export default function AddWithdrawalMethodSection({
   onCancel: () => void;
   payoneer: SavedPayoneerWithdrawal | null;
   cryptoWallets: SavedCryptoWithdrawal[];
-  onPayoneerConnect: (email: string) => void | Promise<void>;
+  onPayoneerRegister: (
+    email: string,
+  ) => Promise<{ registrationLink: string } | null | void>;
   onPayoneerDelete: () => void | Promise<void>;
-  onCryptoSave: (body: {
-    address: string;
-    chain: string;
-    label?: string;
-  }) => boolean | void | Promise<boolean | void>;
+  onPayoneerRefresh?: () => void | Promise<void>;
+  onCryptoSave: (
+    body: CryptoSaveBody,
+  ) => boolean | void | Promise<boolean | void>;
   onCryptoUpdate?: (
     uid: string,
-    body: { address: string; label?: string },
+    body: CryptoSaveBody,
   ) => boolean | void | Promise<boolean | void>;
   onCryptoDelete: (wallet: SavedCryptoWithdrawal) => void | Promise<void>;
   onSetDefaultPayoneer?: () => void | Promise<void>;
@@ -97,7 +107,13 @@ export default function AddWithdrawalMethodSection({
                 disabled={!canAddPayoneer}
                 onCheck={() => setSelectedMethod("payoneer")}
               />
-              <Image src={PayoneerLogo} alt="Payoneer" width={100} height={24} className="h-5 w-auto" />
+              <Image
+                src={PayoneerLogo}
+                alt="Payoneer"
+                width={100}
+                height={24}
+                className="h-5 w-auto"
+              />
               {!canAddPayoneer && (
                 <span className="text-xs text-slate-500">Already connected</span>
               )}
@@ -106,8 +122,9 @@ export default function AddWithdrawalMethodSection({
             {selectedMethod === "payoneer" && canAddPayoneer && (
               <PayoneerWithdrawalSection
                 account={null}
-                onConnect={onPayoneerConnect}
+                onRegister={onPayoneerRegister}
                 onDelete={onPayoneerDelete}
+                onRefresh={onPayoneerRefresh}
               />
             )}
           </li>

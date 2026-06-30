@@ -1,17 +1,18 @@
+"use client";
+
 import { Button, Input } from "@/components/atoms";
 import CardWindowLogo from "@/public/assets/svgs/icons/other/card_window.svg";
 import PayoneerLogo from "@/public/assets/svgs/icons/logos/payoneer.svg";
 import Image from "next/image";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface PayoneerWithdrawalFormProps {
-  onSuccess?: (email: string) => void | Promise<void>;
+  onRegister?: (email: string) => Promise<{ registrationLink: string } | null>;
   onCancel?: () => void;
 }
 
 export default function PayoneerWithdrawalForm({
-  onSuccess,
+  onRegister,
   onCancel,
 }: PayoneerWithdrawalFormProps) {
   const [email, setEmail] = useState("");
@@ -39,9 +40,14 @@ export default function PayoneerWithdrawalForm({
     setLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1200));
-      await onSuccess?.(email.trim());
-      toast.success("Payoneer account connected.");
+      const result = await onRegister?.(email.trim());
+      if (!result?.registrationLink) {
+        setFormError("Unable to start Payoneer registration. Please try again.");
+        setStep("intro");
+        return;
+      }
+
+      window.open(result.registrationLink, "_blank", "noopener,noreferrer");
     } catch {
       setFormError("Unable to connect Payoneer. Please try again.");
       setStep("intro");

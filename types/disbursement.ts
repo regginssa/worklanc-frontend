@@ -8,7 +8,9 @@ export type SavedPayoneerWithdrawal = {
   uid: string;
   type: "payoneer";
   email: string;
-  status: "pending" | "active";
+  payeeId?: string | null;
+  registrationLink?: string | null;
+  status: "pending" | "active" | "inactive" | "declined";
   isDefault: boolean;
   createdAt: string;
 };

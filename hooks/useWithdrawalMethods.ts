@@ -1,9 +1,10 @@
 "use client";
 
 import {
-  connectPayoneerWithdrawal,
   disconnectPayoneerWithdrawal,
   fetchDisbursementContext,
+  refreshPayoneerWithdrawal,
+  registerPayoneerWithdrawal,
   removeCryptoWithdrawalMethod,
   saveCryptoWithdrawal,
   setDefaultCryptoMethod,
@@ -18,20 +19,27 @@ import type {
 import type { CryptoChainId, CryptoTokenId } from "@/lib/crypto/assets";
 import { useCallback, useEffect, useState } from "react";
 
+const EMPTY_METHODS: WithdrawalMethodsState = {
+  payoneer: null,
+  cryptoWallets: [],
+  schedule: null,
+};
+
 export function useWithdrawalMethods() {
-  const [methods, setMethods] = useState<WithdrawalMethodsState>({
-    payoneer: null,
-    cryptoWallets: [],
-    schedule: null,
-  });
+  const [methods, setMethods] = useState<WithdrawalMethodsState>(EMPTY_METHODS);
   const [taxProfileComplete, setTaxProfileComplete] = useState(true);
   const [hydrated, setHydrated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const refresh = useCallback(async () => {
+    setIsLoading(true);
     const context = await fetchDisbursementContext();
-    setMethods(context.methods);
-    setTaxProfileComplete(context.taxProfileComplete);
-    setHydrated(true);
+    if (context) {
+      setMethods(context.methods ?? EMPTY_METHODS);
+      setTaxProfileComplete(context.taxProfileComplete ?? true);
+      setHydrated(true);
+    }
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -39,16 +47,27 @@ export function useWithdrawalMethods() {
   }, [refresh]);
 
   const connectPayoneer = useCallback(async (email: string) => {
-    const next = await connectPayoneerWithdrawal(email);
-    setMethods(next);
-    return next;
-  }, []);
+    const result = await registerPayoneerWithdrawal(email);
+    if (!result?.payoneer) return null;
+    await refresh();
+    return result;
+  }, [refresh]);
+
+  const refreshPayoneer = useCallback(async () => {
+    const result = await refreshPayoneerWithdrawal();
+    if (result?.payoneer) {
+      await refresh();
+    }
+    return result;
+  }, [refresh]);
 
   const disconnectPayoneer = useCallback(async () => {
-    const next = await disconnectPayoneerWithdrawal();
-    setMethods(next);
-    return next;
-  }, []);
+    const result = await disconnectPayoneerWithdrawal();
+    if (result?.success) {
+      await refresh();
+    }
+    return result;
+  }, [refresh]);
 
   const saveCrypto = useCallback(
     async (body: {
@@ -56,59 +75,88 @@ export function useWithdrawalMethods() {
       chain: CryptoChainId;
       label?: string;
       token?: CryptoTokenId;
+      message: string;
+      signature: string;
     }) => {
-      const next = await saveCryptoWithdrawal(body);
-      setMethods(next);
-      return next;
+      const result = await saveCryptoWithdrawal(body);
+      if (result?.wallet) {
+        await refresh();
+      }
+      return result;
     },
-    [],
+    [refresh],
   );
 
   const updateCrypto = useCallback(
     async (
       uid: string,
-      body: { address: string; label?: string; token?: CryptoTokenId },
+      body: {
+        address: string;
+        chain: CryptoChainId;
+        label?: string;
+        token?: CryptoTokenId;
+        message: string;
+        signature: string;
+      },
     ) => {
-      const next = await updateCryptoWithdrawalMethod(uid, body);
-      setMethods(next);
-      return next;
+      const result = await updateCryptoWithdrawalMethod(uid, body);
+      if (result?.wallet) {
+        await refresh();
+      }
+      return result;
     },
-    [],
+    [refresh],
   );
 
-  const removeCrypto = useCallback(async (uid: string) => {
-    const next = await removeCryptoWithdrawalMethod(uid);
-    setMethods(next);
-    return next;
-  }, []);
+  const removeCrypto = useCallback(
+    async (uid: string) => {
+      const result = await removeCryptoWithdrawalMethod(uid);
+      if (result?.success) {
+        await refresh();
+      }
+      return result;
+    },
+    [refresh],
+  );
 
   const setDefaultPayoneer = useCallback(async () => {
-    const next = await setDefaultPayoneerMethod();
-    setMethods(next);
-    return next;
-  }, []);
+    const result = await setDefaultPayoneerMethod();
+    if (result?.payoneer) {
+      await refresh();
+    }
+    return result;
+  }, [refresh]);
 
-  const setDefaultCrypto = useCallback(async (uid: string) => {
-    const next = await setDefaultCryptoMethod(uid);
-    setMethods(next);
-    return next;
-  }, []);
+  const setDefaultCrypto = useCallback(
+    async (uid: string) => {
+      const result = await setDefaultCryptoMethod(uid);
+      if (result?.wallet) {
+        await refresh();
+      }
+      return result;
+    },
+    [refresh],
+  );
 
   const updateSchedule = useCallback(
     async (schedule: WithdrawalSchedule | null) => {
-      const next = await updateWithdrawalSchedule(schedule);
-      setMethods(next);
-      return next;
+      const result = await updateWithdrawalSchedule(schedule);
+      if (result) {
+        await refresh();
+      }
+      return result;
     },
-    [],
+    [refresh],
   );
 
   return {
     methods,
     taxProfileComplete,
     hydrated,
+    isLoading,
     refresh,
     connectPayoneer,
+    refreshPayoneer,
     disconnectPayoneer,
     saveCrypto,
     updateCrypto,

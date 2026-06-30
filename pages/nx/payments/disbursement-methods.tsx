@@ -11,6 +11,7 @@ import SavedPayoneerWithdrawalList, {
 import WithdrawalScheduleSection from "@/components/molecules/WithdrawalScheduleSection";
 import { useWithdrawalMethods } from "@/hooks/useWithdrawalMethods";
 import { CRYPTO_CHAINS } from "@/lib/crypto/assets";
+import type { CryptoChainId } from "@/lib/crypto/assets";
 import {
   getEmptyWithdrawalMethodsDescription,
   hasWithdrawalMethods,
@@ -24,13 +25,16 @@ import { Icon } from "@iconify/react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function DisbursementMethods() {
   const {
     methods,
     taxProfileComplete,
     hydrated,
+    isLoading,
     connectPayoneer,
+    refreshPayoneer,
     disconnectPayoneer,
     saveCrypto,
     updateCrypto,
@@ -51,31 +55,57 @@ export default function DisbursementMethods() {
   const showDefaultControl = payoutOptionCount > 1;
   const canManageWithdrawals = taxProfileComplete;
 
-  const handlePayoneerConnect = async (email: string) => {
-    await connectPayoneer(email);
-    setShowAddSection(false);
+  const handlePayoneerRegister = async (email: string) => {
+    const result = await connectPayoneer(email);
+    if (result?.registrationLink) {
+      setShowAddSection(false);
+      return { registrationLink: result.registrationLink };
+    }
+    return null;
   };
 
   const handleCryptoSave = async (body: {
     address: string;
     chain: string;
     label?: string;
+    message: string;
+    signature: string;
   }) => {
-    await saveCrypto({
-      address: body.address,
-      chain: body.chain as "solana" | "ethereum" | "bnb",
-      label: body.label,
+    const result = await saveCrypto({
+      ...body,
+      chain: body.chain as CryptoChainId,
     });
-    setShowAddSection(false);
-    return true;
+    if (result?.wallet) {
+      setShowAddSection(false);
+      return true;
+    }
+    return false;
   };
 
   const handleCryptoUpdate = async (
     uid: string,
-    body: { address: string; label?: string }
+    body: {
+      address: string;
+      chain: string;
+      label?: string;
+      message: string;
+      signature: string;
+    }
   ) => {
-    await updateCrypto(uid, body);
-    return true;
+    const result = await updateCrypto(uid, {
+      ...body,
+      chain: body.chain as CryptoChainId,
+    });
+    return Boolean(result?.wallet);
+  };
+
+  const handleRefreshPayoneer = async () => {
+    const result = await refreshPayoneer();
+    if (result?.payoneer?.status === "active") {
+      toast.success("Payoneer account is now active.");
+    } else {
+      toast.message("Payoneer setup is still pending.");
+    }
   };
 
   return (
@@ -167,12 +197,12 @@ export default function DisbursementMethods() {
         <div className="p-8 rounded-3xl border border-slate-300 space-y-4">
           <div className="flex items-center justify-between">
             <h4 className="text-xl font-medium">Withdrawal schedule</h4>
-            <Icon icon="mdi:clock-outline" className="size-5" />
+            <Icon icon="mdi:clock-arrow" className="size-5" />
           </div>
 
           <WithdrawalScheduleSection
             schedule={schedule}
-            disabled={!canManageWithdrawals || !hasMethods}
+            disabled={!canManageWithdrawals || !hasMethods || isLoading}
             onSave={async (nextSchedule) => {
               await updateSchedule(nextSchedule);
             }}
@@ -193,18 +223,15 @@ export default function DisbursementMethods() {
           cryptoWallets={cryptoWallets}
           showDefaultControl={showDefaultControl}
           onCancel={() => setShowAddSection(false)}
-          onPayoneerConnect={handlePayoneerConnect}
-          onPayoneerDelete={async () => {
-            await disconnectPayoneer();
-          }}
+          onPayoneerRegister={handlePayoneerRegister}
+          onPayoneerDelete={disconnectPayoneer}
+          onPayoneerRefresh={handleRefreshPayoneer}
           onCryptoSave={handleCryptoSave}
           onCryptoUpdate={handleCryptoUpdate}
           onCryptoDelete={async (wallet) => {
             await removeCrypto(wallet.uid);
           }}
-          onSetDefaultPayoneer={async () => {
-            await setDefaultPayoneer();
-          }}
+          onSetDefaultPayoneer={setDefaultPayoneer}
           onSetDefaultCrypto={async (wallet) => {
             await setDefaultCrypto(wallet.uid);
           }}
@@ -214,7 +241,7 @@ export default function DisbursementMethods() {
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 space-y-2">
               <h4 className="text-xl font-medium">Withdrawal methods</h4>
-              {!hydrated ? (
+              {!hydrated || isLoading ? (
                 <div className="mt-4 space-y-6">
                   <SavedPayoneerWithdrawalListSkeleton />
                   <SavedCryptoWithdrawalListSkeleton rows={2} />
@@ -228,12 +255,9 @@ export default function DisbursementMethods() {
                       </p>
                       <SavedPayoneerWithdrawalList
                         account={payoneer}
-                        onDelete={async () => {
-                          await disconnectPayoneer();
-                        }}
-                        onSetDefault={async () => {
-                          await setDefaultPayoneer();
-                        }}
+                        onDelete={disconnectPayoneer}
+                        onRefresh={handleRefreshPayoneer}
+                        onSetDefault={setDefaultPayoneer}
                         showDefaultControl={showDefaultControl}
                       />
                     </div>
@@ -271,28 +295,28 @@ export default function DisbursementMethods() {
                 type="primary"
                 label="Add a method"
                 classname="px-5! py-2.5! rounded-full! text-sm! font-medium! shrink-0"
-                disabled={!canManageWithdrawals}
+                disabled={!canManageWithdrawals || isLoading}
                 onClick={() => setShowAddSection(true)}
               />
             )}
           </div>
 
-          {canAddMore && (
+          {/* {canAddMore && (
             <motion.button
               whileTap={{ scale: 0.95 }}
               type="button"
               className={`text-sm font-medium flex items-center gap-2 ${
-                canManageWithdrawals
+                canManageWithdrawals && !isLoading
                   ? "text-blue-600 cursor-pointer hover:underline"
                   : "text-slate-400 cursor-not-allowed"
               }`}
               onClick={() => setShowAddSection(true)}
-              disabled={!canManageWithdrawals}
+              disabled={!canManageWithdrawals || isLoading}
             >
               <Icon icon="mdi:plus" className="size-5" />
               Add a withdrawal method
             </motion.button>
-          )}
+          )} */}
         </div>
       )}
     </FreelancerSettingsLayout>

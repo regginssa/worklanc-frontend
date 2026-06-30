@@ -3,80 +3,114 @@ import type {
   WithdrawalSchedule,
 } from "@/types/disbursement";
 import type { CryptoChainId, CryptoTokenId } from "@/lib/crypto/assets";
-import {
-  addCryptoWithdrawal,
-  addPayoneerWithdrawal,
-  loadTaxProfileComplete,
-  loadWithdrawalMethods,
-  removeCryptoWithdrawal,
-  removePayoneerWithdrawal,
-  setDefaultCryptoWithdrawal,
-  setDefaultPayoneerWithdrawal,
-  setWithdrawalSchedule,
-  updateCryptoWithdrawal,
-} from "@/lib/disbursement/storage";
+import { request } from "./client";
+import { localRequest } from "./localClient";
 
 export type DisbursementContextResponse = {
   taxProfileComplete: boolean;
   methods: WithdrawalMethodsState;
 };
 
-/**
- * Disbursement API surface for talent withdrawals.
- *
- * Today: backed by localStorage via `lib/disbursement/storage.ts`.
- * Later: swap each function to `request(...)` against backend routes.
- */
+export type RegisterPayoneerResponse = {
+  payoneer: WithdrawalMethodsState["payoneer"];
+  registrationLink: string;
+};
 
-export async function fetchDisbursementContext(): Promise<DisbursementContextResponse> {
-  return {
-    taxProfileComplete: loadTaxProfileComplete(),
-    methods: loadWithdrawalMethods(),
-  };
+export async function fetchDisbursementContext() {
+  return request<DisbursementContextResponse>("/disbursements/context");
 }
 
-export async function connectPayoneerWithdrawal(email: string) {
-  return addPayoneerWithdrawal(email);
+export async function registerPayoneerWithdrawal(email: string) {
+  return request<RegisterPayoneerResponse>("/disbursements/payoneer/register", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+}
+
+export async function refreshPayoneerWithdrawal() {
+  return request<{ payoneer: NonNullable<WithdrawalMethodsState["payoneer"]> }>(
+    "/disbursements/payoneer/refresh",
+    { method: "POST" },
+  );
 }
 
 export async function disconnectPayoneerWithdrawal() {
-  return removePayoneerWithdrawal();
+  return request<{ success: boolean }>("/disbursements/payoneer", {
+    method: "DELETE",
+  });
 }
 
 export async function saveCryptoWithdrawal(body: {
   address: string;
   chain: CryptoChainId;
   label?: string;
+  message: string;
+  signature: string;
   token?: CryptoTokenId;
 }) {
-  return addCryptoWithdrawal(body);
+  return localRequest<{ wallet: WithdrawalMethodsState["cryptoWallets"][number] }>(
+    "/api/disbursements/crypto/wallets",
+    {
+      method: "POST",
+      body: JSON.stringify(body),
+    },
+  );
 }
 
 export async function updateCryptoWithdrawalMethod(
   uid: string,
   body: {
     address: string;
+    chain: CryptoChainId;
     label?: string;
+    message: string;
+    signature: string;
     token?: CryptoTokenId;
   },
 ) {
-  return updateCryptoWithdrawal(uid, body);
+  return localRequest<{ wallet: WithdrawalMethodsState["cryptoWallets"][number] }>(
+    "/api/disbursements/crypto/wallets",
+    {
+      method: "PATCH",
+      body: JSON.stringify({ uid, ...body }),
+    },
+  );
 }
 
 export async function removeCryptoWithdrawalMethod(uid: string) {
-  return removeCryptoWithdrawal(uid);
+  return request<{ success: boolean }>(`/disbursements/crypto/wallets/${uid}`, {
+    method: "DELETE",
+  });
 }
 
 export async function setDefaultPayoneerMethod() {
-  return setDefaultPayoneerWithdrawal();
+  return request<{ payoneer: NonNullable<WithdrawalMethodsState["payoneer"]> }>(
+    "/disbursements/default",
+    {
+      method: "PATCH",
+      body: JSON.stringify({ type: "payoneer" }),
+    },
+  );
 }
 
 export async function setDefaultCryptoMethod(uid: string) {
-  return setDefaultCryptoWithdrawal(uid);
+  return request<{ wallet: WithdrawalMethodsState["cryptoWallets"][number] }>(
+    "/disbursements/default",
+    {
+      method: "PATCH",
+      body: JSON.stringify({ type: "crypto", uid }),
+    },
+  );
 }
 
 export async function updateWithdrawalSchedule(
   schedule: WithdrawalSchedule | null,
 ) {
-  return setWithdrawalSchedule(schedule);
+  return request<{ schedule: WithdrawalSchedule | null }>(
+    "/disbursements/schedule",
+    {
+      method: "PATCH",
+      body: JSON.stringify({ schedule }),
+    },
+  );
 }
