@@ -10,7 +10,7 @@ import {
   SEO,
 } from "@/components/atoms";
 import { IntroLayout, NavLayout } from "@/components/layouts";
-import { dropdowns, navs } from "@/components/layouts/CatLayout";
+import { dropdowns, navs } from "@/components/layouts/cat";
 import {
   AI_EXPERTS,
   AI_EXPERTS_CARDS,

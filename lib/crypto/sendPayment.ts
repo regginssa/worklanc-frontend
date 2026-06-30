@@ -29,7 +29,7 @@ function getSolanaRpcUrl() {
 function amountToAtomicUnits(amount: string, decimals: number): bigint {
   const [whole, fraction = ""] = amount.split(".");
   const paddedFraction = fraction.padEnd(decimals, "0").slice(0, decimals);
-  return BigInt(whole) * 10n ** BigInt(decimals) + BigInt(paddedFraction || "0");
+  return BigInt(whole) * BigInt(10) ** BigInt(decimals) + BigInt(paddedFraction || "0");
 }
 
 function normalizeAddress(value: string) {

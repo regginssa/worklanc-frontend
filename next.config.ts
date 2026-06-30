@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
+      "@react-native-async-storage/async-storage": path.join(
+        process.cwd(),
+        "lib/stubs/async-storage.ts",
+      ),
       canvas: false,
       accounts: false,
       "@wagmi/connectors": path.join(

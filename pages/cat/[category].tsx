@@ -7,7 +7,7 @@ import type {
   TCatLayoutProfessionals,
   TCatLayoutProjectOverview,
   TCatLayoutService,
-} from "@/components/layouts/CatLayout";
+} from "@/components/layouts/cat";
 
 // Intro Images
 import DevIntroImage from "@/public/assets/webps/cat/dev-it/intro.webp";

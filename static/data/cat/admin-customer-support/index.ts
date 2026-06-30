@@ -1,4 +1,4 @@
-import { TCatLayoutProfessionalCardItem } from "@/components/layouts/CatLayout";
+import { TCatLayoutProfessionalCardItem } from "@/components/layouts/cat";
 import {
   ICatFreelancerCategory,
   TAccordionImageViewerItem,
