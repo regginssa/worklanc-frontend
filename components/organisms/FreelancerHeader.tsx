@@ -133,7 +133,7 @@ export default function AuthorizedHeader() {
           },
           { label: "Your reports", href: "#" },
           { label: "Billings and earnings", href: "#" },
-          { label: "Transactions", href: "#" },
+          { label: "Transactions", href: "/nx/reports/transactions/123456789" },
           { label: "Certificate of earnings", href: "#" },
         ],
       },
