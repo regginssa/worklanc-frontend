@@ -106,7 +106,8 @@ export default function TransactionsPage() {
           </div>
 
           <Link
-            href="#"
+            href="/nx/payments/disbursement-methods"
+            target="_blank"
             className="text-xs underline cursor-pointer hover:text-blue-600"
           >
             Add withdrawal method

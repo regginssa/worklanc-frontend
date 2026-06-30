@@ -18,7 +18,7 @@ export default function FreelancerSettingsLayout({
     { label: "Contact Info", href: "/freelancers/settings/contact-info" },
     { label: "My Profile", href: "/freelancers/1" },
     { label: "Profile Settings", href: "/freelancers/settings/profile" },
-    { label: "Withdrawals", href: "#" },
+    { label: "Withdrawals", href: "/nx/payments/disbursement-methods" },
     { label: "My Teams", href: "/freelancers/settings/teams" },
     {
       label: "Connected Services",
