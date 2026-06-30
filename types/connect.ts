@@ -69,3 +69,19 @@ export function formatCentsToUsd(cents: number): string {
     currency: "USD",
   });
 }
+
+export type ConnectPurchaseHistoryItem = {
+  uid: string;
+  connectAmount: number;
+  totalCents: number;
+  discountCents: number;
+  promoCode: string | null;
+  status: ConnectCheckoutStatus;
+  paymentMethod: "card" | "paypal" | "crypto" | null;
+  completedAt: string | null;
+  connectsExpireAt: string | null;
+  createdAt: string;
+  cryptoToken: string | null;
+  cryptoAmount: string | null;
+  cryptoTxHash: string | null;
+};

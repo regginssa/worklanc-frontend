@@ -1,5 +1,10 @@
 import { request } from "./client";
-import type { ConnectBundleOption, ConnectCheckout, ConnectCheckoutCryptoPayment } from "@/types/connect";
+import type {
+  ConnectBundleOption,
+  ConnectCheckout,
+  ConnectCheckoutCryptoPayment,
+  ConnectPurchaseHistoryItem,
+} from "@/types/connect";
 
 export async function fetchConnectBundles() {
   return request<{ bundles: ConnectBundleOption[] }>("/connects/bundles");
@@ -7,6 +12,20 @@ export async function fetchConnectBundles() {
 
 export async function fetchConnectsBalance() {
   return request<{ connectsBalance: number }>("/connects/balance");
+}
+
+export async function fetchConnectsHistory(params?: {
+  search?: string;
+  dateRange?: string;
+}) {
+  const query = new URLSearchParams();
+  if (params?.search) query.set("search", params.search);
+  if (params?.dateRange) query.set("dateRange", params.dateRange);
+
+  const suffix = query.toString() ? `?${query.toString()}` : "";
+  return request<{ transactions: ConnectPurchaseHistoryItem[] }>(
+    `/connects/history${suffix}`,
+  );
 }
 
 export async function createConnectCheckout(body: {
