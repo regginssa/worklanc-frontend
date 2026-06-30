@@ -49,10 +49,13 @@ export default function CheckoutPage() {
   const [isCryptoWalletConnected, setIsCryptoWalletConnected] = useState(false);
   const [isCryptoPaymentReady, setIsCryptoPaymentReady] = useState(false);
 
-  const handleCryptoPaymentReady = useCallback((api: CryptoCheckoutPaymentHandle) => {
-    cryptoPaymentApiRef.current = api;
-    setIsCryptoPaymentReady(true);
-  }, []);
+  const handleCryptoPaymentReady = useCallback(
+    (api: CryptoCheckoutPaymentHandle) => {
+      cryptoPaymentApiRef.current = api;
+      setIsCryptoPaymentReady(true);
+    },
+    []
+  );
 
   const [selectedBillingMethod, setSelectedBillingMethod] =
     useState<PaymentMethod>("card");
@@ -68,9 +71,9 @@ export default function CheckoutPage() {
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [cryptoPaymentStage, setCryptoPaymentStage] =
     useState<CryptoCheckoutPaymentStage>("idle");
-  const [cryptoPaymentMessage, setCryptoPaymentMessage] = useState<string | null>(
-    null,
-  );
+  const [cryptoPaymentMessage, setCryptoPaymentMessage] = useState<
+    string | null
+  >(null);
 
   const { data: checkoutData, isLoading: isCheckoutLoading } = useQuery({
     queryKey: ["connect-checkout", uid],
@@ -181,7 +184,11 @@ export default function CheckoutPage() {
     if (selectedBillingMethod !== "crypto") return;
     setCryptoPaymentStage("idle");
     setCryptoPaymentMessage(null);
-  }, [selectedBillingMethod, billingSelection.wallet?.uid, billingSelection.cryptoTokenId]);
+  }, [
+    selectedBillingMethod,
+    billingSelection.wallet?.uid,
+    billingSelection.cryptoTokenId,
+  ]);
 
   useEffect(() => {
     if (selectedBillingMethod === "crypto") return;
@@ -309,7 +316,9 @@ export default function CheckoutPage() {
 
         if (!prepared?.payment) {
           setCryptoPaymentStage("failed");
-          setCryptoPaymentMessage("Unable to prepare crypto payment. Please try again.");
+          setCryptoPaymentMessage(
+            "Unable to prepare crypto payment. Please try again."
+          );
           return;
         }
 
@@ -329,17 +338,19 @@ export default function CheckoutPage() {
           cryptoPaymentApiRef.current?.sendPayment;
         if (!sendCryptoCheckoutPayment) {
           throw new Error(
-            "Wallet payment module is not ready. Wait a moment and try again.",
+            "Wallet payment module is not ready. Wait a moment and try again."
           );
         }
 
         const txHash = await sendCryptoCheckoutPayment(
           prepared.payment,
-          billingSelection.cryptoTokenId as CryptoTokenId,
+          billingSelection.cryptoTokenId as CryptoTokenId
         );
 
         setCryptoPaymentStage("verifying");
-        setCryptoPaymentMessage("Transaction sent. Verifying on-chain confirmation...");
+        setCryptoPaymentMessage(
+          "Transaction sent. Verifying on-chain confirmation..."
+        );
         toast.message("Payment sent. Waiting for on-chain confirmation...");
 
         let confirmed = false;
@@ -366,10 +377,10 @@ export default function CheckoutPage() {
         if (!confirmed) {
           setCryptoPaymentStage("verifying");
           setCryptoPaymentMessage(
-            "Payment submitted. We will credit connects once blockchain confirmation completes.",
+            "Payment submitted. We will credit connects once blockchain confirmation completes."
           );
           toast.message(
-            "Payment submitted. Connects will be credited once the transaction is confirmed.",
+            "Payment submitted. Connects will be credited once the transaction is confirmed."
           );
         }
       } catch (error) {
@@ -405,7 +416,7 @@ export default function CheckoutPage() {
       if (typeof result.connectsBalance === "number") {
         dispatch(setConnectsBalance(result.connectsBalance));
       }
-      await router.replace("/nx/find-work");
+      await router.replace("/nx/plans/connects/history");
     }
   };
 
