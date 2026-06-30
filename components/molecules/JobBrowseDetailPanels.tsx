@@ -421,7 +421,13 @@ export default function JobBrowseDetailPanels(
                 type="primary"
                 label={balance === 0 ? "Buy Connects to apply" : "Apply"}
                 classname="py-2.5! w-full! rounded-full! font-medium! text-sm!"
-                onClick={() => router.push("/nx/plans/connects/buy")}
+                onClick={() =>
+                  router.push(
+                    balance === 0
+                      ? "/nx/plans/connects/buy"
+                      : `/jobs/${job.uid}/apply`
+                  )
+                }
               />
               <Button
                 type="outline"

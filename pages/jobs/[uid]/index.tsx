@@ -7,7 +7,9 @@ import JobBrowseDetailPanels from "@/components/molecules/JobBrowseDetailPanels"
 
 export default function JobPage() {
   const router = useRouter();
-  const uid = router.isReady ? (router.query.uid as string | undefined) : undefined;
+  const uid = router.isReady
+    ? (router.query.uid as string | undefined)
+    : undefined;
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["browse-job", uid],
@@ -22,8 +24,8 @@ export default function JobPage() {
       <Header variant="talent" />
       <SEO
         title={job?.title || "Job posting"}
-        url={uid ? `/jobs/${uid}` : "/jobs"}
         description={job?.description?.slice(0, 160) || "View job posting"}
+        url={uid ? `/jobs/${uid}` : "/jobs"}
       />
       <main className="w-full max-w-7xl mx-auto flex-1">
         {isLoading && <JobBrowseDetailPanels loading variant="page" />}
