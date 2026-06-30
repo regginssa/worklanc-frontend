@@ -4,6 +4,7 @@ import CoinsIcon from "@/public/assets/svgs/icons/other/coins.svg";
 import EmptyIcon from "@/public/assets/svgs/icons/other/empty_teams.svg";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 const DATE_OPTIONS = [
   { label: "Last 7 days", value: "last-7-days" },
@@ -12,7 +13,9 @@ const DATE_OPTIONS = [
 ];
 
 export default function ConnectsHistory() {
+  const [date, setDate] = useState(DATE_OPTIONS[0].value);
   const router = useRouter();
+
   return (
     <FreelancerLayout
       seo={{
@@ -55,8 +58,8 @@ export default function ConnectsHistory() {
             label="Date"
             name="date"
             options={DATE_OPTIONS}
-            value={DATE_OPTIONS[0].value}
-            onSelect={() => {}}
+            value={date}
+            onSelect={(value) => setDate(value)}
           />
         </div>
       </div>
