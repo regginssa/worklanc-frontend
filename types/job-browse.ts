@@ -66,6 +66,27 @@ export type BrowseJobBase = {
 
 export type BrowseJobListItem = BrowseJobBase;
 
+export type BrowseJobsParams = {
+  keyword?: string;
+  sortBy?: string;
+  location?: string[];
+  category?: string[];
+  experienceLevel?: string[];
+  jobType?: string[];
+  numberOfProposals?: string[];
+  clientInfo?: string[];
+  clientHistory?: string[];
+  clientLocation?: string[];
+  clientTimezones?: string[];
+  projectLength?: string[];
+  hoursPerWeek?: string[];
+  jobDuration?: string[];
+  minHourlyRate?: string;
+  maxHourlyRate?: string;
+  minFixedPrice?: string;
+  maxFixedPrice?: string;
+};
+
 export type BrowseJobInProgressItem = {
   title: string;
   link: string;

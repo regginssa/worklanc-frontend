@@ -1,10 +1,32 @@
 import { request } from "./client";
 import type { Job, JobPatch } from "@/types/job";
-import type { BrowseJobDetail, BrowseJobListItem } from "@/types/job-browse";
+import type {
+  BrowseJobDetail,
+  BrowseJobListItem,
+  BrowseJobsParams,
+} from "@/types/job-browse";
+
+const buildBrowseQuery = (params: BrowseJobsParams = {}) => {
+  const search = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value == null) return;
+    if (Array.isArray(value)) {
+      if (value.length === 0) return;
+      search.set(key, value.join(","));
+      return;
+    }
+    if (String(value).trim().length === 0) return;
+    search.set(key, String(value));
+  });
+  const query = search.toString();
+  return query ? `?${query}` : "";
+};
 
 const JobsAPI = {
-  browse: async (): Promise<{ jobs: BrowseJobListItem[] } | null> =>
-    request("/jobs/browse", { method: "GET" }),
+  browse: async (
+    params: BrowseJobsParams = {},
+  ): Promise<{ jobs: BrowseJobListItem[] } | null> =>
+    request(`/jobs/browse${buildBrowseQuery(params)}`, { method: "GET" }),
 
   browseOne: async (uid: string): Promise<{ job: BrowseJobDetail } | null> =>
     request(`/jobs/browse/${uid}`, { method: "GET" }),

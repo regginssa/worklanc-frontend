@@ -6,6 +6,8 @@ import { useRouter } from "next/router";
 import { Icon } from "@iconify/react";
 import { JobListItemGroup } from "@/components/molecules";
 import { JobFilter } from "@/components/organisms";
+import type { BrowseJobsParams } from "@/types/job-browse";
+import type { JobFilterValue } from "@/components/organisms/JobFilter";
 
 const sortByOptions = [
   { label: "Sort by: Best Matches", value: "best_matches" },
@@ -15,6 +17,25 @@ const sortByOptions = [
 ];
 
 export default function SearchJobsPage() {
+  const [filters, setFilters] = useState<JobFilterValue>({
+    location: [],
+    category: [],
+    experienceLevel: [],
+    jobType: [],
+    numberOfProposals: [],
+    clientInfo: [],
+    clientHistory: [],
+    clientLocation: [],
+    clientTimezones: [],
+    projectLength: [],
+    hoursPerWeek: [],
+    jobDuration: [],
+    fixedPrice: [],
+    minHourlyRate: "",
+    maxHourlyRate: "",
+    minFixedPrice: "",
+    maxFixedPrice: "",
+  });
   const [formData, setFormData] = useState({
     keyword: "",
     sortBy: sortByOptions[0].value,
@@ -24,9 +45,30 @@ export default function SearchJobsPage() {
 
   useEffect(() => {
     if (keyword) {
-      setFormData({ ...formData, keyword: keyword as string });
+      setFormData((prev) => ({ ...prev, keyword: keyword as string }));
     }
   }, [keyword]);
+
+  const browseParams: BrowseJobsParams = {
+    keyword: formData.keyword,
+    sortBy: formData.sortBy,
+    location: filters.location,
+    category: filters.category,
+    experienceLevel: filters.experienceLevel,
+    jobType: filters.jobType,
+    numberOfProposals: filters.numberOfProposals,
+    clientInfo: filters.clientInfo,
+    clientHistory: filters.clientHistory,
+    clientLocation: filters.clientLocation,
+    clientTimezones: filters.clientTimezones,
+    projectLength: filters.projectLength,
+    hoursPerWeek: filters.hoursPerWeek,
+    jobDuration: filters.jobDuration,
+    minHourlyRate: filters.minHourlyRate,
+    maxHourlyRate: filters.maxHourlyRate,
+    minFixedPrice: filters.minFixedPrice,
+    maxFixedPrice: filters.maxFixedPrice,
+  };
 
   return (
     <FreelancerLayout
@@ -60,7 +102,7 @@ export default function SearchJobsPage() {
       <div className="flex items-start gap-4">
         {/* FILTERS */}
         <div className="w-1/4">
-          <JobFilter />
+          <JobFilter value={filters} onChange={setFilters} />
         </div>
 
         <div className="flex-1">
@@ -97,7 +139,14 @@ export default function SearchJobsPage() {
             </div>
           </div>
 
-          <JobListItemGroup />
+          <JobListItemGroup
+            params={browseParams}
+            keyword={formData.keyword}
+            matchedSkills={formData.keyword
+              .split(/\s+/)
+              .map((word) => word.trim())
+              .filter(Boolean)}
+          />
         </div>
       </div>
     </FreelancerLayout>

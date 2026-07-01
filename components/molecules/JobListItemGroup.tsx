@@ -3,29 +3,42 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { JobListItem } from "../common";
 import JobPreviewDrawer from "./drawers/JobPreviewDrawer";
 import JobsAPI from "@/lib/api/jobs";
-import type { BrowseJobListItem } from "@/types/job-browse";
+import type { BrowseJobListItem, BrowseJobsParams } from "@/types/job-browse";
 
-export default function JobListItemGroup() {
+type JobListItemGroupProps = {
+  params?: BrowseJobsParams;
+  keyword?: string;
+  matchedSkills?: string[];
+};
+
+export default function JobListItemGroup({
+  params = {},
+  keyword = "",
+  matchedSkills = [],
+}: JobListItemGroupProps) {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [selectedUid, setSelectedUid] = useState<string | null>(null);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["browse-jobs"],
-    queryFn: JobsAPI.browse,
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ["browse-jobs", params],
+    queryFn: () => JobsAPI.browse(params),
   });
 
   const jobs: BrowseJobListItem[] = data?.jobs ?? [];
 
   const markJobReadInCache = (uid: string) => {
-    queryClient.setQueryData(["browse-jobs"], (current: { jobs: BrowseJobListItem[] } | undefined) => {
-      if (!current?.jobs) return current;
-      return {
-        jobs: current.jobs.map((job) =>
-          job.uid === uid ? { ...job, isRead: true } : job,
-        ),
-      };
-    });
+    queryClient.setQueriesData(
+      { queryKey: ["browse-jobs"] },
+      (current: { jobs: BrowseJobListItem[] } | undefined) => {
+        if (!current?.jobs) return current;
+        return {
+          jobs: current.jobs.map((job) =>
+            job.uid === uid ? { ...job, isRead: true } : job,
+          ),
+        };
+      },
+    );
   };
 
   const markJobAsRead = async (uid: string) => {
@@ -69,6 +82,9 @@ export default function JobListItemGroup() {
           <JobListItem
             key={job.uid}
             job={job}
+            loading={isFetching}
+            keyword={keyword}
+            matchedSkills={matchedSkills}
             onClock={() => handleOpen(job.uid)}
             onMarkRead={() => markJobAsRead(job.uid)}
           />

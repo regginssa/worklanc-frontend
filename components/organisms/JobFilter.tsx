@@ -3,7 +3,7 @@ import CheckBoxGroup from "../molecules/CheckBoxGroup";
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchableGroupDropdown, {
   SearchableGroupOption,
 } from "../atoms/SearchableGroupDropdown";
@@ -79,8 +79,56 @@ const FILTER_SECTIONS = [
   "jobDuration",
 ] as const;
 
-export default function JobFilter() {
-  const [filterData, setFilterData] = useState<any>({});
+export type JobFilterValue = {
+  location: string[];
+  category: string[];
+  experienceLevel: string[];
+  jobType: string[];
+  numberOfProposals: string[];
+  clientInfo: string[];
+  clientHistory: string[];
+  clientLocation: string[];
+  clientTimezones: string[];
+  projectLength: string[];
+  hoursPerWeek: string[];
+  jobDuration: string[];
+  fixedPrice: string[];
+  minHourlyRate: string;
+  maxHourlyRate: string;
+  minFixedPrice: string;
+  maxFixedPrice: string;
+};
+
+const emptyFilterValue: JobFilterValue = {
+  location: [],
+  category: [],
+  experienceLevel: [],
+  jobType: [],
+  numberOfProposals: [],
+  clientInfo: [],
+  clientHistory: [],
+  clientLocation: [],
+  clientTimezones: [],
+  projectLength: [],
+  hoursPerWeek: [],
+  jobDuration: [],
+  fixedPrice: [],
+  minHourlyRate: "",
+  maxHourlyRate: "",
+  minFixedPrice: "",
+  maxFixedPrice: "",
+};
+
+type JobFilterProps = {
+  value?: Partial<JobFilterValue>;
+  onChange?: (value: JobFilterValue) => void;
+};
+
+export default function JobFilter({ value, onChange }: JobFilterProps) {
+  const [filterData, setFilterData] = useState<JobFilterValue>({
+    ...emptyFilterValue,
+    ...(value ?? {}),
+  });
   const [expandedSections, setExpandedSections] = useState<
     Record<FilterSectionKey, boolean>
   >(
@@ -98,14 +146,24 @@ export default function JobFilter() {
     queryFn: CategoriesAPI.getAll,
   });
 
+  useEffect(() => {
+    if (!value) return;
+    setFilterData({ ...emptyFilterValue, ...value });
+  }, [value]);
+
+  const updateFilterData = (next: JobFilterValue) => {
+    setFilterData(next);
+    onChange?.(next);
+  };
+
   const locationOptions = [
-    { label: "Local only", value: "local_only" },
-    { label: "Worldwide", value: "worldwide" },
+    { label: "Local only", value: "local" },
+    { label: "Worldwide", value: "global" },
   ];
 
   const experienceLevelOptions = [
-    { label: "Entry level", value: "entry_level" },
-    { label: "Intermidiate", value: "intermidiate" },
+    { label: "Entry level", value: "entry" },
+    { label: "Intermediate", value: "intermediate" },
     { label: "Expert", value: "expert" },
   ];
 
@@ -137,19 +195,18 @@ export default function JobFilter() {
   ];
 
   const projectLengthOptions = [
-    { label: "Less than one month", value: "less_than_one_month" },
-    { label: "1 to 3 months", value: "1_to_3_months" },
-    { label: "3 to 6 months", value: "3_to_6_months" },
-    { label: "More than 6 months", value: "more_than_6_months" },
+    { label: "1 to 3 months", value: "1-3" },
+    { label: "3 to 6 months", value: "3-6" },
+    { label: "More than 6 months", value: "6+" },
   ];
 
   const hoursPerWeekOptions = [
-    { label: "Less than 30 hrs/week", value: "less_than_30hrs_week" },
-    { label: "More than 30 hrs/week", value: "more_than_30hrs_week" },
+    { label: "Less than 30 hrs/week", value: "less_than_30_hrs_week" },
+    { label: "More than 30 hrs/week", value: "more_than_30_hrs_week" },
   ];
 
   const jobDurationOptions = [
-    { label: "Contract-to-hire roles", value: "contract_to_hire_roles" },
+    { label: "Contract-to-hire roles", value: "yes" },
   ];
 
   const makeCategoryOptions = (): SearchableGroupOption[] => {
@@ -219,7 +276,7 @@ export default function JobFilter() {
         options={locationOptions}
         value={filterData.location ?? []}
         onChange={(values) => {
-          setFilterData({ ...filterData, location: values });
+          updateFilterData({ ...filterData, location: values });
         }}
       />
 
@@ -234,7 +291,9 @@ export default function JobFilter() {
           placeholder="Select categories"
           options={makeCategoryOptions()}
           values={filterData.category ?? []}
-          onChange={() => {}}
+          onChange={(values) => {
+            updateFilterData({ ...filterData, category: values });
+          }}
         />
       </FilterSection>
 
@@ -248,7 +307,7 @@ export default function JobFilter() {
           options={experienceLevelOptions}
           value={filterData.experienceLevel ?? []}
           onChange={(values) => {
-            setFilterData({ ...filterData, experienceLevel: values });
+            updateFilterData({ ...filterData, experienceLevel: values });
           }}
         />
       </FilterSection>
@@ -261,7 +320,16 @@ export default function JobFilter() {
       >
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <Checkbox className="size-5!" />
+            <Checkbox
+              className="size-5!"
+              checked={filterData.jobType.includes("hourly")}
+              onCheck={(checked) => {
+                const next = checked
+                  ? [...filterData.jobType, "hourly"]
+                  : filterData.jobType.filter((item) => item !== "hourly");
+                updateFilterData({ ...filterData, jobType: next });
+              }}
+            />
             <p className="flex-1 text-sm font-light">Hourly</p>
           </div>
 
@@ -276,7 +344,7 @@ export default function JobFilter() {
                 classname="h-8! w-24!"
                 value={filterData.minHourlyRate ?? ""}
                 onChange={(e) => {
-                  setFilterData({
+                  updateFilterData({
                     ...filterData,
                     minHourlyRate: e.target.value,
                   });
@@ -291,7 +359,7 @@ export default function JobFilter() {
                 classname="h-8! w-24!"
                 value={filterData.maxHourlyRate ?? ""}
                 onChange={(e) => {
-                  setFilterData({
+                  updateFilterData({
                     ...filterData,
                     maxHourlyRate: e.target.value,
                   });
@@ -302,7 +370,16 @@ export default function JobFilter() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Checkbox className="size-5!" />
+            <Checkbox
+              className="size-5!"
+              checked={filterData.jobType.includes("fixed")}
+              onCheck={(checked) => {
+                const next = checked
+                  ? [...filterData.jobType, "fixed"]
+                  : filterData.jobType.filter((item) => item !== "fixed");
+                updateFilterData({ ...filterData, jobType: next });
+              }}
+            />
             <p className="flex-1 text-sm font-light">Fixed-Price</p>
           </div>
 
@@ -311,11 +388,17 @@ export default function JobFilter() {
               options={fixedPriceOptions}
               value={filterData.fixedPrice ?? []}
               onChange={(values) => {
-                setFilterData({ ...filterData, fixedPrice: values });
+                updateFilterData({ ...filterData, fixedPrice: values });
               }}
             />
             <div className="flex items-center gap-2 mt-2">
-              <Checkbox className="size-5!" />
+              <Checkbox
+                className="size-5!"
+                checked={
+                  Boolean(filterData.minFixedPrice) ||
+                  Boolean(filterData.maxFixedPrice)
+                }
+              />
               <div className="flex-1 flex items-center gap-2">
                 <Input
                   type="number"
@@ -325,7 +408,7 @@ export default function JobFilter() {
                   classname="h-8! w-24!"
                   value={filterData.minFixedPrice ?? ""}
                   onChange={(e) => {
-                    setFilterData({
+                    updateFilterData({
                       ...filterData,
                       minFixedPrice: e.target.value,
                     });
@@ -339,7 +422,7 @@ export default function JobFilter() {
                   classname="h-8! w-24!"
                   value={filterData.maxFixedPrice ?? ""}
                   onChange={(e) => {
-                    setFilterData({
+                    updateFilterData({
                       ...filterData,
                       maxFixedPrice: e.target.value,
                     });
@@ -361,7 +444,7 @@ export default function JobFilter() {
           options={numberOfProposalsOptions}
           value={filterData.numberOfProposals ?? []}
           onChange={(values) => {
-            setFilterData({ ...filterData, numberOfProposals: values });
+            updateFilterData({ ...filterData, numberOfProposals: values });
           }}
         />
       </FilterSection>
@@ -376,7 +459,7 @@ export default function JobFilter() {
           options={clientInfoOptions}
           value={filterData.clientInfo ?? []}
           onChange={(values) => {
-            setFilterData({ ...filterData, clientInfo: values });
+            updateFilterData({ ...filterData, clientInfo: values });
           }}
         />
       </FilterSection>
@@ -391,7 +474,7 @@ export default function JobFilter() {
           options={clientHistoryOptions}
           value={filterData.clientHistory ?? []}
           onChange={(values) => {
-            setFilterData({ ...filterData, clientHistory: values });
+            updateFilterData({ ...filterData, clientHistory: values });
           }}
         />
       </FilterSection>
@@ -407,7 +490,7 @@ export default function JobFilter() {
           options={makeLocationOptions()}
           values={filterData.clientLocation ?? []}
           onChange={(values) => {
-            setFilterData({ ...filterData, clientLocation: values });
+            updateFilterData({ ...filterData, clientLocation: values });
           }}
         />
       </FilterSection>
@@ -423,7 +506,7 @@ export default function JobFilter() {
           options={makeTimezoneOptions()}
           values={filterData.clientTimezones ?? []}
           onChange={(values) => {
-            setFilterData({ ...filterData, clientTimezones: values });
+            updateFilterData({ ...filterData, clientTimezones: values });
           }}
         />
       </FilterSection>
@@ -438,7 +521,7 @@ export default function JobFilter() {
           options={projectLengthOptions}
           value={filterData.projectLength ?? []}
           onChange={(values) => {
-            setFilterData({ ...filterData, projectLength: values });
+            updateFilterData({ ...filterData, projectLength: values });
           }}
         />
       </FilterSection>
@@ -453,7 +536,7 @@ export default function JobFilter() {
           options={hoursPerWeekOptions}
           value={filterData.hoursPerWeek ?? []}
           onChange={(values) => {
-            setFilterData({ ...filterData, hoursPerWeek: values });
+            updateFilterData({ ...filterData, hoursPerWeek: values });
           }}
         />
       </FilterSection>
@@ -468,7 +551,7 @@ export default function JobFilter() {
           options={jobDurationOptions}
           value={filterData.jobDuration ?? []}
           onChange={(values) => {
-            setFilterData({ ...filterData, jobDuration: values });
+            updateFilterData({ ...filterData, jobDuration: values });
           }}
         />
       </FilterSection>

@@ -98,24 +98,68 @@ type JobListItemProps =
       loading: true;
       job?: never;
       onClock?: () => void;
+      keyword?: string;
+      matchedSkills?: string[];
     }
   | {
-      loading?: false;
+      loading?: boolean;
       job: BrowseJobListItem;
       onClock: () => void;
       onMarkRead?: () => void;
+      keyword?: string;
+      matchedSkills?: string[];
     };
+
+const escapeRegExp = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const renderHighlightedText = (text: string, query: string) => {
+  const normalized = query.trim();
+  if (!normalized) return text;
+
+  const terms = Array.from(
+    new Set(
+      normalized
+        .split(/\s+/)
+        .map((item) => item.trim())
+        .filter(Boolean),
+    ),
+  );
+  if (terms.length === 0) return text;
+
+  const pattern = terms.map(escapeRegExp).join("|");
+  const splitter = new RegExp(`(${pattern})`, "gi");
+  const parts = text.split(splitter);
+  return parts.map((part, index) =>
+    terms.some((term) => part.toLowerCase() === term.toLowerCase()) ? (
+      <mark key={`${part}-${index}`} className="bg-yellow-200 rounded px-0.5">
+        {part}
+      </mark>
+    ) : (
+      <span key={`${part}-${index}`}>{part}</span>
+    ),
+  );
+};
 
 export default function JobListItem(props: JobListItemProps) {
   if (props.loading) {
     return <JobListItemSkeleton />;
   }
 
-  const { job, onClock, onMarkRead } = props;
+  const { job, onClock, onMarkRead, keyword = "", matchedSkills = [] } = props;
+
+  const normalizedMatchedSkills = matchedSkills
+    .map((item) => item.trim().toLowerCase())
+    .filter(Boolean);
+  const highlightedSkills = getJobSkills(job).filter((skill) =>
+    normalizedMatchedSkills.some((needle) => skill.toLowerCase().includes(needle)),
+  );
 
   return (
     <li
       className={`space-y-4 border-b border-slate-300 cursor-pointer p-4 transition-colors duration-200 group ${
+        props.loading ? "animate-pulse" : ""
+      } ${
         job.isRead ? "bg-slate-100 hover:bg-slate-100" : "hover:bg-slate-100"
       }`}
     >
@@ -131,7 +175,7 @@ export default function JobListItem(props: JobListItemProps) {
             className="text-xl cursor-pointer hover:text-blue-600 hover:underline group-hover:text-blue-600"
             onClick={onClock}
           >
-            {job.title}
+            {renderHighlightedText(job.title, keyword)}
           </h3>
           <p className="text-xs text-slate-600">{formatListBudgetLine(job)}</p>
         </div>
@@ -159,7 +203,7 @@ export default function JobListItem(props: JobListItemProps) {
         />
       )}
 
-      <SkillsGroup skills={getJobSkills(job)} />
+      <SkillsGroup skills={getJobSkills(job)} matchedSkills={highlightedSkills} />
 
       <ul className="flex items-center gap-10 text-sm text-slate-600">
         <li className="flex items-center gap-2">
