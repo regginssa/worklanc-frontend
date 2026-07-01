@@ -79,6 +79,21 @@ const JobsAPI = {
 
   remove: async (uid: string) =>
     request(`/jobs/${uid}`, { method: "DELETE" }),
+
+  listSavedSearches: async (): Promise<
+    { searches: { id: number; name: string; params: BrowseJobsParams }[] } | null
+  > => request("/job-saved-searches", { method: "GET" }),
+
+  saveSearch: async (payload: {
+    name: string;
+    params: BrowseJobsParams;
+  }): Promise<{
+    search: { id: number; name: string; params: BrowseJobsParams };
+  } | null> =>
+    request("/job-saved-searches", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
 };
 
 export default JobsAPI;
