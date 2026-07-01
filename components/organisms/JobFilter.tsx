@@ -3,24 +3,13 @@ import CheckBoxGroup from "../molecules/CheckBoxGroup";
 import { Icon } from "@iconify/react";
 import { AnimatePresence, motion } from "motion/react";
 import { useQuery } from "@tanstack/react-query";
-import { CheckboxGroupDropdown } from "../atoms";
 import { useState } from "react";
 import SearchableGroupDropdown, {
   SearchableGroupOption,
 } from "../atoms/SearchableGroupDropdown";
-
-const FILTER_SECTIONS = [
-  "category",
-  "hourlyRate",
-  "location",
-  "timezones",
-  "talentType",
-  "jobSuccess",
-  "earnedAmount",
-  "hoursBilled",
-  "englishLevel",
-  "otherLanguages",
-] as const;
+import { Checkbox, Input } from "../atoms";
+import { countries, timezones as Timezones } from "country-data-list";
+import { formatTimezone } from "@/utils/date";
 
 type FilterSectionKey = (typeof FILTER_SECTIONS)[number];
 
@@ -42,7 +31,7 @@ function FilterSection({
       <button
         type="button"
         aria-expanded={expanded}
-        className="flex w-full cursor-pointer items-center justify-between text-left"
+        className="flex w-full cursor-pointer items-center justify-between text-left text-sm font-medium"
         onClick={onToggle}
       >
         {titleExtra ?? <span>{title}</span>}
@@ -76,10 +65,19 @@ function FilterSection({
   );
 }
 
-const locationOptions = [
-  { label: "Local only", value: "local_only" },
-  { label: "Worldwide", value: "worldwide" },
-];
+const FILTER_SECTIONS = [
+  "category",
+  "experienceLevel",
+  "jobType",
+  "numberOfProposals",
+  "clientInfo",
+  "clientHistory",
+  "clientLocation",
+  "clientTimezones",
+  "projectLength",
+  "hoursPerWeek",
+  "jobDuration",
+] as const;
 
 export default function JobFilter() {
   const [filterData, setFilterData] = useState<any>({});
@@ -100,6 +98,60 @@ export default function JobFilter() {
     queryFn: CategoriesAPI.getAll,
   });
 
+  const locationOptions = [
+    { label: "Local only", value: "local_only" },
+    { label: "Worldwide", value: "worldwide" },
+  ];
+
+  const experienceLevelOptions = [
+    { label: "Entry level", value: "entry_level" },
+    { label: "Intermidiate", value: "intermidiate" },
+    { label: "Expert", value: "expert" },
+  ];
+
+  const fixedPriceOptions = [
+    { label: "Less than $100", value: "less_than_100" },
+    { label: "$100 - $500", value: "100_to_500" },
+    { label: "$500 - $1K", value: "500_to_1000" },
+    { label: "$1K - $5K", value: "1000_to_5000" },
+    { label: "$5K+", value: "5000_plus" },
+  ];
+
+  const numberOfProposalsOptions = [
+    { label: "Fewer than 5", value: "fewer_than_5" },
+    { label: "5 to 10", value: "5_to_10" },
+    { label: "10 to 15", value: "10_to_15" },
+    { label: "15 to 20", value: "15_to_20" },
+    { label: "20 to 50", value: "20_to_50" },
+  ];
+
+  const clientInfoOptions = [
+    { label: "My previous clients", value: "my_previous_clients" },
+    { label: "Payment verified", value: "payment_verified" },
+  ];
+
+  const clientHistoryOptions = [
+    { label: "No hires", value: "no_hires" },
+    { label: "1 to 9 hires", value: "1_to_9_hires" },
+    { label: "10+ hires", value: "10_plus_hires" },
+  ];
+
+  const projectLengthOptions = [
+    { label: "Less than one month", value: "less_than_one_month" },
+    { label: "1 to 3 months", value: "1_to_3_months" },
+    { label: "3 to 6 months", value: "3_to_6_months" },
+    { label: "More than 6 months", value: "more_than_6_months" },
+  ];
+
+  const hoursPerWeekOptions = [
+    { label: "Less than 30 hrs/week", value: "less_than_30hrs_week" },
+    { label: "More than 30 hrs/week", value: "more_than_30hrs_week" },
+  ];
+
+  const jobDurationOptions = [
+    { label: "Contract-to-hire roles", value: "contract_to_hire_roles" },
+  ];
+
   const makeCategoryOptions = (): SearchableGroupOption[] => {
     const options: SearchableGroupOption[] = [];
     categories?.forEach((category) => {
@@ -114,9 +166,62 @@ export default function JobFilter() {
     return options;
   };
 
+  const makeLocationOptions = (): SearchableGroupOption[] => {
+    const regions = [
+      { label: "Asia", value: "asia" },
+      { label: "Africa", value: "africa" },
+      { label: "Americas", value: "americas" },
+      { label: "Europe", value: "europe" },
+      { label: "Oceania", value: "oceania" },
+    ];
+    const options: SearchableGroupOption[] = [
+      {
+        title: "Local",
+        items: [{ label: "Search your location only", value: "local" }],
+      },
+      {
+        title: "Regions",
+        items: regions,
+      },
+      {
+        title: "Countries",
+        items: countries.all.map((country) => ({
+          label: country.name,
+          value: country.alpha2,
+        })),
+      },
+    ];
+    return options;
+  };
+
+  const makeTimezoneOptions = (): SearchableGroupOption[] => {
+    const timezones = Timezones.all;
+    const seenTimezones = new Set<string>();
+    const timezoneItems = timezones
+      .map((timezone) => ({ label: formatTimezone(timezone), value: timezone }))
+      .filter((item) => {
+        if (seenTimezones.has(item.label)) return false;
+        seenTimezones.add(item.label);
+        return true;
+      });
+    const options: SearchableGroupOption[] = [
+      {
+        title: "Timezones",
+        items: timezoneItems,
+      },
+    ];
+    return options;
+  };
+
   return (
     <div className="space-y-4">
-      <CheckBoxGroup options={locationOptions} value={[]} onChange={() => {}} />
+      <CheckBoxGroup
+        options={locationOptions}
+        value={filterData.location ?? []}
+        onChange={(values) => {
+          setFilterData({ ...filterData, location: values });
+        }}
+      />
 
       <FilterSection
         key="category"
@@ -126,9 +231,245 @@ export default function JobFilter() {
       >
         <SearchableGroupDropdown
           name="category"
+          placeholder="Select categories"
           options={makeCategoryOptions()}
           values={filterData.category ?? []}
           onChange={() => {}}
+        />
+      </FilterSection>
+
+      <FilterSection
+        key="experienceLevel"
+        title="Experience Level"
+        expanded={expandedSections.experienceLevel}
+        onToggle={() => toggleSection("experienceLevel")}
+      >
+        <CheckBoxGroup
+          options={experienceLevelOptions}
+          value={filterData.experienceLevel ?? []}
+          onChange={(values) => {
+            setFilterData({ ...filterData, experienceLevel: values });
+          }}
+        />
+      </FilterSection>
+
+      <FilterSection
+        key="jobType"
+        title="Job Type"
+        expanded={expandedSections.jobType}
+        onToggle={() => toggleSection("jobType")}
+      >
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Checkbox className="size-5!" />
+            <p className="flex-1 text-sm font-light">Hourly</p>
+          </div>
+
+          <div className="flex items-center gap-2 pl-5">
+            <Checkbox className="size-5!" />
+            <div className="flex-1 flex items-center gap-2">
+              <Input
+                type="number"
+                name="minHourlyRate"
+                placeholder="Min"
+                icon="mdi:dollar"
+                classname="h-8! w-24!"
+                value={filterData.minHourlyRate ?? ""}
+                onChange={(e) => {
+                  setFilterData({
+                    ...filterData,
+                    minHourlyRate: e.target.value,
+                  });
+                }}
+              />
+              <span className="text-sm font-light">/hr</span>
+              <Input
+                type="number"
+                name="maxHourlyRate"
+                placeholder="Max"
+                icon="mdi:dollar"
+                classname="h-8! w-24!"
+                value={filterData.maxHourlyRate ?? ""}
+                onChange={(e) => {
+                  setFilterData({
+                    ...filterData,
+                    maxHourlyRate: e.target.value,
+                  });
+                }}
+              />
+              <span className="text-sm font-light">/hr</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Checkbox className="size-5!" />
+            <p className="flex-1 text-sm font-light">Fixed-Price</p>
+          </div>
+
+          <div className="pl-5">
+            <CheckBoxGroup
+              options={fixedPriceOptions}
+              value={filterData.fixedPrice ?? []}
+              onChange={(values) => {
+                setFilterData({ ...filterData, fixedPrice: values });
+              }}
+            />
+            <div className="flex items-center gap-2 mt-2">
+              <Checkbox className="size-5!" />
+              <div className="flex-1 flex items-center gap-2">
+                <Input
+                  type="number"
+                  name="minFixedPrice"
+                  placeholder="Min"
+                  icon="mdi:dollar"
+                  classname="h-8! w-24!"
+                  value={filterData.minFixedPrice ?? ""}
+                  onChange={(e) => {
+                    setFilterData({
+                      ...filterData,
+                      minFixedPrice: e.target.value,
+                    });
+                  }}
+                />
+                <Input
+                  type="number"
+                  name="maxFixedPrice"
+                  placeholder="Max"
+                  icon="mdi:dollar"
+                  classname="h-8! w-24!"
+                  value={filterData.maxFixedPrice ?? ""}
+                  onChange={(e) => {
+                    setFilterData({
+                      ...filterData,
+                      maxFixedPrice: e.target.value,
+                    });
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </FilterSection>
+
+      <FilterSection
+        key="numberOfProposals"
+        title="Number of Proposals"
+        expanded={expandedSections.numberOfProposals}
+        onToggle={() => toggleSection("numberOfProposals")}
+      >
+        <CheckBoxGroup
+          options={numberOfProposalsOptions}
+          value={filterData.numberOfProposals ?? []}
+          onChange={(values) => {
+            setFilterData({ ...filterData, numberOfProposals: values });
+          }}
+        />
+      </FilterSection>
+
+      <FilterSection
+        key="numberOfProposals"
+        title="Client Info"
+        expanded={expandedSections.clientInfo}
+        onToggle={() => toggleSection("clientInfo")}
+      >
+        <CheckBoxGroup
+          options={clientInfoOptions}
+          value={filterData.clientInfo ?? []}
+          onChange={(values) => {
+            setFilterData({ ...filterData, clientInfo: values });
+          }}
+        />
+      </FilterSection>
+
+      <FilterSection
+        key="numberOfProposals"
+        title="Client History"
+        expanded={expandedSections.clientHistory}
+        onToggle={() => toggleSection("clientHistory")}
+      >
+        <CheckBoxGroup
+          options={clientHistoryOptions}
+          value={filterData.clientHistory ?? []}
+          onChange={(values) => {
+            setFilterData({ ...filterData, clientHistory: values });
+          }}
+        />
+      </FilterSection>
+
+      <FilterSection
+        title="Client location"
+        expanded={expandedSections.clientLocation}
+        onToggle={() => toggleSection("clientLocation")}
+      >
+        <SearchableGroupDropdown
+          name="clientLocation"
+          placeholder="Region or Country"
+          options={makeLocationOptions()}
+          values={filterData.clientLocation ?? []}
+          onChange={(values) => {
+            setFilterData({ ...filterData, clientLocation: values });
+          }}
+        />
+      </FilterSection>
+
+      <FilterSection
+        title="Client time zones"
+        expanded={expandedSections.clientTimezones}
+        onToggle={() => toggleSection("clientTimezones")}
+      >
+        <SearchableGroupDropdown
+          name="clientTimezones"
+          placeholder="Select talent time zones"
+          options={makeTimezoneOptions()}
+          values={filterData.clientTimezones ?? []}
+          onChange={(values) => {
+            setFilterData({ ...filterData, clientTimezones: values });
+          }}
+        />
+      </FilterSection>
+
+      <FilterSection
+        key="projectLength"
+        title="Project length"
+        expanded={expandedSections.projectLength}
+        onToggle={() => toggleSection("projectLength")}
+      >
+        <CheckBoxGroup
+          options={projectLengthOptions}
+          value={filterData.projectLength ?? []}
+          onChange={(values) => {
+            setFilterData({ ...filterData, projectLength: values });
+          }}
+        />
+      </FilterSection>
+
+      <FilterSection
+        key="hoursPerWeek"
+        title="Hours per week"
+        expanded={expandedSections.hoursPerWeek}
+        onToggle={() => toggleSection("hoursPerWeek")}
+      >
+        <CheckBoxGroup
+          options={hoursPerWeekOptions}
+          value={filterData.hoursPerWeek ?? []}
+          onChange={(values) => {
+            setFilterData({ ...filterData, hoursPerWeek: values });
+          }}
+        />
+      </FilterSection>
+
+      <FilterSection
+        key="jobDuration"
+        title="Job duration"
+        expanded={expandedSections.jobDuration}
+        onToggle={() => toggleSection("jobDuration")}
+      >
+        <CheckBoxGroup
+          options={jobDurationOptions}
+          value={filterData.jobDuration ?? []}
+          onChange={(values) => {
+            setFilterData({ ...filterData, jobDuration: values });
+          }}
         />
       </FilterSection>
     </div>

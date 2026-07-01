@@ -54,7 +54,7 @@ const Input: React.FC<InputProps> = ({
             : disabled
             ? "border border-slate-400 bg-slate-100 cursor-not-allowed"
             : "border border-slate-400 hover:border-2 hover:border-black focus-within:border-2 focus-within:border-black"
-        } group transition-all duration-200`}
+        } group transition-all duration-200 overflow-hidden`}
       >
         {icon && (
           <Icon
