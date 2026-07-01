@@ -10,7 +10,11 @@ const THEME_OPTIONS = [
 
 type ThemeValue = (typeof THEME_OPTIONS)[number]["value"];
 
-export default function ThemeToggle({ compact = false }: { compact?: boolean }) {
+export default function ThemeToggle({
+  compact = false,
+}: {
+  compact?: boolean;
+}) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -30,11 +34,6 @@ export default function ThemeToggle({ compact = false }: { compact?: boolean }) 
 
   return (
     <div className="space-y-2">
-      {!compact && (
-        <p className="text-xs font-medium text-slate-600 dark:text-muted-foreground">
-          Theme
-        </p>
-      )}
       <div className="grid grid-cols-3 gap-1 rounded-lg border border-slate-200 bg-slate-50 p-1 dark:border-border dark:bg-muted">
         {THEME_OPTIONS.map((option) => {
           const isActive = activeTheme === option.value;

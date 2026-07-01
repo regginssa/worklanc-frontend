@@ -275,7 +275,7 @@ export default function AuthorizedHeader() {
                       <span>Online for messages</span>
                       <Switch />
                     </div>
-                    <div className="px-4 py-3 border-b border-slate-200 dark:border-border">
+                    <div className="px-4 py-3">
                       <ThemeToggle />
                     </div>
                   </div>
@@ -315,7 +315,7 @@ export default function AuthorizedHeader() {
                     ))}
                   </ul>
 
-                  <ul className="py-1 border-b border-slate-200 dark:border-border">
+                  <ul className="py-1">
                     <li
                       key={profileNavs[6].label}
                       className="px-4 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-accent cursor-pointer"
