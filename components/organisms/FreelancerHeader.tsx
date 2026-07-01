@@ -11,6 +11,7 @@ import { useAppSelector } from "@/store/hooks";
 import { useQuery } from "@tanstack/react-query";
 import TalentAPI from "@/lib/api/talent";
 import { useLogout } from "@/hooks/useLogout";
+import ThemeToggle from "../molecules/ThemeToggle";
 
 type NavLink = {
   label: string;
@@ -32,7 +33,7 @@ function HoverNavMenu({ label, sections }: HoverNavMenuProps) {
     <div className="group relative">
       <button
         type="button"
-        className="flex items-center gap-1 rounded-full px-1 py-2 text-sm font-medium text-slate-800 transition-all duration-200 hover:text-slate-600 cursor-pointer"
+        className="flex items-center gap-1 rounded-full px-1 py-2 text-sm font-medium text-slate-800 dark:text-foreground transition-all duration-200 hover:text-slate-600 dark:hover:text-muted-foreground cursor-pointer"
       >
         <span>{label}</span>
         <Icon
@@ -42,14 +43,14 @@ function HoverNavMenu({ label, sections }: HoverNavMenuProps) {
       </button>
 
       <div className="invisible pointer-events-none absolute left-0 top-full z-50 pt-2 opacity-0 translate-y-1 transition-all duration-200 group-hover:visible group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0">
-        <div className="w-56 rounded-xl border border-slate-200 bg-white p-1 shadow-lg">
+        <div className="w-56 rounded-xl border border-slate-200 dark:border-border bg-white dark:bg-card p-1 shadow-lg">
           {sections.map((section, index) => (
             <div key={`${label}-${section.heading ?? `section-${index}`}`}>
               {index > 0 && (
-                <div className="h-[1px] bg-slate-200 w-full my-2" />
+                <div className="h-[1px] bg-slate-200 dark:bg-border w-full my-2" />
               )}
               {section.heading && (
-                <p className="text-slate-600 text-xs p-2 font-medium">
+                <p className="text-slate-600 dark:text-muted-foreground text-xs p-2 font-medium">
                   {section.heading}
                 </p>
               )}
@@ -59,7 +60,7 @@ function HoverNavMenu({ label, sections }: HoverNavMenuProps) {
                   <li key={item.label}>
                     <Link
                       href={item.href}
-                      className="block rounded-lg p-2 text-sm transition-all duration-200 hover:bg-slate-200"
+                      className="block rounded-lg p-2 text-sm transition-all duration-200 hover:bg-slate-200 dark:hover:bg-accent"
                     >
                       {item.label}
                     </Link>
@@ -203,7 +204,7 @@ export default function AuthorizedHeader() {
   return (
     <header
       ref={headerRef}
-      className="w-full max-w-[90%] mx-auto py-2 flex items-center justify-between bg-white mb-10"
+      className="w-full max-w-[90%] mx-auto py-2 flex items-center justify-between mb-10"
     >
       <div className="flex items-center gap-4">
         <WorklancLogo />
@@ -217,7 +218,7 @@ export default function AuthorizedHeader() {
           />
           <Link
             href="/ab/messages/rooms/123456789"
-            className="rounded-full px-3 py-2 text-sm font-medium text-slate-800 transition-all duration-200 hover:text-slate-600 cursor-pointer"
+            className="rounded-full px-3 py-2 text-sm font-medium text-slate-800 dark:text-foreground transition-all duration-200 hover:text-slate-600 dark:hover:text-muted-foreground cursor-pointer"
           >
             Messages
           </Link>
@@ -228,13 +229,13 @@ export default function AuthorizedHeader() {
         <HeaderSearch />
         <div className="flex items-center gap-6">
           <Link href="#" className="group cursor-pointer">
-            <CircleQuestionMarkIcon className="size-5 text-slate-600 group-hover:text-slate-800" />
+            <CircleQuestionMarkIcon className="size-5 text-slate-600 dark:text-muted-foreground group-hover:text-slate-800 dark:group-hover:text-foreground" />
           </Link>
           <Link href="/ab/notifications" className="group cursor-pointer">
-            <LucideBell className="size-5 text-slate-600 group-hover:text-slate-800" />
+            <LucideBell className="size-5 text-slate-600 dark:text-muted-foreground group-hover:text-slate-800 dark:group-hover:text-foreground" />
           </Link>
           <Link href="#" className="group cursor-pointer">
-            <LucideBrain className="size-5 text-slate-600 group-hover:text-slate-800" />
+            <LucideBrain className="size-5 text-slate-600 dark:text-muted-foreground group-hover:text-slate-800 dark:group-hover:text-foreground" />
           </Link>
         </div>
 
@@ -253,10 +254,10 @@ export default function AuthorizedHeader() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -8, scale: 0.98 }}
                   transition={{ duration: 0.18, ease: "easeOut" }}
-                  className="absolute bg-white top-full w-[280px] right-0 max-h-[420px] overflow-y-auto text-sm z-40 mt-1 shadow-md py-1 rounded-lg border border-slate-200"
+                  className="absolute bg-white dark:bg-card top-full w-[280px] right-0 max-h-[420px] overflow-y-auto text-sm z-40 mt-1 shadow-md py-1 rounded-lg border border-slate-200 dark:border-border"
                 >
-                  <div className="py-1 border-b border-slate-200">
-                    <div className="flex items-center gap-2 p-4 hover:bg-slate-100 cursor-pointer">
+                  <div className="py-1 border-b border-slate-200 dark:border-border">
+                    <div className="flex items-center gap-2 p-4 hover:bg-slate-100 dark:hover:bg-accent cursor-pointer">
                       <UserAvatar
                         avatarUrl={user?.avatarUrl}
                         alt={fullName}
@@ -264,7 +265,9 @@ export default function AuthorizedHeader() {
                       />
                       <div className="flex flex-col items-start">
                         <h3 className="text-sm font-medium">Jhon Smthi</h3>
-                        <p className="text-xs text-slate-600">Freelancer</p>
+                        <p className="text-xs text-slate-600 dark:text-muted-foreground">
+                          Freelancer
+                        </p>
                       </div>
                     </div>
 
@@ -272,13 +275,16 @@ export default function AuthorizedHeader() {
                       <span>Online for messages</span>
                       <Switch />
                     </div>
+                    <div className="px-4 py-3 border-b border-slate-200 dark:border-border">
+                      <ThemeToggle />
+                    </div>
                   </div>
 
-                  <ul className="py-1 border-b border-slate-200">
+                  <ul className="py-1 border-b border-slate-200 dark:border-border">
                     {profileNavs.slice(0, 2).map((nav, index) => (
                       <li
                         key={nav.label}
-                        className="px-4 py-2 rounded-md hover:bg-slate-100 cursor-pointer"
+                        className="px-4 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-accent cursor-pointer"
                       >
                         <Link
                           href={nav.href}
@@ -291,11 +297,11 @@ export default function AuthorizedHeader() {
                     ))}
                   </ul>
 
-                  <ul className="py-1 border-b border-slate-200">
+                  <ul className="py-1 border-b border-slate-200 dark:border-border">
                     {profileNavs.slice(2, 6).map((nav, index) => (
                       <li
                         key={nav.label}
-                        className="px-4 py-2 rounded-md hover:bg-slate-100 cursor-pointer"
+                        className="px-4 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-accent cursor-pointer"
                       >
                         <Link
                           href={nav.href}
@@ -309,10 +315,10 @@ export default function AuthorizedHeader() {
                     ))}
                   </ul>
 
-                  <ul className="py-1 border-b border-slate-200">
+                  <ul className="py-1 border-b border-slate-200 dark:border-border">
                     <li
                       key={profileNavs[6].label}
-                      className="px-4 py-2 rounded-md hover:bg-slate-100 cursor-pointer"
+                      className="px-4 py-2 rounded-md hover:bg-slate-100 dark:hover:bg-accent cursor-pointer"
                     >
                       <button
                         type="button"

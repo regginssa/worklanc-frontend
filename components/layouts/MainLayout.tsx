@@ -15,7 +15,13 @@ export default function MainLayout({
   return (
     <ReduxProvider store={store}>
       <QueryProvider>
-        <ThemeProvider attribute="class" forcedTheme="light">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          storageKey="worklanc-theme"
+          disableTransitionOnChange
+        >
           <AuthBootstrap />
           <TooltipProvider>{children}</TooltipProvider>
           <CookieConsent />

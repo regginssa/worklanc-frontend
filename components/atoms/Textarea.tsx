@@ -42,7 +42,7 @@ const Textarea: React.FC<TextareaProps> = ({
         } ${
           error
             ? "border-2 border-red-500"
-            : "border border-slate-400 hover:border-2 hover:border-black focus-within:border-2 focus-within:border-black"
+            : "border border-slate-400 dark:border-border hover:border-2 hover:border-black dark:hover:border-ring focus-within:border-2 focus-within:border-black dark:focus-within:border-ring"
         } group transition-all duration-200`}
       >
         {icon && (
@@ -59,7 +59,7 @@ const Textarea: React.FC<TextareaProps> = ({
           required={required}
           value={value as any}
           onChange={onChange}
-          className="min-h-[80px] w-full resize-y border-none bg-transparent text-sm outline-none placeholder:text-slate-600"
+          className="min-h-[80px] w-full resize-y border-none bg-transparent text-sm text-foreground outline-none placeholder:text-slate-600 dark:placeholder:text-muted-foreground"
         />
       </div>
       {!!subLabel && (

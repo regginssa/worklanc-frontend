@@ -1,0 +1,123 @@
+/* Dark-mode compatibility for legacy slate/white utility classes */
+
+.dark {
+  color-scheme: dark;
+}
+
+@layer utilities {
+  .dark .bg-white {
+    background-color: var(--card);
+  }
+
+  .dark .bg-slate-50 {
+    background-color: oklch(0.2 0.01 260);
+  }
+
+  .dark .bg-slate-100 {
+    background-color: var(--muted);
+  }
+
+  .dark .bg-slate-200 {
+    background-color: var(--secondary);
+  }
+
+  .dark .bg-slate-300 {
+    background-color: oklch(0.32 0.01 260);
+  }
+
+  .dark .bg-blue-50 {
+    background-color: oklch(0.24 0.04 260);
+  }
+
+  .dark .bg-blue-200 {
+    background-color: oklch(0.34 0.06 260);
+  }
+
+  .dark .bg-zinc-900 {
+    background-color: oklch(0.16 0.01 260);
+  }
+
+  .dark .text-black,
+  .dark .text-slate-900,
+  .dark .text-slate-800 {
+    color: var(--foreground);
+  }
+
+  .dark .text-slate-700,
+  .dark .text-slate-600 {
+    color: var(--muted-foreground);
+  }
+
+  .dark .text-slate-500 {
+    color: oklch(0.68 0.01 260);
+  }
+
+  .dark .text-slate-400,
+  .dark .text-slate-300 {
+    color: oklch(0.55 0.01 260);
+  }
+
+  .dark .text-blue-600,
+  .dark .text-blue-800 {
+    color: oklch(0.74 0.12 260);
+  }
+
+  .dark .border-slate-200,
+  .dark .border-slate-300,
+  .dark .border-slate-400 {
+    border-color: var(--border);
+  }
+
+  .dark .hover\:bg-slate-50:hover,
+  .dark .hover\:bg-slate-100:hover {
+    background-color: var(--accent);
+  }
+
+  .dark .hover\:bg-slate-200:hover {
+    background-color: oklch(0.28 0.01 260);
+  }
+
+  .dark .hover\:text-slate-600:hover,
+  .dark .hover\:text-slate-800:hover,
+  .dark .hover\:text-black:hover {
+    color: var(--foreground);
+  }
+
+  .dark .hover\:text-blue-600:hover {
+    color: oklch(0.78 0.12 260);
+  }
+
+  .dark .group-hover\:text-blue-600:is(:where(.group):hover *) {
+    color: oklch(0.78 0.12 260);
+  }
+
+  .dark .group-hover\:text-slate-800:is(:where(.group):hover *) {
+    color: var(--foreground);
+  }
+
+  .dark .placeholder\:text-slate-600::placeholder {
+    color: var(--muted-foreground);
+  }
+
+  .dark .shadow-md,
+  .dark .shadow-lg {
+    --tw-shadow-color: rgb(0 0 0 / 0.35);
+  }
+
+  .dark mark.bg-yellow-200 {
+    background-color: oklch(0.45 0.1 95);
+    color: oklch(0.95 0.02 95);
+  }
+
+  .dark .custom-scroll {
+    scrollbar-color: oklch(0.45 0.01 260) transparent;
+  }
+
+  .dark .custom-scroll::-webkit-scrollbar-thumb {
+    background-color: oklch(0.45 0.01 260);
+  }
+
+  .dark .custom-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: oklch(0.55 0.01 260);
+  }
+}

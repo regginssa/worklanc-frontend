@@ -9,9 +9,11 @@ interface IntroHeaderProps {
   navItems?: INavItem[];
 }
 
-export default function IntroHeader({ navItems = introNavItems }: IntroHeaderProps) {
+export default function IntroHeader({
+  navItems = introNavItems,
+}: IntroHeaderProps) {
   return (
-    <header className="w-full h-20 flex items-center fixed top-0 bg-white z-50">
+    <header className="w-full h-20 flex items-center fixed top-0 z-50">
       <div className="w-[80%] mx-auto flex flex-row items-center justify-between">
         <div className="flex flex-row items-center gap-10">
           <WorklancLogo />

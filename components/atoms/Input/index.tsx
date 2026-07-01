@@ -52,22 +52,22 @@ const Input: React.FC<InputProps> = ({
           error
             ? "border-2 border-red-500"
             : disabled
-            ? "border border-slate-400 bg-slate-100 cursor-not-allowed"
-            : "border border-slate-400 hover:border-2 hover:border-black focus-within:border-2 focus-within:border-black"
+            ? "border border-slate-400 dark:border-border bg-slate-100 dark:bg-muted cursor-not-allowed"
+            : "border border-slate-400 dark:border-border hover:border-2 hover:border-black dark:hover:border-ring focus-within:border-2 focus-within:border-black dark:focus-within:border-ring"
         } group transition-all duration-200 overflow-hidden`}
       >
         {icon && (
           <Icon
             icon={icon}
             width={20}
-            className="text-slate-700 group-hover:text-black group-focus-within:text-black transition-all duration-200"
+            className="text-slate-700 dark:text-muted-foreground group-hover:text-black dark:group-hover:text-foreground group-focus-within:text-black dark:group-focus-within:text-foreground transition-all duration-200"
           />
         )}
         <input
           type={type === "password" && showPassword ? "text" : type}
           name={name}
           placeholder={placeholder}
-          className="bg-transparent border-none outline-none text-sm flex-1 placeholder:text-slate-600"
+          className="bg-transparent border-none outline-none text-sm flex-1 text-foreground placeholder:text-slate-600 dark:placeholder:text-muted-foreground"
           required={required}
           value={value}
           onChange={(e: any) => onChange(e)}
@@ -108,7 +108,7 @@ const Input: React.FC<InputProps> = ({
               <p className="text-red-600 text-sm flex-1">{error}</p>
             </div>
           )}
-          {subLabel && <p className="text-xs text-slate-600">{subLabel}</p>}
+          {subLabel && <p className="text-xs text-slate-600 dark:text-muted-foreground">{subLabel}</p>}
         </div>
       )}
     </div>

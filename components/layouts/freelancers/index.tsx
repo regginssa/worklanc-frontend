@@ -18,7 +18,7 @@ export default function FreelancerLayout({
     <>
       <Header variant={headerVariant} />
       <SEO {...seo} />
-      <main className="max-w-7xl mx-auto space-y-10">{children}</main>
+      <main className="max-w-7xl mx-auto space-y-10 bg-background text-foreground">{children}</main>
       <AuthorizedFooter />
     </>
   );

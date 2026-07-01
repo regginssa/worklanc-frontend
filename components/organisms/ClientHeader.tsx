@@ -181,7 +181,7 @@ export default function ClientHeader() {
   return (
     <header
       ref={headerRef}
-      className="w-full max-w-[90%] mx-auto py-2 flex items-center justify-between bg-white mb-10"
+      className="w-full max-w-[90%] mx-auto py-2 flex items-center justify-between mb-10"
     >
       <div className="flex items-center gap-4">
         <WorklancLogo />

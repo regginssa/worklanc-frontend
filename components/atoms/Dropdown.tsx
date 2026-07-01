@@ -80,19 +80,19 @@ export default function Dropdown({
             error
               ? "border-2 border-red-500"
               : disabled
-              ? "bg-slate-100 cursor-not-allowed! border border-slate-400"
-              : "border border-slate-400 hover:border-2 hover:border-black"
+              ? "bg-slate-100 dark:bg-muted cursor-not-allowed! border border-slate-400 dark:border-border"
+              : "border border-slate-400 dark:border-border hover:border-2 hover:border-black dark:hover:border-ring"
           }`}
           disabled={disabled}
           onClick={() => setOpen((prev) => !prev)}
         >
           {icon && (
-            <Icon icon={icon} width={14} className="shrink-0 text-slate-700" />
+            <Icon icon={icon} width={14} className="shrink-0 text-slate-700 dark:text-muted-foreground" />
           )}
 
           <span
             className={`min-w-0 flex-1 truncate text-left text-sm ${
-              selectedLabel ? "text-slate-900" : "text-slate-600"
+              selectedLabel ? "text-slate-900 dark:text-foreground" : "text-slate-600 dark:text-muted-foreground"
             }`}
           >
             {selectedLabel || placeholder}
@@ -103,7 +103,7 @@ export default function Dropdown({
           <Icon
             icon="mdi:chevron-down"
             width={20}
-            className={`shrink-0 text-slate-700 transition-transform duration-200 ${
+            className={`shrink-0 text-slate-700 dark:text-muted-foreground transition-transform duration-200 ${
               open ? "rotate-180" : ""
             }`}
           />
@@ -116,7 +116,7 @@ export default function Dropdown({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -8, scale: 0.98 }}
               transition={{ duration: 0.18, ease: "easeOut" }}
-              className="absolute left-0 right-0 top-full z-40 mt-2 flex w-full max-h-64 flex-col overflow-x-hidden overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-md"
+              className="absolute left-0 right-0 top-full z-40 mt-2 flex w-full max-h-64 flex-col overflow-x-hidden overflow-y-auto rounded-lg border border-slate-200 dark:border-border bg-white dark:bg-card shadow-md"
             >
               {normalizedOptions.length === 0 ? (
                 <li className="flex h-40 flex-col items-center justify-center gap-4 p-4">
@@ -133,7 +133,7 @@ export default function Dropdown({
                   return (
                     <li
                       key={option.value}
-                      className="flex w-full cursor-pointer items-center gap-2 p-2 text-sm transition hover:bg-slate-100"
+                      className="flex w-full cursor-pointer items-center gap-2 p-2 text-sm transition hover:bg-slate-100 dark:hover:bg-accent"
                       onClick={() => {
                         onSelect(option.value);
                         setOpen(false);

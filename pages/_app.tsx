@@ -15,7 +15,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <AppKitProvider>
       <MainLayout>
-        <div className={`${inter.variable} font-sans`}>
+        <div className={`${inter.variable} font-sans min-h-screen bg-background text-foreground`}>
           <Component {...pageProps} />
         </div>
       </MainLayout>

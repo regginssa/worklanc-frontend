@@ -19,7 +19,7 @@ export default function ClientLayout({
   hiddenFooter = false,
 }: ClientLayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background text-foreground">
       {!hiddenHeader && <Header variant={headerVariant} />}
       <SEO {...seo} />
       <main

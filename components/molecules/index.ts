@@ -132,3 +132,4 @@ export { default as SavedPayPalList } from "./SavedPayPalList";
 export { default as CheckoutCardBillingSection } from "./CheckoutCardBillingSection";
 export { default as CheckoutCryptoBillingSection } from "./CheckoutCryptoBillingSection";
 export { default as AdvancedSearchJobsDialog } from "./dialogs/AdvancedSearchJobsDialog";
+export { default as ThemeToggle } from "./ThemeToggle";
