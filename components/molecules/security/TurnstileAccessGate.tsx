@@ -17,7 +17,7 @@ export default function TurnstileAccessGate({
   const description = useMemo(
     () =>
       "This website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.",
-    [],
+    []
   );
 
   const handleVerify = async (challengeToken: string) => {
@@ -38,7 +38,7 @@ export default function TurnstileAccessGate({
   };
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-2xl items-center justify-center px-6">
+    <main className="mx-auto flex min-h-screen w-full max-w-2xl p-20">
       <section className="w-full">
         <div className="mb-6 flex items-center justify-between">
           <WorklancLogo href="/" className="gap-1!" />
@@ -57,10 +57,15 @@ export default function TurnstileAccessGate({
           ) : (
             <Turnstile
               sitekey={siteKey}
-              options={{ theme: "light", size: "flexible" }}
+              theme="light"
+              size="flexible"
               onVerify={handleVerify}
-              onError={() => setError("Turnstile challenge failed. Please retry.")}
-              onExpire={() => setError("Challenge expired. Please verify again.")}
+              onError={() =>
+                setError("Turnstile challenge failed. Please retry.")
+              }
+              onExpire={() =>
+                setError("Challenge expired. Please verify again.")
+              }
             />
           )}
         </div>
