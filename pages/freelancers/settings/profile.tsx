@@ -8,6 +8,7 @@ import {
 import { Icon } from "@iconify/react";
 import { motion } from "motion/react";
 import TurnstileAccessGate from "@/components/molecules/security/TurnstileAccessGate";
+import { getTurnstileSession } from "@/lib/security/turnstile";
 
 export default function Profile() {
   const levels = [
@@ -28,6 +29,10 @@ export default function Profile() {
     },
   ];
 
+  if (!getTurnstileSession("freelancer_profile")) {
+    return <TurnstileAccessGate scope="freelancer_profile" />;
+  }
+
   return (
     <FreelancerSettingsLayout
       seo={{
@@ -36,8 +41,7 @@ export default function Profile() {
         url: "/freelancers/settings/profile",
       }}
     >
-      <TurnstileAccessGate scope="freelancer_profile">
-        <div className="border border-slate-300 rounded-3xl p-8 space-y-8">
+      <div className="border border-slate-300 rounded-3xl p-8 space-y-8">
         <div className="flex items-center justify-between">
           <h3 className="text-2xl font-medium">My profile</h3>
           <motion.button
@@ -211,7 +215,6 @@ export default function Profile() {
           classname="py-2! px-5! font-medium! text-sm! rounded-full!"
         />
         </div>
-      </TurnstileAccessGate>
     </FreelancerSettingsLayout>
   );
 }

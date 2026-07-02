@@ -84,7 +84,7 @@ const fromEmploymentForm = (form: any): EmploymentInput => ({
   description: form.description ?? "",
 });
 
-export function useFreelancerProfilePage(uid?: string) {
+export function useFreelancerProfilePage(uid?: string, enabled = true) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
@@ -94,7 +94,7 @@ export function useFreelancerProfilePage(uid?: string) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!router.isReady || !uid) {
+    if (!enabled || !router.isReady || !uid) {
       setData(null);
       setIsLoading(false);
       return;
@@ -118,7 +118,7 @@ export function useFreelancerProfilePage(uid?: string) {
     return () => {
       cancelled = true;
     };
-  }, [router.isReady, uid]);
+  }, [enabled, router.isReady, uid]);
 
   const isPageLoading = !router.isReady || (Boolean(uid) && isLoading);
 

@@ -28,6 +28,7 @@ import { TurnOnAvailabilityBadgeDialog } from "@/components/molecules";
 import { ExternalLink } from "lucide-react";
 import { useRouter } from "next/router";
 import TurnstileAccessGate from "@/components/molecules/security/TurnstileAccessGate";
+import { getTurnstileSession } from "@/lib/security/turnstile";
 
 const tabs: TTabItem[] = [
   { label: "Best matches", value: "best_matches" },
@@ -168,6 +169,10 @@ export default function FindWork() {
     }
   };
 
+  if (!getTurnstileSession("find_work")) {
+    return <TurnstileAccessGate scope="find_work" />;
+  }
+
   return (
     <FreelancerLayout
       seo={{
@@ -176,8 +181,7 @@ export default function FindWork() {
         url: "/nx/find-work",
       }}
     >
-      <TurnstileAccessGate scope="find_work">
-        {openAssesmentAlert && (
+      {openAssesmentAlert && (
           <div className="flex items-center justify-between bg-blue-50 rounded-lg p-4 -mt-8">
             <div className="flex items-center gap-2">
               <Icon icon="lets-icons:lamp" className="w-6 h-6 text-blue-600" />
@@ -467,7 +471,6 @@ export default function FindWork() {
           </ul>
           </div>
         </div>
-      </TurnstileAccessGate>
 
       <JobFiltersDialog
         open={openFiltersDialog}
