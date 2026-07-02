@@ -8,6 +8,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Icon } from "@iconify/react";
+import Link from "next/link";
 
 export default function CreateProjectDashboard() {
   const [formData, setFormData] = useState<any>({});
@@ -56,14 +58,16 @@ export default function CreateProjectDashboard() {
 
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Input
-                    type="text"
-                    name="title"
-                    subLabel="0/75 characters (min. 7 words)"
-                    placeholder="You will get a fantastic deliverable that drives impact"
-                    value={formData.title}
-                    onChange={handleInputChange}
-                  />
+                  <div>
+                    <Input
+                      type="text"
+                      name="title"
+                      subLabel="0/75 characters (min. 7 words)"
+                      placeholder="You will get a fantastic deliverable that drives impact"
+                      value={formData.title}
+                      onChange={handleInputChange}
+                    />
+                  </div>
                 </TooltipTrigger>
                 <TooltipContent side="right">
                   <p className="p-2 text-sm">
@@ -111,22 +115,39 @@ export default function CreateProjectDashboard() {
                 </span>
               </div>
 
-              <AutoComplete
-                name="tags"
-                placeholder="Start typing to view & select options. If entering your own tags, press Enter to save."
-                subLabel="(max. 5 tags)"
-                options={[]}
-                loading={false}
-                value={tagKeyWord}
-                selectedValues={[]}
-                onSelect={() => {}}
-                onSelectedChange={() => {}}
-                filterOptionsLocally={false}
-                noResultsText="No tags found"
-                maxResults={10}
-                multiple={true}
-                onChange={(value) => setTagKeyWord(value)}
-              />
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <AutoComplete
+                      name="tags"
+                      placeholder="Start typing to view & select options. If entering your own tags, press Enter to save."
+                      subLabel="(max. 5 tags)"
+                      options={[]}
+                      loading={false}
+                      value={tagKeyWord}
+                      selectedValues={[]}
+                      onSelect={() => {}}
+                      onSelectedChange={() => {}}
+                      filterOptionsLocally={false}
+                      noResultsText="No tags found"
+                      maxResults={10}
+                      multiple={true}
+                      onChange={(value) => setTagKeyWord(value)}
+                    />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p className="p-2 text-sm">
+                    Search tags help clients find your project. Add the tags
+                    that you think clients will use when searching for your
+                    services. The more specific, the better.
+                    <br />
+                    <br />
+                    It doesn't matter if you use uppercase or lowercase letters
+                    for your tags.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
             </div>
 
             <div className="flex items-center gap-8">
@@ -146,7 +167,40 @@ export default function CreateProjectDashboard() {
             </div>
           </form>
         </div>
-        <div className="flex-1 pl-10"></div>
+
+        <div className="flex-1 pl-10 space-y-10">
+          <h2 className="text-2xl font-semibold">Need help getting started?</h2>
+
+          <ul className="text-base space-y-2">
+            <li>
+              Review these resources to learn how to create a great project.
+            </li>
+            <li>
+              <Link
+                href="#"
+                className="cursor-pointer flex items-start gap-2 underline text-blue-600 hover:text-blue-500"
+              >
+                <Icon icon="f7:doc" className="size-5 text-black" />
+                <span className="flex-1">
+                  Step by step videos on how to create a project
+                </span>
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                href="#"
+                className="cursor-pointer flex items-start gap-2 underline text-blue-600 hover:text-blue-500"
+              >
+                <Icon icon="f7:doc" className="size-5 text-black" />
+                <span className="flex-1">
+                  Tip for planning and improving your project
+                </span>
+              </Link>
+            </li>
+            <li>You can always come back and change your project later.</li>
+          </ul>
+        </div>
       </div>
     </ProjectDashboardOnboardingLayout>
   );
