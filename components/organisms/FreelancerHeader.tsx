@@ -40,10 +40,14 @@ const isNavSectionActive = (sections: NavSection[], pathname: string) =>
     section.items.some((item) => {
       const itemPath = getHrefPathname(item.href);
       return itemPath != null && pathname === itemPath;
-    }),
+    })
   );
 
-function HoverNavMenu({ label, sections, isActive = false }: HoverNavMenuProps) {
+function HoverNavMenu({
+  label,
+  sections,
+  isActive = false,
+}: HoverNavMenuProps) {
   return (
     <div className="group relative">
       <button
@@ -130,7 +134,7 @@ export default function AuthorizedHeader() {
       {
         heading: "Reach more clients",
         items: [
-          { label: "Your services", href: "#" },
+          { label: "Your services", href: "/nx/project-dashboard" },
           { label: "Promote with ads", href: "#" },
           { label: "Direct contracts", href: "/ab/flservices/contracts" },
         ],
@@ -208,7 +212,7 @@ export default function AuthorizedHeader() {
     {
       label: "Connects",
       icon: "material-symbols-light:av-timer",
-      href: "#",
+      href: "/nx/plans/connects/history",
     },
 
     {
@@ -248,7 +252,7 @@ export default function AuthorizedHeader() {
             sections={navs.manageFinancesNavs}
             isActive={isNavSectionActive(
               navs.manageFinancesNavs,
-              router.pathname,
+              router.pathname
             )}
           />
           <Link
