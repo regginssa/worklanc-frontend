@@ -1,5 +1,6 @@
 import { Button, CircleProgress } from "@/components/atoms";
 import { FreelancerLayout } from "@/components/layouts";
+import { ProfileMetricsChart } from "@/components/molecules";
 import {
   Tooltip,
   TooltipContent,
@@ -105,6 +106,8 @@ export default function MyStats() {
               </div>
             </div>
           </div>
+
+          <ProfileMetricsChart />
         </div>
         <div className="flex-1 space-y-8"></div>
       </div>
