@@ -4,6 +4,7 @@ import { WorklancLogo } from "../atoms";
 import { HeaderSearch } from "../molecules";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/router";
 import { UserAvatar } from "../atoms";
 import { Switch } from "../ui/switch";
 import { CircleQuestionMarkIcon, LucideBell, LucideBrain } from "lucide-react";
@@ -26,14 +27,32 @@ type NavSection = {
 interface HoverNavMenuProps {
   label: string;
   sections: NavSection[];
+  isActive?: boolean;
 }
 
-function HoverNavMenu({ label, sections }: HoverNavMenuProps) {
+const getHrefPathname = (href: string) => {
+  if (!href || href === "#") return null;
+  return href.split("?")[0];
+};
+
+const isNavSectionActive = (sections: NavSection[], pathname: string) =>
+  sections.some((section) =>
+    section.items.some((item) => {
+      const itemPath = getHrefPathname(item.href);
+      return itemPath != null && pathname === itemPath;
+    }),
+  );
+
+function HoverNavMenu({ label, sections, isActive = false }: HoverNavMenuProps) {
   return (
     <div className="group relative">
       <button
         type="button"
-        className="flex items-center gap-1 rounded-full px-1 py-2 text-sm font-medium text-slate-800 dark:text-foreground transition-all duration-200 hover:text-slate-600 dark:hover:text-muted-foreground cursor-pointer"
+        className={`flex items-center gap-1 rounded-full px-1 py-2 text-sm font-medium transition-all duration-200 cursor-pointer ${
+          isActive
+            ? "text-slate-600 dark:text-muted-foreground"
+            : "text-slate-800 dark:text-foreground hover:text-slate-600 dark:hover:text-muted-foreground"
+        }`}
       >
         <span>{label}</span>
         <Icon
@@ -76,6 +95,7 @@ function HoverNavMenu({ label, sections }: HoverNavMenuProps) {
 }
 
 export default function AuthorizedHeader() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const { user } = useAppSelector((state) => state.user);
@@ -134,7 +154,10 @@ export default function AuthorizedHeader() {
           },
           { label: "Your reports", href: "#" },
           { label: "Billings and earnings", href: "/nx/reports/earnings" },
-          { label: "Transactions", href: "/nx/reports/transactions/123456789" },
+          {
+            label: "Transactions",
+            href: "/nx/payments/reports/transaction-history",
+          },
           { label: "Certificate of earnings", href: "#" },
         ],
       },
@@ -210,11 +233,23 @@ export default function AuthorizedHeader() {
         <WorklancLogo />
 
         <nav className="flex items-center gap-2">
-          <HoverNavMenu label="Find work" sections={navs.findWorkNavs} />
-          <HoverNavMenu label="Deliver work" sections={navs.deliverWorkNavs} />
+          <HoverNavMenu
+            label="Find work"
+            sections={navs.findWorkNavs}
+            isActive={isNavSectionActive(navs.findWorkNavs, router.pathname)}
+          />
+          <HoverNavMenu
+            label="Deliver work"
+            sections={navs.deliverWorkNavs}
+            isActive={isNavSectionActive(navs.deliverWorkNavs, router.pathname)}
+          />
           <HoverNavMenu
             label="Manage finances"
             sections={navs.manageFinancesNavs}
+            isActive={isNavSectionActive(
+              navs.manageFinancesNavs,
+              router.pathname,
+            )}
           />
           <Link
             href="/ab/messages/rooms/123456789"

@@ -26,7 +26,10 @@ export default function EarningsReportsPage() {
         <p className="text-sm text-slate-600">
           View your earnings and any applicable fees or taxes by client for the
           past 3 years. For earnings past three years, go to{" "}
-          <Link href="/nx/reports/transactions/123456789">
+          <Link
+            href="/nx/payments/reports/transaction-history"
+            className="text-black cursor-pointer underline"
+          >
             transaction history
           </Link>
           .
