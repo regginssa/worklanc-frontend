@@ -11,8 +11,11 @@ import Tips1 from "@/public/assets/webps/tips-for-success-1.webp";
 import Tips2 from "@/public/assets/webps/tips-for-success-2.webp";
 import Tips3 from "@/public/assets/webps/tips-for-success-3.webp";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function ProjectDashboard() {
+  const router = useRouter();
+
   return (
     <FreelancerLayout
       seo={{
@@ -38,6 +41,7 @@ export default function ProjectDashboard() {
             type="primary"
             label="Create a project"
             classname="rounded-md! text-base! font-medium! py-2.5! px-6!"
+            onClick={() => router.push("/nx/project-dashboard/create")}
           />
         </div>
         <Image
@@ -84,6 +88,7 @@ export default function ProjectDashboard() {
             type="primary"
             label="Create a project"
             classname="rounded-md! text-base! font-medium! py-2.5! px-6!"
+            onClick={() => router.push("/nx/project-dashboard/create")}
           />
         </div>
 

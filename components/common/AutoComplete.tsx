@@ -14,6 +14,7 @@ interface AutoCompleteProps {
   placeholder?: string;
   labelClassName?: string;
   classname?: string;
+  subLabel?: string;
   icon?: string;
   value: string;
   options?: AutoCompleteOption[];
@@ -38,6 +39,7 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({
   label,
   placeholder,
   labelClassName,
+  subLabel,
   classname,
   icon,
   value,
@@ -66,9 +68,7 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({
 
     const query = value.trim().toLowerCase();
     const list = query
-      ? options.filter((option) =>
-          option.label.toLowerCase().includes(query),
-        )
+      ? options.filter((option) => option.label.toLowerCase().includes(query))
       : options;
 
     return list.slice(0, maxResults);
@@ -130,8 +130,8 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({
           error
             ? "border-2 border-red-500"
             : disabled
-              ? "border border-slate-400 bg-slate-100 cursor-not-allowed"
-              : "border border-slate-400 hover:border-2 hover:border-black focus-within:border-2 focus-within:border-black"
+            ? "border border-slate-400 bg-slate-100 cursor-not-allowed"
+            : "border border-slate-400 hover:border-2 hover:border-black focus-within:border-2 focus-within:border-black"
         } group transition-all duration-200`}
       >
         {icon && (
@@ -207,14 +207,25 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({
         )}
       </AnimatePresence>
 
-      {!!error && (
-        <div className="flex items-center gap-2">
-          <Icon
-            icon="mdi:information-outline"
-            width={16}
-            className="text-red-500"
-          />
-          <p className="text-red-600 text-sm">{error}</p>
+      {(!!error || subLabel) && (
+        <div
+          className={`flex items-start gap-4 ${
+            !error && subLabel ? "justify-end text-right" : "justify-between"
+          }`}
+        >
+          {error && (
+            <div className="flex items-center gap-2">
+              <Icon
+                icon="mdi:information-outline"
+                width={16}
+                className="text-red-500"
+              />
+              <p className="text-red-600 text-sm">{error}</p>
+            </div>
+          )}
+          {subLabel && (
+            <span className="text-xs text-slate-500">{subLabel}</span>
+          )}
         </div>
       )}
     </div>

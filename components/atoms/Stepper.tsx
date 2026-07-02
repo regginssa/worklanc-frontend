@@ -23,7 +23,7 @@ export default function Stepper({
 }) {
   return (
     <BaseStepper
-      className="w-full max-w-md space-y-8"
+      className="w-full space-y-8"
       defaultValue={currentStep}
       indicators={{
         completed: checkIndicator,

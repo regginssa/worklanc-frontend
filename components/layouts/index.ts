@@ -14,3 +14,4 @@ export { default as WmLayout } from "./wm";
 export { CreateProfilePageLayout } from "./create-profile/CreateProfilePageLayout";
 export { ClientOnboardingLayout } from "./client-onboarding/ClientOnboardingLayout";
 export { default as BenchLayout } from "./browse/BenchLayout";
+export { default as ProjectDashboardOnboardingLayout } from "./freelancers/ProjectDashboardOnboardingLayout";
