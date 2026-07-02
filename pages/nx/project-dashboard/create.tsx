@@ -10,10 +10,12 @@ import {
 } from "@/components/ui/tooltip";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
+import { ProjectCategoryDialog } from "@/components/molecules";
 
 export default function CreateProjectDashboard() {
   const [formData, setFormData] = useState<any>({});
   const [tagKeyWord, setTagKeyWord] = useState("");
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -94,6 +96,7 @@ export default function CreateProjectDashboard() {
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 className="text-base h-10 font-medium text-blue-600 cursor-pointer"
+                onClick={() => setCategoryDialogOpen(true)}
               >
                 Browse all categories
               </motion.button>
@@ -202,6 +205,14 @@ export default function CreateProjectDashboard() {
           </ul>
         </div>
       </div>
+
+      <ProjectCategoryDialog
+        open={categoryDialogOpen}
+        onClose={() => setCategoryDialogOpen(false)}
+        onSave={(fd) => {
+          setFormData({ ...formData, ...fd });
+        }}
+      />
     </ProjectDashboardOnboardingLayout>
   );
 }

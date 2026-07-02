@@ -135,3 +135,4 @@ export { default as AdvancedSearchJobsDialog } from "./dialogs/AdvancedSearchJob
 export { default as ThemeToggle } from "./ThemeToggle";
 export { default as TurnstileAccessGate } from "./security/TurnstileAccessGate";
 export { default as ProfileMetricsChart } from "./ProfileMetricsChart";
+export { default as ProjectCategoryDialog } from "./dialogs/ProjectCategoryDialog";

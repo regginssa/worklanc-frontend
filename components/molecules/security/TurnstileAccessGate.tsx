@@ -1,7 +1,11 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import Image from "next/image";
 import Turnstile from "react-turnstile";
-import WorklancLogo from "@/components/atoms/WorkLancLogo";
+import Logo from "@/public/assets/logos/logo.png";
 import SecurityAPI from "@/lib/api/security";
+import { WorklancLogo } from "@/components/atoms";
+
+const SITE_DOMAIN = "www.worklanc.com";
 
 type TurnstileAccessGateProps = {
   onVerified?: () => void;
@@ -13,12 +17,6 @@ export default function TurnstileAccessGate({
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const description = useMemo(
-    () =>
-      "This website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.",
-    []
-  );
 
   const handleVerify = async (challengeToken: string) => {
     setError(null);
@@ -38,42 +36,48 @@ export default function TurnstileAccessGate({
   };
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-2xl p-20">
-      <section className="w-full">
-        <div className="mb-6 flex items-center justify-between">
-          <WorklancLogo href="/" className="gap-1!" />
-          <span className="text-sm text-slate-600">www.worklanc.com</span>
+    <main className="min-h-screen bg-white">
+      <section className="mx-auto mt-32 w-full max-w-xl px-6">
+        <div className="mb-6 flex items-center gap-2.5 justify-between">
+          <WorklancLogo />
+          <h1 className="text-base text-slate-800">www.worklanc.com</h1>
         </div>
-        <h1 className="text-3xl font-semibold text-slate-900">
-          Performing security verification
-        </h1>
-        <p className="mt-4 text-sm text-slate-600">{description}</p>
 
-        <div className="mt-8">
-          {!siteKey ? (
-            <p className="text-sm text-red-600">
-              Turnstile is not configured. Set NEXT_PUBLIC_TURNSTILE_SITE_KEY.
-            </p>
-          ) : (
-            <Turnstile
-              sitekey={siteKey}
-              theme="light"
-              size="flexible"
-              onVerify={handleVerify}
-              onError={() =>
-                setError("Turnstile challenge failed. Please retry.")
-              }
-              onExpire={() =>
-                setError("Challenge expired. Please verify again.")
-              }
-            />
-          )}
+        <h1 className="text-base font-normal leading-relaxed text-[#313131]">
+          Verifying you are human. This may take a few seconds.
+        </h1>
+
+        <p className="mt-5 text-sm leading-relaxed text-[#666666]">
+          {SITE_DOMAIN} needs to review the security of your connection before
+          proceeding.
+        </p>
+
+        <div className="mt-6">
+          <Turnstile
+            sitekey={siteKey}
+            theme="light"
+            size="normal"
+            onVerify={handleVerify}
+            onError={() =>
+              setError("Turnstile challenge failed. Please retry.")
+            }
+            onExpire={() => setError("Challenge expired. Please verify again.")}
+          />
         </div>
 
         {isVerifying && (
-          <p className="mt-3 text-sm text-slate-600">Verifying challenge...</p>
+          <p className="mt-3 text-sm text-[#666666]">Verifying challenge...</p>
         )}
         {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+
+        <footer className="mt-10 border-t border-[#e5e5e5] pt-4">
+          <p className="text-xs text-[#999999]">
+            Performance &amp; security by{" "}
+            <span className="font-semibold tracking-wide text-[#f38020]">
+              CLOUDFLARE
+            </span>
+          </p>
+        </footer>
       </section>
     </main>
   );
