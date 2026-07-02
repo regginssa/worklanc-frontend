@@ -107,6 +107,7 @@ import {
 import { AutoCompleteSelector, Button as AtomButton } from "@/components/atoms";
 import { MOCK_SKILLS } from "@/static/data/mock-skills";
 import type { AutoCompleteOption } from "@/components/atoms/AutoCompleteSelector";
+import TurnstileAccessGate from "@/components/molecules/security/TurnstileAccessGate";
 
 const createEmptyEmploymentDraft = () => ({
   title: "",
@@ -432,7 +433,8 @@ export default function FreelancerProfilePage() {
         url: `/freelancers/${profile.uid}`,
       }}
     >
-      <div className="rounded-3xl border border-slate-300">
+      <TurnstileAccessGate scope="freelancer_profile">
+        <div className="rounded-3xl border border-slate-300">
         <FreelancerProfileHeader
           name={displayName}
           avatar={avatarSrc}
@@ -685,16 +687,16 @@ export default function FreelancerProfilePage() {
             )}
           </div>
         </div>
-      </div>
+        </div>
 
-      <FreelancerProfileTestimonials
+        <FreelancerProfileTestimonials
         testimonials={profile.testimonials ?? []}
         onAdd={canEdit ? () => setTestimonialOpen(true) : undefined}
         onRequestNew={canEdit ? () => setTestimonialOpen(true) : undefined}
         onEmptyAction={canEdit ? () => setTestimonialOpen(true) : undefined}
       />
 
-      <FreelancerProfileCertifications
+        <FreelancerProfileCertifications
         items={(profile.certifications ?? []).map((certification, index) => ({
           ...certification,
           onEdit: canEdit ? () => openCertificationDialog(index) : undefined,
@@ -718,7 +720,7 @@ export default function FreelancerProfilePage() {
         }
       />
 
-      <FreelancerProfileEmploymentHistory
+        <FreelancerProfileEmploymentHistory
         items={employmentItems.map((item, index) => ({
           company: item.company,
           title: item.title,
@@ -744,10 +746,10 @@ export default function FreelancerProfilePage() {
         onAdd={canEdit ? () => openEmploymentDialog(null) : undefined}
       />
 
-      <FreelancerProfileOtherExperiences
+        <FreelancerProfileOtherExperiences
         onAdd={canEdit ? openOtherExperienceDialog : undefined}
         onEmptyAction={canEdit ? openOtherExperienceDialog : undefined}
-      >
+        >
         {(profile.otherExperiences ?? []).length > 0 ? (
           <ul className="space-y-4 py-6">
             {(profile.otherExperiences ?? []).map((item) => (
@@ -762,7 +764,8 @@ export default function FreelancerProfilePage() {
             ))}
           </ul>
         ) : null}
-      </FreelancerProfileOtherExperiences>
+        </FreelancerProfileOtherExperiences>
+      </TurnstileAccessGate>
 
       <MilitaryVeteranDialog
         open={militaryVeteranOpen}

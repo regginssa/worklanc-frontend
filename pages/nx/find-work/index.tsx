@@ -27,6 +27,7 @@ import {
 import { TurnOnAvailabilityBadgeDialog } from "@/components/molecules";
 import { ExternalLink } from "lucide-react";
 import { useRouter } from "next/router";
+import TurnstileAccessGate from "@/components/molecules/security/TurnstileAccessGate";
 
 const tabs: TTabItem[] = [
   { label: "Best matches", value: "best_matches" },
@@ -175,31 +176,32 @@ export default function FindWork() {
         url: "/nx/find-work",
       }}
     >
-      {openAssesmentAlert && (
-        <div className="flex items-center justify-between bg-blue-50 rounded-lg p-4 -mt-8">
-          <div className="flex items-center gap-2">
-            <Icon icon="lets-icons:lamp" className="w-6 h-6 text-blue-600" />
-            <p className="text-sm font-medium">
-              To do:{" "}
-              <Link href="#" className="cursor-pointer underline">
-                Take the working style assessment
-              </Link>
-              . Clients trust and hire freelancers who highlight their working
-              style on their profile.
-            </p>
+      <TurnstileAccessGate scope="find_work">
+        {openAssesmentAlert && (
+          <div className="flex items-center justify-between bg-blue-50 rounded-lg p-4 -mt-8">
+            <div className="flex items-center gap-2">
+              <Icon icon="lets-icons:lamp" className="w-6 h-6 text-blue-600" />
+              <p className="text-sm font-medium">
+                To do:{" "}
+                <Link href="#" className="cursor-pointer underline">
+                  Take the working style assessment
+                </Link>
+                . Clients trust and hire freelancers who highlight their working
+                style on their profile.
+              </p>
+            </div>
+
+            <button
+              className="cursor-pointer"
+              onClick={() => setOpenAssesmentAlert(false)}
+            >
+              <Icon icon="mdi:close" className="w-5 h-5" />
+            </button>
           </div>
+        )}
 
-          <button
-            className="cursor-pointer"
-            onClick={() => setOpenAssesmentAlert(false)}
-          >
-            <Icon icon="mdi:close" className="w-5 h-5" />
-          </button>
-        </div>
-      )}
-
-      <div className="flex items-start gap-8 -mt-2">
-        <div className="w-3/4 space-y-6">
+        <div className="flex items-start gap-8 -mt-2">
+          <div className="w-3/4 space-y-6">
           {/* Banner */}
           <div className="bg-zinc-900 p-8 rounded-3xl flex items-center justify-between relative gap-10 text-white">
             <div className="w-3/5">
@@ -268,9 +270,9 @@ export default function FindWork() {
 
           {/* Jobs */}
           <JobListItemGroup />
-        </div>
+          </div>
 
-        <div className="flex-1 space-y-6">
+          <div className="flex-1 space-y-6">
           <div className="p-6 rounded-3xl bg-slate-50 space-y-6">
             <div className="flex items-center gap-4">
               <UserAvatar
@@ -463,8 +465,9 @@ export default function FindWork() {
               </Link>
             </li>
           </ul>
+          </div>
         </div>
-      </div>
+      </TurnstileAccessGate>
 
       <JobFiltersDialog
         open={openFiltersDialog}

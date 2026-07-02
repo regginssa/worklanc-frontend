@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Icon } from "@iconify/react";
 import { motion } from "motion/react";
+import TurnstileAccessGate from "@/components/molecules/security/TurnstileAccessGate";
 
 export default function Profile() {
   const levels = [
@@ -35,7 +36,8 @@ export default function Profile() {
         url: "/freelancers/settings/profile",
       }}
     >
-      <div className="border border-slate-300 rounded-3xl p-8 space-y-8">
+      <TurnstileAccessGate scope="freelancer_profile">
+        <div className="border border-slate-300 rounded-3xl p-8 space-y-8">
         <div className="flex items-center justify-between">
           <h3 className="text-2xl font-medium">My profile</h3>
           <motion.button
@@ -108,9 +110,9 @@ export default function Profile() {
             <p>to enable this setting.</p>
           </div>
         </div>
-      </div>
+        </div>
 
-      <div className="border border-slate-300 rounded-3xl p-8 space-y-8">
+        <div className="border border-slate-300 rounded-3xl p-8 space-y-8">
         <h3 className="text-2xl font-medium">Experience level</h3>
         <ul className="grid grid-cols-3 gap-6">
           {levels.map((level, idx) => (
@@ -140,9 +142,9 @@ export default function Profile() {
             </motion.li>
           ))}
         </ul>
-      </div>
+        </div>
 
-      <div className="border border-slate-300 rounded-3xl p-8 space-y-8">
+        <div className="border border-slate-300 rounded-3xl p-8 space-y-8">
         <div className="flex items-center justify-between">
           <h3 className="text-2xl font-medium">Categories</h3>
           <IconButton
@@ -170,9 +172,9 @@ export default function Profile() {
             ))}
           </ul>
         </div>
-      </div>
+        </div>
 
-      <div className="border border-slate-300 rounded-3xl p-8 space-y-8">
+        <div className="border border-slate-300 rounded-3xl p-8 space-y-8">
         <h3 className="text-2xl font-medium">Linked accounts</h3>
         <div className="flex items-center gap-8">
           <motion.button
@@ -191,9 +193,9 @@ export default function Profile() {
             <span>Stack Overflow</span>
           </motion.button>
         </div>
-      </div>
+        </div>
 
-      <div className="border border-slate-300 rounded-3xl p-8 space-y-8">
+        <div className="border border-slate-300 rounded-3xl p-8 space-y-8">
         <div>
           <h3 className="text-2xl font-medium">AI preference</h3>
           <p className="mt-1 text-slate-600 text-sm">
@@ -208,7 +210,8 @@ export default function Profile() {
           size="medium"
           classname="py-2! px-5! font-medium! text-sm! rounded-full!"
         />
-      </div>
+        </div>
+      </TurnstileAccessGate>
     </FreelancerSettingsLayout>
   );
 }

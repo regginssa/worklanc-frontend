@@ -133,3 +133,4 @@ export { default as CheckoutCardBillingSection } from "./CheckoutCardBillingSect
 export { default as CheckoutCryptoBillingSection } from "./CheckoutCryptoBillingSection";
 export { default as AdvancedSearchJobsDialog } from "./dialogs/AdvancedSearchJobsDialog";
 export { default as ThemeToggle } from "./ThemeToggle";
+export { default as TurnstileAccessGate } from "./security/TurnstileAccessGate";

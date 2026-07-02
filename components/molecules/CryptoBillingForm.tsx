@@ -125,7 +125,7 @@ function CryptoBillingFormContent({
     editingWallet?.chain ??
       allowedChains?.[0] ??
       availableChains[0]?.id ??
-      "solana",
+      "solana"
   );
   const [walletLabel, setWalletLabel] = useState(editingWallet?.label ?? "");
   const [loading, setLoading] = useState(false);
@@ -135,7 +135,7 @@ function CryptoBillingFormContent({
   const selectedChain = getChainById(selectedChainId);
   const supportedTokens = useMemo(
     () => getTokensForChain(selectedChainId),
-    [selectedChainId],
+    [selectedChainId]
   );
 
   const chainOptions = useMemo(
@@ -149,7 +149,7 @@ function CryptoBillingFormContent({
         description: chain.description,
         icon: chain.icon,
       })),
-    [availableChains, editingWallet, lockNetwork],
+    [availableChains, editingWallet, lockNetwork]
   );
 
   useEffect(() => {
@@ -168,7 +168,7 @@ function CryptoBillingFormContent({
   const walletMatchesChain = isWalletOnChain(
     selectedChainId,
     caipAddress,
-    address,
+    address
   );
 
   const handleConnectWallet = () => {
@@ -188,6 +188,7 @@ function CryptoBillingFormContent({
     try {
       await disconnect();
       toast.success("Wallet disconnected.");
+      32;
     } catch (error) {
       const messageText =
         error instanceof Error ? error.message : "Unable to disconnect wallet.";
@@ -213,7 +214,7 @@ function CryptoBillingFormContent({
 
     if (!walletMatchesChain) {
       setFormError(
-        `Switch your wallet to ${selectedChain.label} before saving.`,
+        `Switch your wallet to ${selectedChain.label} before saving.`
       );
       return;
     }
@@ -235,7 +236,7 @@ function CryptoBillingFormContent({
         }
 
         const signedMessage = await solanaProvider.signMessage(
-          new TextEncoder().encode(message),
+          new TextEncoder().encode(message)
         );
         signature = bytesToBase64(signedMessage);
       } else {
@@ -280,15 +281,15 @@ function CryptoBillingFormContent({
           {editingWallet
             ? "Update crypto wallet"
             : isWithdrawal
-              ? "Connect a crypto wallet for withdrawals"
-              : "Connect a crypto wallet"}
+            ? "Connect a crypto wallet for withdrawals"
+            : "Connect a crypto wallet"}
         </h4>
         <p className="text-sm font-light text-slate-600">
           {editingWallet
             ? "Reconnect or update the wallet details for this network. The network cannot be changed."
             : isWithdrawal
-              ? "Link your wallet to receive earnings on Worklanc. One wallet per network — you can withdraw in any supported token on that network. Worklanc never asks for your seed phrase or private key."
-              : "Link your own wallet to deposit funds on Worklanc. One wallet per network — you can pay with any supported token on that network at checkout. Worklanc never asks for your seed phrase or private key."}
+            ? "Link your wallet to receive earnings on Worklanc. One wallet per network — you can withdraw in any supported token on that network. Worklanc never asks for your seed phrase or private key."
+            : "Link your own wallet to deposit funds on Worklanc. One wallet per network — you can pay with any supported token on that network at checkout. Worklanc never asks for your seed phrase or private key."}
         </p>
       </div>
 

@@ -1,5 +1,6 @@
 import { toast } from "sonner";
 import { getAuthToken, removeAuthToken } from "./auth";
+import { getTurnstileSessionForEndpoint } from "@/lib/security/turnstile";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -9,6 +10,7 @@ export async function request<T>(
   config?: { silent?: boolean },
 ): Promise<any> {
   const token = getAuthToken();
+  const turnstileSession = getTurnstileSessionForEndpoint(endpoint);
 
   const res = await fetch(`${BASE_URL}/api${endpoint}`, {
     headers: {
@@ -18,6 +20,11 @@ export async function request<T>(
       ...(token
         ? {
             Authorization: token,
+          }
+        : {}),
+      ...(turnstileSession
+        ? {
+            "x-turnstile-session": turnstileSession,
           }
         : {}),
 

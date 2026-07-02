@@ -15,7 +15,7 @@ async function fetchNativeTokenPricesUsd(): Promise<NativeTokenPrices> {
       fetch("https://api.coinpaprika.com/v1/tickers/eth-ethereum?quotes=USD"),
       fetch("https://api.coinpaprika.com/v1/tickers/sol-solana?quotes=USD"),
       fetch(
-        "https://api.coinpaprika.com/v1/tickers/bnb-binance-coin?quotes=USD",
+        "https://api.coinpaprika.com/v1/tickers/bnb-binance-coin?quotes=USD"
       ),
     ]);
 
@@ -36,8 +36,8 @@ async function fetchNativeTokenPricesUsd(): Promise<NativeTokenPrices> {
 }
 
 async function fetchWorklancTokenPricesUsd(): Promise<WorklancTokenPrices> {
-  const babyuTokenAddress = process.env.BABYU_TOKEN_ADDRESS;
-  const chrleTokenAddress = process.env.CHRLE_TOKEN_ADDRESS;
+  const babyuTokenAddress = process.env.NEXT_PUBLIC_BABYU_TOKEN_ADDRESS;
+  const chrleTokenAddress = process.env.NEXT_PUBLIC_CHRLE_TOKEN_ADDRESS;
 
   if (!babyuTokenAddress || !chrleTokenAddress) {
     return { babyu: 0, chrle: 0 };
@@ -45,11 +45,9 @@ async function fetchWorklancTokenPricesUsd(): Promise<WorklancTokenPrices> {
 
   try {
     const [babyuRes, chrleRes] = await Promise.all([
+      fetch(`https://api-v3.raydium.io/mint/price?mints=${babyuTokenAddress}`),
       fetch(
-        `https://api-v3.raydium.io/mint/price?mints=${babyuTokenAddress}`,
-      ),
-      fetch(
-        `https://launch-mint-v1.raydium.io/get/by/mints?ids=${chrleTokenAddress}`,
+        `https://launch-mint-v1.raydium.io/get/by/mints?ids=${chrleTokenAddress}`
       ),
     ]);
 
