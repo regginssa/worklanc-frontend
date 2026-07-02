@@ -11,8 +11,6 @@ import type { JobFilterValue } from "@/components/organisms/JobFilter";
 import { AdvancedSearchJobsDialog } from "@/components/molecules";
 import JobsAPI from "@/lib/api/jobs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import TurnstileAccessGate from "@/components/molecules/security/TurnstileAccessGate";
-import { getTurnstileSession } from "@/lib/security/turnstile";
 
 const sortByOptions = [
   { label: "Sort by: Best Matches", value: "best_matches" },
@@ -22,7 +20,6 @@ const sortByOptions = [
 ];
 
 export default function SearchJobsPage() {
-  const turnstileVerified = Boolean(getTurnstileSession("find_work"));
   const queryClient = useQueryClient();
   const [advancedSearchDialogOpen, setAdvancedSearchDialogOpen] =
     useState(false);
@@ -176,7 +173,6 @@ export default function SearchJobsPage() {
   const { data: savedSearchesData } = useQuery({
     queryKey: ["job-saved-searches"],
     queryFn: JobsAPI.listSavedSearches,
-    enabled: turnstileVerified,
   });
 
   const saveSearchMutation = useMutation({
@@ -186,10 +182,6 @@ export default function SearchJobsPage() {
       setSaveSearchOpen(false);
     },
   });
-
-  if (!turnstileVerified) {
-    return <TurnstileAccessGate scope="find_work" />;
-  }
 
   return (
     <FreelancerLayout

@@ -107,8 +107,6 @@ import {
 import { AutoCompleteSelector, Button as AtomButton } from "@/components/atoms";
 import { MOCK_SKILLS } from "@/static/data/mock-skills";
 import type { AutoCompleteOption } from "@/components/atoms/AutoCompleteSelector";
-import TurnstileAccessGate from "@/components/molecules/security/TurnstileAccessGate";
-import { getTurnstileSession } from "@/lib/security/turnstile";
 
 const createEmptyEmploymentDraft = () => ({
   title: "",
@@ -121,7 +119,6 @@ const createEmptyEmploymentDraft = () => ({
 });
 
 export default function FreelancerProfilePage() {
-  const turnstileVerified = Boolean(getTurnstileSession("freelancer_profile"));
   const router = useRouter();
   const uid = router.isReady
     ? (router.query.uid as string | undefined)
@@ -152,7 +149,7 @@ export default function FreelancerProfilePage() {
     educationItems,
     emptyEducation,
     toEmploymentForm,
-  } = useFreelancerProfilePage(uid, turnstileVerified);
+  } = useFreelancerProfilePage(uid);
 
   const [portfolioTabIdx, setPortfolioTabIdx] = useState(0);
   const [titleOpen, setTitleOpen] = useState(false);
@@ -426,10 +423,6 @@ export default function FreelancerProfilePage() {
   ]
     .filter(Boolean)
     .join(" - ");
-
-  if (!turnstileVerified) {
-    return <TurnstileAccessGate scope="freelancer_profile" />;
-  }
 
   return (
     <FreelancerLayout

@@ -27,8 +27,6 @@ import {
 import { TurnOnAvailabilityBadgeDialog } from "@/components/molecules";
 import { ExternalLink } from "lucide-react";
 import { useRouter } from "next/router";
-import TurnstileAccessGate from "@/components/molecules/security/TurnstileAccessGate";
-import { getTurnstileSession } from "@/lib/security/turnstile";
 
 const tabs: TTabItem[] = [
   { label: "Best matches", value: "best_matches" },
@@ -168,10 +166,6 @@ export default function FindWork() {
       router.push(`/nx/search/jobs?keyword=${search}`);
     }
   };
-
-  if (!getTurnstileSession("find_work")) {
-    return <TurnstileAccessGate scope="find_work" />;
-  }
 
   return (
     <FreelancerLayout

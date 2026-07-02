@@ -7,8 +7,6 @@ import {
 } from "@/components/ui/tooltip";
 import { Icon } from "@iconify/react";
 import { motion } from "motion/react";
-import TurnstileAccessGate from "@/components/molecules/security/TurnstileAccessGate";
-import { getTurnstileSession } from "@/lib/security/turnstile";
 
 export default function Profile() {
   const levels = [
@@ -28,10 +26,6 @@ export default function Profile() {
       value: "expert",
     },
   ];
-
-  if (!getTurnstileSession("freelancer_profile")) {
-    return <TurnstileAccessGate scope="freelancer_profile" />;
-  }
 
   return (
     <FreelancerSettingsLayout

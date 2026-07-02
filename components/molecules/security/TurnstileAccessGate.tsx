@@ -2,35 +2,34 @@ import { useMemo, useState } from "react";
 import Turnstile from "react-turnstile";
 import WorklancLogo from "@/components/atoms/WorkLancLogo";
 import SecurityAPI from "@/lib/api/security";
-import { setTurnstileSession, type TurnstileScope } from "@/lib/security/turnstile";
 
 type TurnstileAccessGateProps = {
-  scope: TurnstileScope;
+  onVerified?: () => void;
 };
 
-export default function TurnstileAccessGate({ scope }: TurnstileAccessGateProps) {
+export default function TurnstileAccessGate({
+  onVerified,
+}: TurnstileAccessGateProps) {
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
   const [isVerifying, setIsVerifying] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const description = useMemo(() => {
-    if (scope === "find_work") {
-      return "This website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.";
-    }
-    return "This website uses a security service to protect against malicious bots. This page is displayed while the website verifies your profile traffic is safe.";
-  }, [scope]);
+  const description = useMemo(
+    () =>
+      "This website uses a security service to protect against malicious bots. This page is displayed while the website verifies you are not a bot.",
+    [],
+  );
 
   const handleVerify = async (challengeToken: string) => {
     setError(null);
     setIsVerifying(true);
     try {
-      const response = await SecurityAPI.verifyTurnstile(challengeToken, scope);
-      if (!response?.token || !response?.expiresIn) {
+      const response = await SecurityAPI.verifyTurnstile(challengeToken);
+      if (!response?.success) {
         setError("Verification failed. Please retry.");
         return;
       }
-      setTurnstileSession(scope, response.token, response.expiresIn);
-      window.location.reload();
+      onVerified?.();
     } catch {
       setError("Verification failed. Please retry.");
     } finally {

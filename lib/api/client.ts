@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import { getAuthToken, removeAuthToken } from "./auth";
-import { getTurnstileSessionForEndpoint } from "@/lib/security/turnstile";
+import { notifyTurnstileRequired } from "@/lib/security/turnstileEvents";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -10,21 +10,14 @@ export async function request<T>(
   config?: { silent?: boolean },
 ): Promise<any> {
   const token = getAuthToken();
-  const turnstileSession = getTurnstileSessionForEndpoint(endpoint);
 
   const res = await fetch(`${BASE_URL}/api${endpoint}`, {
     headers: {
       "Content-Type": "application/json",
 
-      // add token automatically
       ...(token
         ? {
             Authorization: token,
-          }
-        : {}),
-      ...(turnstileSession
-        ? {
-            "x-turnstile-session": turnstileSession,
           }
         : {}),
 
@@ -44,12 +37,16 @@ export async function request<T>(
   const data = await res.json().catch(() => null);
 
   if (!res.ok) {
+    if (data?.code === "TURNSTILE_REQUIRED") {
+      notifyTurnstileRequired();
+      return data;
+    }
+
     if (!config?.silent) {
       toast.error(data?.message || data?.msg || "API Error", {
         position: "top-center",
       });
     }
-    // throw new Error(data?.message || data?.msg || "API Error");
   }
 
   return data;
@@ -79,6 +76,11 @@ export async function uploadRequest(
   const data = await res.json().catch(() => null);
 
   if (!res.ok) {
+    if (data?.code === "TURNSTILE_REQUIRED") {
+      notifyTurnstileRequired();
+      return data;
+    }
+
     toast.error(data?.message || data?.msg || "Upload failed", {
       position: "top-center",
     });

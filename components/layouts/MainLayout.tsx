@@ -6,6 +6,7 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "../ui/sonner";
 import { TooltipProvider } from "../ui/tooltip";
 import CookieConsent from "../molecules/CookieConsent";
+import TurnstileProvider from "../providers/TurnstileProvider";
 
 export default function MainLayout({
   children,
@@ -23,7 +24,9 @@ export default function MainLayout({
           disableTransitionOnChange
         >
           <AuthBootstrap />
-          <TooltipProvider>{children}</TooltipProvider>
+          <TurnstileProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+          </TurnstileProvider>
           <CookieConsent />
           <Toaster />
         </ThemeProvider>
