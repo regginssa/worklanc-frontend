@@ -54,6 +54,11 @@ export default function Pricing() {
     setFormData({ ...formData, numberOfRevisions: value });
   };
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    router.push("/nx/project-dashboard/gallery");
+  };
+
   return (
     <ProjectDashboardOnboardingLayout
       seo={{
@@ -71,12 +76,12 @@ export default function Pricing() {
               type="outline"
               label="Preview project"
               size="medium"
-              icon="mdi:eye"
+              icon="solar:eye-linear"
               classname="rounded-md! text-sm! font-medium! py-2.5! px-6!"
             />
           </div>
 
-          <form className="space-y-8">
+          <form className="space-y-8" onSubmit={handleSubmit}>
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <h5 className="text-2xl font-medium">Create pricing tiers</h5>
@@ -457,7 +462,6 @@ export default function Pricing() {
                   isSubmit
                   label="Save & Continue"
                   classname="px-5! py-2.5! rounded-md! text-sm! font-medium!"
-                  onClick={() => router.push("/nx/project-dashboard/pricing")}
                 />
               </div>
             </div>

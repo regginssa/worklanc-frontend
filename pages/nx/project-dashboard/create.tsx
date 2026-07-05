@@ -105,7 +105,7 @@ export default function CreateProjectDashboard() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
+    router.push("/nx/project-dashboard/pricing");
   };
 
   const makeCategorySuggestions = () => {
@@ -130,7 +130,7 @@ export default function CreateProjectDashboard() {
               type="outline"
               label="Preview project"
               size="medium"
-              icon="mdi:eye"
+              icon="solar:eye-linear"
               classname="rounded-md! text-sm! font-medium! py-2.5! px-6!"
             />
           </div>
@@ -309,7 +309,6 @@ export default function CreateProjectDashboard() {
                 isSubmit
                 label="Save & Continue"
                 classname="px-5! py-2.5! rounded-md! text-sm! font-medium!"
-                onClick={() => router.push("/nx/project-dashboard/pricing")}
               />
             </div>
           </form>
