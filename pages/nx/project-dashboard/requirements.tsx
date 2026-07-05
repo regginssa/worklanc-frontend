@@ -26,7 +26,7 @@ export default function Requirements() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    router.push("/nx/project-dashboard/pricing");
+    router.push("/nx/project-dashboard/description");
   };
 
   const handleAddSubmit = () => {
