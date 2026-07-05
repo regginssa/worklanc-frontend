@@ -18,6 +18,7 @@ import {
   parseCategoryRadioValue,
   toCategoryRadioValue,
 } from "@/utils/category";
+import { useRouter } from "next/router";
 
 const mockAttributes = [
   {
@@ -96,6 +97,7 @@ export default function CreateProjectDashboard() {
     queryKey: ["project-categories"],
     queryFn: () => CategoryAPI.getAll(),
   });
+  const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -307,6 +309,7 @@ export default function CreateProjectDashboard() {
                 isSubmit
                 label="Save & Continue"
                 classname="px-5! py-2.5! rounded-md! text-sm! font-medium!"
+                onClick={() => router.push("/nx/project-dashboard/pricing")}
               />
             </div>
           </form>
