@@ -1,4 +1,4 @@
-import { Button, Input } from "@/components/atoms";
+import { Button, Checkbox, Input, RadioGroup } from "@/components/atoms";
 import { ProjectDashboardOnboardingLayout } from "@/components/layouts";
 import { useState } from "react";
 import { motion } from "motion/react";
@@ -11,11 +11,91 @@ import {
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { ProjectCategoryDialog } from "@/components/molecules";
+import { useQuery } from "@tanstack/react-query";
+import CategoryAPI from "@/lib/api/categories";
+import {
+  categoriesToRadioOptions,
+  parseCategoryRadioValue,
+  toCategoryRadioValue,
+} from "@/utils/category";
+
+const mockAttributes = [
+  {
+    title: "Platform",
+    description: "Choose up to 1",
+    options: [
+      { label: "Android", value: "android" },
+      { label: "iOS", value: "ios" },
+      { label: "Mobile Website", value: "mobile-website" },
+      { label: "Tizen", value: "tizen" },
+    ],
+  },
+  {
+    title: "App Type",
+    desecription: "Chose up to 1",
+    options: [
+      { label: "Native App", value: "native" },
+      { label: "Hybrid App", value: "hybrid-app" },
+      { label: "PWA", value: "pwa" },
+    ],
+  },
+  {
+    title: "Development Technology",
+    description: "Choose up to 3",
+    options: [
+      { label: "React", value: "react" },
+      { label: "Vue", value: "vue" },
+      { label: "Angular", value: "angular" },
+      { label: "Node.js", value: "nodejs" },
+      { label: "Express", value: "express" },
+      { label: "MongoDB", value: "mongodb" },
+      { label: "PostgreSQL", value: "postgresql" },
+    ],
+  },
+  {
+    title: "App Purpose",
+    description: "Choose up to 10",
+    options: [
+      { label: "Productivity", value: "productivity" },
+      { label: "Social", value: "social" },
+      { label: "Entertainment", value: "entertainment" },
+      { label: "Education", value: "education" },
+      { label: "Health", value: "health" },
+      { label: "Finance", value: "finance" },
+      { label: "Communication", value: "communication" },
+      { label: "Travel", value: "travel" },
+      { label: "Shopping", value: "shopping" },
+      { label: "Food", value: "food" },
+      { label: "Transportation", value: "transportation" },
+      { label: "Utilities", value: "utilities" },
+      { label: "Other", value: "other" },
+    ],
+  },
+  {
+    title: "Expertise",
+    description: "Choose up to 3",
+    options: [
+      { label: "Frontend", value: "frontend" },
+      { label: "Backend", value: "backend" },
+      { label: "Full Stack", value: "full-stack" },
+      { label: "Mobile", value: "mobile" },
+      { label: "Desktop", value: "desktop" },
+      { label: "UI/UX Design", value: "uiux-design" },
+      { label: "DevOps", value: "devops" },
+      { label: "QA", value: "qa" },
+      { label: "Other", value: "other" },
+    ],
+  },
+];
 
 export default function CreateProjectDashboard() {
   const [formData, setFormData] = useState<any>({});
   const [tagKeyWord, setTagKeyWord] = useState("");
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+  const { data: categories } = useQuery({
+    queryKey: ["project-categories"],
+    queryFn: () => CategoryAPI.getAll(),
+  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,6 +104,11 @@ export default function CreateProjectDashboard() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formData);
+  };
+
+  const makeCategorySuggestions = () => {
+    if (!categories) return [];
+    return categoriesToRadioOptions(categories);
   };
 
   return (
@@ -93,21 +178,77 @@ export default function CreateProjectDashboard() {
                 </span>
               </div>
 
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                className="text-base h-10 font-medium text-blue-600 cursor-pointer"
-                onClick={() => setCategoryDialogOpen(true)}
-              >
-                Browse all categories
-              </motion.button>
+              {formData.title && formData.title.length > 0 && (
+                <div className="space-y-4">
+                  <p className="text-xs text-slate-600">
+                    Here are some suggestions based on your project title.
+                  </p>
+
+                  <RadioGroup
+                    name="category"
+                    options={makeCategorySuggestions()}
+                    value={toCategoryRadioValue(
+                      formData.category,
+                      formData.subCategory
+                    )}
+                    onChange={(value) => {
+                      const { category, subCategory } =
+                        parseCategoryRadioValue(value);
+                      setFormData({ ...formData, category, subCategory });
+                    }}
+                  />
+                </div>
+              )}
+
+              <div className="flex items-center gap-2">
+                {formData.title && formData.title.length > 0 && (
+                  <span className="text-sm text-slate-600">
+                    Not seeing the right fit?
+                  </span>
+                )}
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  className="text-base h-10 font-medium text-blue-600 cursor-pointer"
+                  onClick={() => setCategoryDialogOpen(true)}
+                >
+                  Browse all categories
+                </motion.button>
+              </div>
             </div>
 
             <div className="space-y-4">
               <div className="flex flex-col gap-2">
                 <span className="text-xl font-medium">Project attributes</span>
-                <span className="text-base font-light text-slate-800">
-                  Select a category above to view options.
-                </span>
+                {formData.category && formData.category.length > 0 ? (
+                  <ul className="space-y-6">
+                    {mockAttributes.map((attribute) => (
+                      <li key={attribute.title} className="space-y-2">
+                        <div className="space-y-1">
+                          <h5 className="text-base">{attribute.title}</h5>
+                          <p className="text-sm font-light text-slate-800">
+                            {attribute.description}
+                          </p>
+                        </div>
+
+                        <ul className="grid grid-cols-3 gap-4">
+                          {attribute.options.map((option) => (
+                            <li
+                              key={option.value}
+                              className="flex items-center gap-2"
+                            >
+                              <Checkbox className="size-5!" />
+                              <span className="text-sm">{option.label}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <span className="text-base font-light text-slate-800">
+                    Select a category above to view options.
+                  </span>
+                )}
               </div>
             </div>
 
