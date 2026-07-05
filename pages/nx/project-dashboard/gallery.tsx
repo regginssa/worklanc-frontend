@@ -27,6 +27,7 @@ export default function Gallery() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    router.push("/nx/project-dashboard/requirements");
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
