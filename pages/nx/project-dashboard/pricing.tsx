@@ -27,8 +27,18 @@ const numberOfRevisionsOptions = [
   { label: "Unlimited", value: "unlimited" },
 ];
 
+const addsOnOptions = [
+  { label: "Fast Delivery", value: "fast-delivery" },
+  { label: "Additional Revision", value: "additional-revision" },
+  {
+    label: "Additional Mobile Operation System",
+    value: "additional-mobile-operation-system",
+  },
+];
+
 export default function Pricing() {
   const [formData, setFormData] = useState<any>({});
+  const [selectedAddsOn, setSelectedAddsOn] = useState<any[]>([]);
   const [is3Tiers, setIs3Tiers] = useState(false);
   const router = useRouter();
 
@@ -51,7 +61,7 @@ export default function Pricing() {
         description: "Project Catalog - Worklanc",
         url: "/nx/project-dashboard/pricing",
       }}
-      currentStep={1}
+      currentStep={2}
     >
       <div className="flex items-start">
         <div className="w-3/4 pr-10 space-y-10 border-r border-slate-400">
@@ -306,7 +316,124 @@ export default function Pricing() {
                 Choose add-ons (optional)
               </h5>
 
-              <ul className="space-y-4"></ul>
+              <ul className="space-y-4">
+                {addsOnOptions.map((item) => (
+                  <li key={item.value} className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        checked={selectedAddsOn.includes(item.value)}
+                        onCheck={() => {
+                          if (selectedAddsOn.includes(item.value)) {
+                            setSelectedAddsOn(
+                              selectedAddsOn.filter(
+                                (value) => value !== item.value
+                              )
+                            );
+                          } else {
+                            setSelectedAddsOn([...selectedAddsOn, item.value]);
+                          }
+                        }}
+                      />
+                      <span className="text-sm">{item.label}</span>
+                    </div>
+
+                    {selectedAddsOn.includes(item.value) &&
+                      item.value === "fast-delivery" && (
+                        <div className="bg-slate-100 p-4 rounded-md space-y-2">
+                          <div className="grid grid-cols-4 gap-6">
+                            <div></div>
+                            <span>Standard</span>
+                            <span>Advanced</span>
+                          </div>
+
+                          <div className="grid grid-cols-4 gap-6">
+                            <label className="text-sm">Delivery Days</label>
+                            <Input
+                              type="number"
+                              name="starterTitle"
+                              value={formData.starterTitle}
+                              onChange={handleInputChange}
+                            />
+                            <Input
+                              type="number"
+                              name="starterTitle"
+                              value={formData.starterTitle}
+                              onChange={handleInputChange}
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-4 gap-6">
+                            <label className="text-sm">For an extra</label>
+                            <Input
+                              type="number"
+                              name="starterTitle"
+                              placeholder="$0.00"
+                              value={formData.starterTitle}
+                              onChange={handleInputChange}
+                            />
+                            <Input
+                              type="number"
+                              name="starterTitle"
+                              placeholder="$0.00"
+                              value={formData.starterTitle}
+                              onChange={handleInputChange}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                    {selectedAddsOn.includes(item.value) &&
+                      item.value === "additional-revision" && (
+                        <div className="bg-slate-100 p-4 rounded-md space-y-2">
+                          <div className="grid grid-cols-4 gap-6">
+                            <label className="text-sm">For an extra</label>
+                            <Input
+                              type="number"
+                              name="starterTitle"
+                              placeholder="$0.00"
+                              value={formData.starterTitle}
+                              onChange={handleInputChange}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                    {selectedAddsOn.includes(item.value) &&
+                      item.value === "additional-mobile-operation-system" && (
+                        <div className="bg-slate-100 p-4 rounded-md space-y-2">
+                          <div className="flex items-center gap-6">
+                            <label className="text-sm flex-1">
+                              For an extra
+                            </label>
+                            <Input
+                              type="number"
+                              name="starterNumberOfMobileOperatingSystems"
+                              placeholder="0"
+                              classname="flex-1"
+                              value={
+                                formData.starterNumberOfMobileOperatingSystems
+                              }
+                              onChange={handleInputChange}
+                            />
+                            <label className="text-sm flex-1">
+                              Additional days
+                            </label>
+                            <Input
+                              type="number"
+                              name="starterNumberOfMobileOperatingSystems"
+                              placeholder="0"
+                              classname="flex-1"
+                              value={
+                                formData.starterNumberOfMobileOperatingSystems
+                              }
+                              onChange={handleInputChange}
+                            />
+                          </div>
+                        </div>
+                      )}
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <div className="flex items-center justify-between">
