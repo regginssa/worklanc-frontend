@@ -1,4 +1,4 @@
-import { Button } from "@/components/atoms";
+import { Button, IconButton, TabBar } from "@/components/atoms";
 import { FreelancerLayout } from "@/components/layouts";
 import BannerPng from "@/public/assets/pngs/project-dashboard-banner.png";
 import BannerSvg from "@/public/assets/svgs/project-dashboard-banner.svg";
@@ -12,9 +12,29 @@ import Tips2 from "@/public/assets/webps/tips-for-success-2.webp";
 import Tips3 from "@/public/assets/webps/tips-for-success-3.webp";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import { formatDate } from "date-fns";
+
+const MOCK_PROJECTS = [
+  {
+    image:
+      "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    title: "You will get a fantastic mobile app on both android and ios",
+    createdAt: new Date(),
+    status: "Needs changes",
+  },
+];
+
+const tabs = [
+  { label: "Approved", value: "approved" },
+  { label: "Under Review", value: "under-review" },
+  { label: "Drafts", value: "drafts" },
+];
 
 export default function ProjectDashboard() {
+  const [selectedTabIndex, setSelectedTabIndex] = useState(0);
   const router = useRouter();
+  const projects = [] as any;
 
   return (
     <FreelancerLayout
@@ -51,49 +71,112 @@ export default function ProjectDashboard() {
         />
       </div>
 
-      <div className="p-10 rounded-lg bg-slate-50 flex items-center justify-between gap-10 mt-10">
-        <div className="space-y-8 w-3/5">
-          <div className="space-y-6">
-            <h2 className="text-4xl font-semibold">
-              Create your first fixed-price project
-            </h2>
-            <p className="text-base">
-              Package your most popular services to attract clients. You define
-              the scope, timeline, and price for each project upfront.
-            </p>
+      {projects.length === 0 ? (
+        <div className="p-10 rounded-lg bg-slate-50 flex items-center justify-between gap-10 mt-10">
+          <div className="space-y-8 w-3/5">
+            <div className="space-y-6">
+              <h2 className="text-4xl font-semibold">
+                Create your first fixed-price project
+              </h2>
+              <p className="text-base">
+                Package your most popular services to attract clients. You
+                define the scope, timeline, and price for each project upfront.
+              </p>
+            </div>
+
+            <ul className="space-y-4">
+              <li className="flex items-center gap-4">
+                <Icon icon="hugeicons:mail-open" className="size-5" />
+                <span className="text-base">
+                  Build a portfolio doing what you do best
+                </span>
+              </li>
+
+              <li className="flex items-center gap-4">
+                <Icon
+                  icon="streamline-plump:bag-suitcase-4"
+                  className="size-5"
+                />
+                <span className="text-base">
+                  Get discovered by clients who are looking for your unique
+                  skills
+                </span>
+              </li>
+
+              <li className="flex items-center gap-4">
+                <Icon icon="tabler:checkbox" className="size-5" />
+                <span className="text-base">No Connects needed</span>
+              </li>
+            </ul>
+
+            <Button
+              type="primary"
+              label="Create a project"
+              classname="rounded-md! text-base! font-medium! py-2.5! px-6!"
+              onClick={() => router.push("/nx/project-dashboard/create")}
+            />
           </div>
 
-          <ul className="space-y-4">
-            <li className="flex items-center gap-4">
-              <Icon icon="hugeicons:mail-open" className="size-5" />
-              <span className="text-base">
-                Build a portfolio doing what you do best
-              </span>
-            </li>
-
-            <li className="flex items-center gap-4">
-              <Icon icon="streamline-plump:bag-suitcase-4" className="size-5" />
-              <span className="text-base">
-                Get discovered by clients who are looking for your unique skills
-              </span>
-            </li>
-
-            <li className="flex items-center gap-4">
-              <Icon icon="tabler:checkbox" className="size-5" />
-              <span className="text-base">No Connects needed</span>
-            </li>
-          </ul>
-
-          <Button
-            type="primary"
-            label="Create a project"
-            classname="rounded-md! text-base! font-medium! py-2.5! px-6!"
-            onClick={() => router.push("/nx/project-dashboard/create")}
+          <Image
+            src={BannerSvg}
+            alt="Banner svg"
+            className="w-[407px] h-auto"
           />
         </div>
+      ) : (
+        <div className="p-10 space-y-10">
+          <div className="flex items-center justify-between">
+            <h2 className="text-4xl font-semibold">Projects</h2>
+            <Button
+              type="primary"
+              label="Create a project"
+              classname="rounded-md! text-base! font-medium! py-2.5! px-6!"
+              onClick={() => router.push("/nx/project-dashboard/create")}
+            />
+          </div>
 
-        <Image src={BannerSvg} alt="Banner svg" className="w-[407px] h-auto" />
-      </div>
+          <div>
+            <TabBar
+              tabs={tabs}
+              selectedTabIndex={selectedTabIndex}
+              onTab={setSelectedTabIndex}
+            />
+
+            <ul className="">
+              {projects.map((project: any, index: number) => (
+                <li
+                  key={index}
+                  className="px-2 py-6 transition-colors duration-200 hover:bg-slate-100 hover:border-l-2 hover:border-l-blue-600 flex items-center justify-between border-b border-slate-200"
+                >
+                  <div className="flex items-center gap-4">
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      width={58}
+                      height={43}
+                      className="object-cover rounded-lg"
+                    />
+                    <h3 className="text-sm font-medium cursor-pointer hover:text-blue-600">
+                      <Link href="#">{project.title}</Link>
+                    </h3>
+                  </div>
+
+                  <div className="flex items-center gap-4 text-base">
+                    <span>{formatDate(project.createdAt, "MMM d, yyyy")}</span>
+                    <span className="text-red-700">{project.status}</span>
+                    <IconButton
+                      variant="outline"
+                      icon="mdi:dots-horizontal"
+                      className="p-1!"
+                      onClick={() => {}}
+                    />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
 
       <div className="space-y-6 mt-10">
         <h2 className="text-4xl font-semibold">How it works</h2>
