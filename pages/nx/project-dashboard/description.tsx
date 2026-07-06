@@ -36,7 +36,7 @@ export default function Description() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    router.push("/nx/project-dashboard/pricing");
+    router.push("/nx/project-dashboard/review");
   };
 
   const handleAddStep = () => {
@@ -311,7 +311,8 @@ export default function Description() {
                   <br />
                   What tools do you use?
                   <br />
-                  How often can I expect to hear from you if I buy this project?
+                  How often can I expect to hear from you if I buy this
+                  project?-
                 </p>
               </TooltipContent>
             </Tooltip>
